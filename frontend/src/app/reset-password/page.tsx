@@ -1,8 +1,10 @@
 "use client";
-import { useState, Suspense } from "react";
+import { Suspense, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import api from "@/lib/api";
 import { toast } from "react-toastify";
+
+export const dynamic = "force-dynamic";
 
 function ResetPasswordForm() {
   const [newPassword, setNewPassword] = useState("");
