@@ -409,22 +409,6 @@ export default function DashboardPage() {
 
         {selectedAccount && (
           <>
-            {/* Cards de receitas, despesas e saldo */}
-            <section className="grid grid-cols-1 sm:grid-cols-3 gap-6 mb-10">
-              <div className="bg-gradient-to-br from-amber-400/80 to-yellow-300/80 rounded-2xl shadow-lg p-6 flex flex-col items-center">
-                <span className="text-lg font-semibold text-zinc-800">Receitas</span>
-                <span className="text-2xl font-bold text-green-700">{receitas.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</span>
-              </div>
-              <div className="bg-gradient-to-br from-red-400/80 to-pink-300/80 rounded-2xl shadow-lg p-6 flex flex-col items-center">
-                <span className="text-lg font-semibold text-zinc-800">Despesas</span>
-                <span className="text-2xl font-bold text-red-700">{despesas.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</span>
-              </div>
-              <div className="bg-gradient-to-br from-zinc-700/80 to-zinc-900/80 rounded-2xl shadow-lg p-6 flex flex-col items-center">
-                <span className="text-lg font-semibold text-zinc-200">Saldo</span>
-                <span className={`text-2xl font-bold ${saldo >= 0 ? 'text-green-400' : 'text-red-400'}`}>{saldo.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</span>
-              </div>
-            </section>
-            
             {/* Gráficos e Tabela */}
             <section className="grid grid-cols-1 lg:grid-cols-5 gap-8">
               <div className="lg:col-span-2 space-y-8">
