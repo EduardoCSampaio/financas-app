@@ -3,8 +3,6 @@ import { useEffect, useRef, useState, useCallback, Fragment } from "react";
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
 import Chart from 'chart.js/auto';
-import AddTransactionModal from "@/components/AddTransactionModal";
-import EditTransactionModal from "@/components/EditTransactionModal";
 import { FaEdit, FaTrash, FaUserCircle, FaPaperclip } from 'react-icons/fa';
 import debounce from 'lodash.debounce';
 import Pagination from "@/components/Pagination";
@@ -41,9 +39,6 @@ export default function DashboardPage() {
   
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [loading, setLoading] = useState(true);
-  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
-  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
-  const [selectedTransaction, setSelectedTransaction] = useState<Transaction | null>(null);
   const [search, setSearch] = useState('');
   const [category, setCategory] = useState('');
   const [viewMode, setViewMode] = useState<'real' | 'previsto'>('real');
@@ -84,11 +79,6 @@ export default function DashboardPage() {
         toast.error('Erro ao excluir transação.');
       }
     }
-  };
-
-  const openEditModal = (transaction: Transaction) => {
-    setSelectedTransaction(transaction);
-    setIsEditModalOpen(true);
   };
 
   const handleTogglePaid = async (transaction: Transaction) => {
@@ -363,7 +353,7 @@ export default function DashboardPage() {
                 <div className="flex justify-between items-center mb-4">
                   <h2 className="text-lg font-semibold text-white">Últimas Transações</h2>
                   <button 
-                    onClick={() => setIsAddModalOpen(true)}
+                    onClick={() => handleTransactionAdded({ id: 0, description: '', value: 0, type: 'income', category: '', date: '', paid: false, account_id: selectedAccount.id })}
                     className="bg-amber-500 hover:bg-amber-600 text-black font-bold py-2 px-4 rounded-lg transition-colors"
                   >
                     Adicionar Transação
@@ -402,7 +392,7 @@ export default function DashboardPage() {
                             )}
                           </td>
                           <td className="p-2 flex justify-center items-center gap-4">
-                            <button onClick={() => openEditModal(t)} className="text-blue-400 hover:text-blue-300"><FaEdit /></button>
+                            <button onClick={() => handleTransactionUpdated({ ...t, description: '' })} className="text-blue-400 hover:text-blue-300"><FaEdit /></button>
                             <button onClick={() => handleDelete(t.id)} className="text-red-500 hover:text-red-400"><FaTrash /></button>
                           </td>
                         </tr>
