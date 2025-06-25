@@ -23,7 +23,7 @@ export default function ResetPasswordPage() {
       await api.post("/auth/reset-password", { token, new_password: newPassword });
       toast.success("Senha redefinida com sucesso!");
       router.push("/login");
-    } catch (err) {
+    } catch {
       toast.error("Erro ao redefinir senha. O link pode estar expirado ou inválido.");
     } finally {
       setLoading(false);
