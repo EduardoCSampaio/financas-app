@@ -88,12 +88,17 @@ export default function LoginPage() {
           </button>
           {error && <p className="text-sm text-center text-red-500">{error}</p>}
         </form>
-        <p className="text-sm text-center text-zinc-400">
-          Não tem uma conta?{' '}
-          <Link href="/register" className="font-medium text-amber-400 hover:underline">
-            Registre-se
+        <div className="flex flex-col items-center gap-2 mt-4">
+          <Link href="/esqueci-senha" className="text-sm text-amber-400 hover:underline">
+            Esqueci minha senha?
           </Link>
-        </p>
+          <p className="text-sm text-center text-zinc-400">
+            Não tem uma conta?{' '}
+            <Link href="/register" className="font-medium text-amber-400 hover:underline">
+              Registre-se
+            </Link>
+          </p>
+        </div>
       </div>
     </div>
   );
