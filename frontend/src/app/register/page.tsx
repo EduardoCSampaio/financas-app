@@ -6,6 +6,7 @@ import { toast } from 'react-toastify';
 import api from '@/lib/api';
 import { FaUser, FaLock, FaArrowLeft, FaEye, FaEyeSlash, FaCheckCircle } from 'react-icons/fa';
 import { motion } from 'framer-motion';
+import Image from 'next/image';
 
 export default function RegisterPage() {
   const [email, setEmail] = useState('');
@@ -60,6 +61,12 @@ export default function RegisterPage() {
     <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}
       className="flex items-center justify-center min-h-screen bg-gradient-to-br from-black via-zinc-900 to-zinc-800">
       <div className="w-full max-w-md p-8 space-y-8 backdrop-blur-lg bg-white/10 border border-zinc-700 rounded-2xl shadow-lg">
+        <div className="flex flex-col items-center justify-center mb-4">
+          <div className="flex items-center gap-3">
+            <Image src="/logo.svg" alt="Logo" width={40} height={40} />
+            <span className="text-2xl font-extrabold text-amber-400 tracking-tight drop-shadow-lg select-none" style={{letterSpacing: '-1px'}}>Finanças Premium</span>
+          </div>
+        </div>
         <h1 className="text-3xl font-bold text-center text-white drop-shadow-lg">
           <FaUser className="inline mb-1 mr-2 text-amber-400" /> Criar Conta
         </h1>
