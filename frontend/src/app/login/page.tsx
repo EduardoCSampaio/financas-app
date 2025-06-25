@@ -6,7 +6,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { useRouter } from 'next/navigation';
 import { toast } from 'react-toastify';
 import api from '@/lib/api';
-import { FaUser, FaLock } from 'react-icons/fa';
+import { FaUser, FaLock, FaEye, FaEyeSlash } from 'react-icons/fa';
 import { motion } from 'framer-motion';
 
 export default function LoginPage() {
@@ -16,6 +16,7 @@ export default function LoginPage() {
   const { login } = useAuth();
   const router = useRouter();
   const [loading, setLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -63,37 +64,40 @@ export default function LoginPage() {
               required
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="w-full px-3 py-2 mt-1 text-white bg-white/5 border border-zinc-600 rounded-md focus:outline-none focus:ring-2 focus:ring-amber-400"
+              placeholder="Digite seu e-mail"
+              className={`w-full px-3 py-2 mt-1 text-white bg-white/5 border ${error ? 'border-red-500' : 'border-zinc-600'} rounded-md focus:outline-none focus:ring-2 focus:ring-amber-400`}
             />
+            {error && <span className="text-xs text-red-400">{error}</span>}
           </div>
           <div>
             <label htmlFor="password" className="text-sm font-medium text-zinc-400 flex items-center gap-2">
               <FaLock className="inline mr-1" /> Senha
             </label>
-            <input
-              id="password"
-              name="password"
-              type="password"
-              autoComplete="current-password"
-              required
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              className="w-full px-3 py-2 mt-1 text-white bg-white/5 border border-zinc-600 rounded-md focus:outline-none focus:ring-2 focus:ring-amber-400"
-            />
+            <div className="relative">
+              <input
+                id="password"
+                name="password"
+                type={showPassword ? "text" : "password"}
+                autoComplete="current-password"
+                required
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                placeholder="Digite sua senha"
+                className={`w-full px-3 py-2 mt-1 text-white bg-white/5 border ${error ? 'border-red-500' : 'border-zinc-600'} rounded-md focus:outline-none focus:ring-2 focus:ring-amber-400 pr-10`}
+              />
+              <button type="button" tabIndex={-1} onClick={() => setShowPassword(!showPassword)}
+                className="absolute right-2 top-1/2 -translate-y-1/2 text-zinc-400 hover:text-amber-400 focus:outline-none">
+                {showPassword ? <FaEyeSlash /> : <FaEye />}
+              </button>
+            </div>
           </div>
           <button
             type="submit"
-            className="w-full py-3 font-semibold text-black bg-amber-400 rounded-md hover:bg-amber-500 transition-colors flex items-center justify-center gap-2"
+            className="w-full py-3 font-semibold text-black bg-amber-400 rounded-md hover:bg-amber-500 transition-colors flex items-center justify-center gap-2 focus:ring-2 focus:ring-amber-400 focus:outline-none"
             disabled={!!error || !email || !password}
           >
-            {error ? (
-              <span>Erro</span>
-            ) : (
-              <>{!email || !password ? "Entrar" : (error ? "Erro" : "Entrar")}</>
-            )}
-            {error === '' && (loading ? <span className="loader ml-2 w-4 h-4 border-2 border-t-2 border-amber-600 border-t-transparent rounded-full animate-spin"></span> : null)}
+            {loading ? <span className="loader ml-2 w-4 h-4 border-2 border-t-2 border-amber-600 border-t-transparent rounded-full animate-spin"></span> : "Entrar"}
           </button>
-          {error && <p className="text-sm text-center text-red-500">{error}</p>}
         </form>
         <div className="flex flex-col items-center gap-2 mt-4">
           <Link href="/esqueci-senha" className="text-sm font-semibold text-amber-400 hover:underline transition-colors">

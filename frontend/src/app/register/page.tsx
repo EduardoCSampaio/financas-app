@@ -4,7 +4,7 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { toast } from 'react-toastify';
 import api from '@/lib/api';
-import { FaUser, FaLock, FaArrowLeft } from 'react-icons/fa';
+import { FaUser, FaLock, FaArrowLeft, FaEye, FaEyeSlash, FaCheckCircle } from 'react-icons/fa';
 import { motion } from 'framer-motion';
 
 export default function RegisterPage() {
@@ -14,6 +14,9 @@ export default function RegisterPage() {
   const [error, setError] = useState('');
   const router = useRouter();
   const [loading, setLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [success, setSuccess] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -27,8 +30,9 @@ export default function RegisterPage() {
     try {
       setLoading(true);
       await api.post('/users/', { email, password });
+      setSuccess(true);
       toast.success('Usuário criado com sucesso! Por favor, faça o login.');
-      router.push('/login');
+      setTimeout(() => router.push('/login'), 1500);
     } catch (err: unknown) {
       let errorMessage = 'Falha ao criar usuário.';
       if (err && typeof err === 'object' && 'response' in err && err.response && typeof err.response === 'object' && 'data' in err.response && err.response.data && typeof err.response.data === 'object' && 'detail' in err.response.data) {
@@ -40,6 +44,17 @@ export default function RegisterPage() {
       setLoading(false);
     }
   };
+
+  if (success) {
+    return (
+      <motion.div initial={{ opacity: 0, scale: 0.8 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.5 }}
+        className="flex flex-col items-center justify-center min-h-screen bg-gradient-to-br from-black via-zinc-900 to-zinc-800">
+        <FaCheckCircle className="text-6xl text-amber-400 mb-4 animate-bounce" />
+        <h2 className="text-2xl font-bold text-white mb-2">Conta criada!</h2>
+        <p className="text-zinc-300 mb-4">Redirecionando para o login...</p>
+      </motion.div>
+    );
+  }
 
   return (
     <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}
@@ -59,34 +74,50 @@ export default function RegisterPage() {
               required
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="w-full px-3 py-2 mt-1 text-white bg-white/5 border border-zinc-600 rounded-md focus:outline-none focus:ring-2 focus:ring-amber-400"
+              placeholder="Digite seu e-mail"
+              className={`w-full px-3 py-2 mt-1 text-white bg-white/5 border ${error ? 'border-red-500' : 'border-zinc-600'} rounded-md focus:outline-none focus:ring-2 focus:ring-amber-400`}
             />
           </div>
           <div>
             <label htmlFor="password" className="text-sm font-medium text-zinc-400 flex items-center gap-2">
               <FaLock className="inline mr-1" /> Senha
             </label>
-            <input
-              id="password"
-              type="password"
-              required
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              className="w-full px-3 py-2 mt-1 text-white bg-white/5 border border-zinc-600 rounded-md focus:outline-none focus:ring-2 focus:ring-amber-400"
-            />
+            <div className="relative">
+              <input
+                id="password"
+                type={showPassword ? "text" : "password"}
+                required
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                placeholder="Digite sua senha"
+                className={`w-full px-3 py-2 mt-1 text-white bg-white/5 border ${error ? 'border-red-500' : 'border-zinc-600'} rounded-md focus:outline-none focus:ring-2 focus:ring-amber-400 pr-10`}
+              />
+              <button type="button" tabIndex={-1} onClick={() => setShowPassword(!showPassword)}
+                className="absolute right-2 top-1/2 -translate-y-1/2 text-zinc-400 hover:text-amber-400 focus:outline-none">
+                {showPassword ? <FaEyeSlash /> : <FaEye />}
+              </button>
+            </div>
           </div>
           <div>
             <label htmlFor="confirmPassword" className="text-sm font-medium text-zinc-400 flex items-center gap-2">
               <FaLock className="inline mr-1" /> Confirmar senha
             </label>
-            <input
-              id="confirmPassword"
-              type="password"
-              required
-              value={confirmPassword}
-              onChange={(e) => setConfirmPassword(e.target.value)}
-              className="w-full px-3 py-2 mt-1 text-white bg-white/5 border border-zinc-600 rounded-md focus:outline-none focus:ring-2 focus:ring-amber-400"
-            />
+            <div className="relative">
+              <input
+                id="confirmPassword"
+                type={showConfirmPassword ? "text" : "password"}
+                required
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
+                placeholder="Confirme sua senha"
+                className={`w-full px-3 py-2 mt-1 text-white bg-white/5 border ${error ? 'border-red-500' : 'border-zinc-600'} rounded-md focus:outline-none focus:ring-2 focus:ring-amber-400 pr-10`}
+              />
+              <button type="button" tabIndex={-1} onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                className="absolute right-2 top-1/2 -translate-y-1/2 text-zinc-400 hover:text-amber-400 focus:outline-none">
+                {showConfirmPassword ? <FaEyeSlash /> : <FaEye />}
+              </button>
+            </div>
+            {error && <span className="text-xs text-red-400">{error}</span>}
           </div>
           <button
             type="submit"
@@ -95,7 +126,6 @@ export default function RegisterPage() {
           >
             {loading ? <span className="loader ml-2 w-4 h-4 border-2 border-t-2 border-amber-600 border-t-transparent rounded-full animate-spin"></span> : "Criar conta"}
           </button>
-          {error && <p className="text-sm text-center text-red-500">{error}</p>}
         </form>
         <div className="flex justify-center mt-4">
           <Link href="/login" className="flex items-center text-sm text-zinc-400 hover:text-amber-400 transition-colors">
