@@ -176,7 +176,7 @@ export default function DashboardPage() {
             labels: Object.keys(gastosPorCategoria),
             datasets: [{ data: Object.values(gastosPorCategoria), backgroundColor: ["#FFD700", "#222", "#444", "#666", "#888"] }],
           },
-          options: { responsive: false, plugins: { legend: { labels: { color: "#fff" } } } },
+          options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { labels: { color: "#fff" } } } },
         });
       }
       // Gráfico de Barras (simplificado, apenas para exemplo)
@@ -191,7 +191,7 @@ export default function DashboardPage() {
                     { label: "Despesas", data: [despesas], backgroundColor: "#ef4444" },
                 ],
             },
-            options: { responsive: false, plugins: { legend: { labels: { color: "#fff" } } }, scales: { x: { ticks: { color: "#fff" } }, y: { ticks: { color: "#fff" } } } },
+            options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { labels: { color: "#fff" } } }, scales: { x: { ticks: { color: "#fff" } }, y: { ticks: { color: "#fff" } } } },
         });
       }
     }
@@ -490,12 +490,12 @@ export default function DashboardPage() {
               Linha
             </button>
           </div>
-          <div className="flex justify-center items-center min-h-[160px]">
+          <div className="flex justify-center items-center min-h-[220px]">
             {chartType === 'pie' && (
-              <canvas ref={pizzaCanvasRef} width={220} height={140} style={{ width: '220px', height: '140px', maxWidth: '100%' }}></canvas>
+              <canvas ref={pizzaCanvasRef} style={{ width: '100%', maxWidth: '340px', height: '220px', maxHeight: '220px', display: 'block' }}></canvas>
             )}
             {chartType === 'bar' && (
-              <canvas ref={barCanvasRef} width={220} height={140} style={{ width: '220px', height: '140px', maxWidth: '100%' }}></canvas>
+              <canvas ref={barCanvasRef} style={{ width: '100%', maxWidth: '340px', height: '220px', maxHeight: '220px', display: 'block' }}></canvas>
             )}
             {chartType === 'line' && (
               <span className="text-zinc-400">Gráfico de linha em breve!</span>
