@@ -3,6 +3,9 @@ import { Suspense, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import api from "@/lib/api";
 import { toast } from "react-toastify";
+import { FaLock, FaArrowLeft } from 'react-icons/fa';
+import { motion } from 'framer-motion';
+import Link from 'next/link';
 
 export const dynamic = "force-dynamic";
 
@@ -33,15 +36,16 @@ function ResetPasswordForm() {
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-black via-zinc-900 to-zinc-800">
+    <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}
+      className="flex items-center justify-center min-h-screen bg-gradient-to-br from-black via-zinc-900 to-zinc-800">
       <div className="w-full max-w-md p-8 space-y-8 backdrop-blur-lg bg-white/10 border border-zinc-700 rounded-2xl shadow-lg">
         <h1 className="text-3xl font-bold text-center text-white drop-shadow-lg">
-          Redefinir senha
+          <FaLock className="inline mb-1 mr-2 text-amber-400" /> Redefinir senha
         </h1>
         <form onSubmit={handleSubmit} className="space-y-6">
           <div>
-            <label htmlFor="newPassword" className="text-sm font-medium text-zinc-400">
-              Nova senha
+            <label htmlFor="newPassword" className="text-sm font-medium text-zinc-400 flex items-center gap-2">
+              <FaLock className="inline mr-1" /> Nova senha
             </label>
             <input
               id="newPassword"
@@ -53,8 +57,8 @@ function ResetPasswordForm() {
             />
           </div>
           <div>
-            <label htmlFor="confirmPassword" className="text-sm font-medium text-zinc-400">
-              Confirmar nova senha
+            <label htmlFor="confirmPassword" className="text-sm font-medium text-zinc-400 flex items-center gap-2">
+              <FaLock className="inline mr-1" /> Confirmar nova senha
             </label>
             <input
               id="confirmPassword"
@@ -67,14 +71,19 @@ function ResetPasswordForm() {
           </div>
           <button
             type="submit"
-            className="w-full py-3 font-semibold text-black bg-amber-400 rounded-md hover:bg-amber-500 transition-colors"
+            className="w-full py-3 font-semibold text-black bg-amber-400 rounded-md hover:bg-amber-500 transition-colors flex items-center justify-center gap-2"
             disabled={loading}
           >
-            {loading ? "Redefinindo..." : "Redefinir senha"}
+            {loading ? <span className="loader ml-2 w-4 h-4 border-2 border-t-2 border-amber-600 border-t-transparent rounded-full animate-spin"></span> : "Redefinir senha"}
           </button>
         </form>
+        <div className="flex justify-center mt-4">
+          <Link href="/login" className="flex items-center text-sm text-zinc-400 hover:text-amber-400 transition-colors">
+            <FaArrowLeft className="mr-1" /> Voltar para login
+          </Link>
+        </div>
       </div>
-    </div>
+    </motion.div>
   );
 }
 
