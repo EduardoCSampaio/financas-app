@@ -50,6 +50,7 @@ export default function DashboardPage() {
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [itemsPerPage] = useState(10); // Remover setItemsPerPage se não for usado
+  const [chartType, setChartType] = useState<'pie' | 'bar' | 'line'>('pie');
 
   // Refs para os gráficos
   const pizzaChartRef = useRef<Chart | null>(null);
@@ -212,7 +213,113 @@ export default function DashboardPage() {
   }
 
   return (
-    <div className="min-h-screen bg-black text-white">
+    <div className="min-h-screen bg-gradient-to-br from-black via-zinc-900 to-zinc-800 py-8">
+      {/* Header com saldo e totais */}
+      <div className="w-full max-w-4xl mx-auto mt-8 mb-6 flex flex-col md:flex-row items-center justify-between gap-4">
+        <div className="flex flex-col items-start">
+          <span className="text-lg text-zinc-400">Saldo atual</span>
+          <span className="text-3xl font-bold text-amber-400 drop-shadow">{saldo.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</span>
+        </div>
+        <div className="flex gap-6">
+          <div className="flex flex-col items-center">
+            <span className="text-sm text-zinc-400">Receitas</span>
+            <span className="text-xl font-semibold text-green-400">{receitas.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</span>
+          </div>
+          <div className="flex flex-col items-center">
+            <span className="text-sm text-zinc-400">Despesas</span>
+            <span className="text-xl font-semibold text-red-400">{despesas.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</span>
+          </div>
+        </div>
+      </div>
+      {/* Barra de filtros e botões "Previsto/Real" */}
+      <div className="w-full max-w-4xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4 mb-8">
+        {/* Filtros */}
+        <div className="flex flex-col md:flex-row gap-2 w-full md:w-auto">
+          <input
+            type="text"
+            placeholder="Buscar descrição..."
+            value={search}
+            onChange={e => setSearch(e.target.value)}
+            className="px-3 py-2 rounded-md bg-zinc-800 text-white border border-zinc-700 focus:ring-2 focus:ring-amber-400 outline-none w-full md:w-64"
+          />
+          <input
+            type="text"
+            placeholder="Filtrar por categoria..."
+            value={category}
+            onChange={e => setCategory(e.target.value)}
+            className="px-3 py-2 rounded-md bg-zinc-800 text-white border border-zinc-700 focus:ring-2 focus:ring-amber-400 outline-none w-full md:w-48"
+          />
+        </div>
+        {/* Botões Previsto/Real */}
+        <div className="flex gap-2 w-full md:w-auto justify-end">
+          <button
+            onClick={() => setViewMode('real')}
+            className={`px-4 py-2 rounded-md font-semibold transition-colors ${
+              viewMode === 'real'
+                ? 'bg-amber-400 text-black shadow'
+                : 'bg-zinc-800 text-zinc-300 hover:bg-zinc-700'
+            }`}
+          >
+            Real
+          </button>
+          <button
+            onClick={() => setViewMode('previsto')}
+            className={`px-4 py-2 rounded-md font-semibold transition-colors ${
+              viewMode === 'previsto'
+                ? 'bg-amber-400 text-black shadow'
+                : 'bg-zinc-800 text-zinc-300 hover:bg-zinc-700'
+            }`}
+          >
+            Previsto
+          </button>
+        </div>
+      </div>
+      {/* Área de gráficos com tabs de seleção */}
+      <div className="w-full max-w-4xl mx-auto mb-8">
+        <div className="flex gap-2 mb-4">
+          <button
+            onClick={() => setChartType('pie')}
+            className={`px-4 py-2 rounded-md font-semibold transition-colors ${
+              chartType === 'pie'
+                ? 'bg-amber-400 text-black shadow'
+                : 'bg-zinc-800 text-zinc-300 hover:bg-zinc-700'
+            }`}
+          >
+            Pizza
+          </button>
+          <button
+            onClick={() => setChartType('bar')}
+            className={`px-4 py-2 rounded-md font-semibold transition-colors ${
+              chartType === 'bar'
+                ? 'bg-amber-400 text-black shadow'
+                : 'bg-zinc-800 text-zinc-300 hover:bg-zinc-700'
+            }`}
+          >
+            Barras
+          </button>
+          <button
+            onClick={() => setChartType('line')}
+            className={`px-4 py-2 rounded-md font-semibold transition-colors ${
+              chartType === 'line'
+                ? 'bg-amber-400 text-black shadow'
+                : 'bg-zinc-800 text-zinc-300 hover:bg-zinc-700'
+            }`}
+          >
+            Linha
+          </button>
+        </div>
+        <div className="bg-zinc-900 rounded-xl p-6 shadow-lg flex justify-center items-center min-h-[300px]">
+          {chartType === 'pie' && (
+            <canvas ref={pizzaCanvasRef} width={320} height={240}></canvas>
+          )}
+          {chartType === 'bar' && (
+            <canvas ref={barCanvasRef} width={320} height={240}></canvas>
+          )}
+          {chartType === 'line' && (
+            <span className="text-zinc-400">Gráfico de linha em breve!</span>
+          )}
+        </div>
+      </div>
       {/* Modais */}
       {selectedAccount && (
         <AddTransactionModal 
@@ -303,56 +410,19 @@ export default function DashboardPage() {
 
         {selectedAccount && (
           <>
-            {/* Seletor de Visão */}
-            <div className="mb-8 flex justify-center items-center gap-4">
-                <span className={`cursor-pointer p-2 rounded-md ${viewMode === 'previsto' ? 'bg-zinc-700' : ''}`} onClick={() => setViewMode('previsto')}>Previsto</span>
-                <div onClick={() => setViewMode(viewMode === 'real' ? 'previsto' : 'real')} className="w-14 h-7 flex items-center bg-zinc-700 rounded-full p-1 cursor-pointer">
-                    <div className={`bg-amber-400 w-5 h-5 rounded-full shadow-md transform duration-300 ease-in-out ${viewMode === 'real' ? 'translate-x-0' : 'translate-x-7'}`}></div>
-                </div>
-                <span className={`cursor-pointer p-2 rounded-md ${viewMode === 'real' ? 'bg-zinc-700' : ''}`} onClick={() => setViewMode('real')}>Real</span>
-            </div>
-            
-            {/* Filtros */}
-            <section className="mb-8 p-6 backdrop-blur-lg bg-white/10 border border-zinc-700 rounded-2xl shadow-lg">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div>
-                        <label htmlFor="search" className="text-sm font-medium text-zinc-400">Buscar por Descrição</label>
-                        <input 
-                            id="search" 
-                            type="text" 
-                            value={search} 
-                            onChange={(e) => setSearch(e.target.value)} 
-                            placeholder="Ex: iFood, Salário..."
-                            className="w-full mt-1 input-style"
-                        />
-                    </div>
-                    <div>
-                        <label htmlFor="category-filter" className="text-sm font-medium text-zinc-400">Filtrar por Categoria</label>
-                        <input 
-                            id="category-filter" 
-                            type="text" 
-                            value={category} 
-                            onChange={(e) => setCategory(e.target.value)} 
-                            placeholder="Ex: Lazer, Alimentação..."
-                            className="w-full mt-1 input-style"
-                        />
-                    </div>
-                </div>
-            </section>
-            
-            {/* Cards */}
+            {/* Cards de receitas, despesas e saldo */}
             <section className="grid grid-cols-1 sm:grid-cols-3 gap-6 mb-10">
-              <div className="backdrop-blur-lg bg-white/10 border border-zinc-700 rounded-2xl shadow-lg p-6 flex flex-col items-center">
-                <span className="text-zinc-400">Saldo</span>
-                <span className="text-2xl font-semibold text-amber-400">R$ {saldo.toLocaleString("pt-BR")}</span>
+              <div className="bg-gradient-to-br from-amber-400/80 to-yellow-300/80 rounded-2xl shadow-lg p-6 flex flex-col items-center">
+                <span className="text-lg font-semibold text-zinc-800">Receitas</span>
+                <span className="text-2xl font-bold text-green-700">{receitas.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</span>
               </div>
-              <div className="backdrop-blur-lg bg-white/10 border border-zinc-700 rounded-2xl shadow-lg p-6 flex flex-col items-center">
-                <span className="text-zinc-400">Receitas</span>
-                <span className="text-2xl font-semibold text-green-400">R$ {receitas.toLocaleString("pt-BR")}</span>
+              <div className="bg-gradient-to-br from-red-400/80 to-pink-300/80 rounded-2xl shadow-lg p-6 flex flex-col items-center">
+                <span className="text-lg font-semibold text-zinc-800">Despesas</span>
+                <span className="text-2xl font-bold text-red-700">{despesas.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</span>
               </div>
-              <div className="backdrop-blur-lg bg-white/10 border border-zinc-700 rounded-2xl shadow-lg p-6 flex flex-col items-center">
-                <span className="text-zinc-400">Despesas</span>
-                <span className="text-2xl font-semibold text-red-400">R$ {despesas.toLocaleString("pt-BR")}</span>
+              <div className="bg-gradient-to-br from-zinc-700/80 to-zinc-900/80 rounded-2xl shadow-lg p-6 flex flex-col items-center">
+                <span className="text-lg font-semibold text-zinc-200">Saldo</span>
+                <span className={`text-2xl font-bold ${saldo >= 0 ? 'text-green-400' : 'text-red-400'}`}>{saldo.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</span>
               </div>
             </section>
             
