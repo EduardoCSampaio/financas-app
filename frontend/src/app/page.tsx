@@ -493,12 +493,12 @@ export default function DashboardPage() {
               Linha
             </button>
           </div>
-          <div className="flex justify-center items-center min-h-[300px]">
+          <div className="flex justify-center items-center min-h-[110px]">
             {chartType === 'pie' && (
-              <canvas ref={pizzaCanvasRef} width={220} height={160}></canvas>
+              <canvas ref={pizzaCanvasRef} width={140} height={100}></canvas>
             )}
             {chartType === 'bar' && (
-              <canvas ref={barCanvasRef} width={220} height={160}></canvas>
+              <canvas ref={barCanvasRef} width={140} height={100}></canvas>
             )}
             {chartType === 'line' && (
               <span className="text-zinc-400">Gráfico de linha em breve!</span>
