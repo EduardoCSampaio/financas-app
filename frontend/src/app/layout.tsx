@@ -33,7 +33,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
             pauseOnHover
             theme="dark"
             toastClassName="rounded-lg shadow-lg"
-            bodyClassName="text-sm"
+            className="text-sm"
           />
         </AuthProvider>
       </body>
