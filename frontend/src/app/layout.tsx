@@ -18,7 +18,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
       <body className={inter.className}>
         <AuthProvider>
           <div className="flex flex-col items-center justify-center pt-8">
-            <Image src="/file.svg" alt="Logo" width={64} height={64} className="mb-4" />
+            <Image src="/logo.svg" alt="Logo" width={48} height={48} className="mb-2" />
           </div>
           {children}
           <ToastContainer
