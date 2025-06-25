@@ -330,7 +330,7 @@ export default function DashboardPage() {
         </div>
       </div>
       {/* Área de gráficos com tabs de seleção */}
-      // Bloco removido: não deve haver nenhum elemento visual (div, botões, canvas) entre os filtros e a tabela de transações.
+      {/* Bloco removido: não deve haver nenhum elemento visual (div, botões, canvas) entre os filtros e a tabela de transações. */}
 
       <main className="p-4 sm:p-6 lg:p-8">
         {!selectedAccount && !loading && (
