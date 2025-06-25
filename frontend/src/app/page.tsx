@@ -373,30 +373,48 @@ export default function DashboardPage() {
                       </tr>
                     </thead>
                     <tbody>
-                      {transactions.map(t => (
-                        <tr key={t.id} className="border-b border-zinc-800 hover:bg-zinc-800/50">
-                          <td className="p-2">
-                            <div onClick={() => handleTogglePaid(t)} className={`w-12 h-6 flex items-center rounded-full p-1 cursor-pointer ${t.paid ? 'bg-green-500' : 'bg-zinc-700'}`}> 
-                              <div className={`bg-white w-4 h-4 rounded-full shadow-md transform duration-300 ease-in-out ${t.paid ? 'translate-x-6' : 'translate-x-0'}`}></div>
+                      {transactions.length === 0 ? (
+                        <tr>
+                          <td colSpan={7} className="py-12 text-center text-zinc-400">
+                            <div className="flex flex-col items-center gap-3">
+                              <span className="text-5xl">🗒️</span>
+                              <span className="text-lg font-semibold">Nenhuma transação encontrada</span>
+                              <span className="text-sm text-zinc-500">Comece adicionando sua primeira transação!</span>
+                              <button
+                                onClick={() => handleTransactionAdded({ id: 0, description: '', value: 0, type: 'income', category: '', date: '', paid: false, account_id: selectedAccount.id })}
+                                className="mt-4 px-5 py-2 bg-amber-500 text-black font-semibold rounded-lg hover:bg-amber-600 transition-colors"
+                              >
+                                Adicionar Transação
+                              </button>
                             </div>
                           </td>
-                          <td className="p-2">{t.description}</td>
-                          <td className={`p-2 font-semibold ${t.type === 'income' ? 'text-green-400' : 'text-red-400'}`}>{t.type === 'expense' && '-'} R$ {t.value.toLocaleString('pt-BR')}</td>
-                          <td className="p-2">{t.category}</td>
-                          <td className="p-2">{new Date(t.date).toLocaleDateString('pt-BR')}</td>
-                          <td className="p-2">
-                            {t.proof_url && (
-                              <a href={`http://localhost:8000${t.proof_url}`} target="_blank" rel="noopener noreferrer" className="text-amber-400 hover:text-amber-300">
-                                <FaPaperclip size={18} />
-                              </a>
-                            )}
-                          </td>
-                          <td className="p-2 flex justify-center items-center gap-4">
-                            <button onClick={() => handleTransactionUpdated({ ...t, description: '' })} className="text-blue-400 hover:text-blue-300"><FaEdit /></button>
-                            <button onClick={() => handleDelete(t.id)} className="text-red-500 hover:text-red-400"><FaTrash /></button>
-                          </td>
                         </tr>
-                      ))}
+                      ) : (
+                        transactions.map(t => (
+                          <tr key={t.id} className="border-b border-zinc-800 hover:bg-zinc-800/50">
+                            <td className="p-2">
+                              <div onClick={() => handleTogglePaid(t)} className={`w-12 h-6 flex items-center rounded-full p-1 cursor-pointer ${t.paid ? 'bg-green-500' : 'bg-zinc-700'}`}> 
+                                <div className={`bg-white w-4 h-4 rounded-full shadow-md transform duration-300 ease-in-out ${t.paid ? 'translate-x-6' : 'translate-x-0'}`}></div>
+                              </div>
+                            </td>
+                            <td className="p-2">{t.description}</td>
+                            <td className={`p-2 font-semibold ${t.type === 'income' ? 'text-green-400' : 'text-red-400'}`}>{t.type === 'expense' && '-'} R$ {t.value.toLocaleString('pt-BR')}</td>
+                            <td className="p-2">{t.category}</td>
+                            <td className="p-2">{new Date(t.date).toLocaleDateString('pt-BR')}</td>
+                            <td className="p-2">
+                              {t.proof_url && (
+                                <a href={`http://localhost:8000${t.proof_url}`} target="_blank" rel="noopener noreferrer" className="text-amber-400 hover:text-amber-300">
+                                  <FaPaperclip size={18} />
+                                </a>
+                              )}
+                            </td>
+                            <td className="p-2 flex justify-center items-center gap-4">
+                              <button onClick={() => handleTransactionUpdated({ ...t, description: '' })} className="text-blue-400 hover:text-blue-300"><FaEdit /></button>
+                              <button onClick={() => handleDelete(t.id)} className="text-red-500 hover:text-red-400"><FaTrash /></button>
+                            </td>
+                          </tr>
+                        ))
+                      )}
                     </tbody>
                   </table>
                 </div>
@@ -477,10 +495,10 @@ export default function DashboardPage() {
           </div>
           <div className="flex justify-center items-center min-h-[300px]">
             {chartType === 'pie' && (
-              <canvas ref={pizzaCanvasRef} width={320} height={240}></canvas>
+              <canvas ref={pizzaCanvasRef} width={220} height={160}></canvas>
             )}
             {chartType === 'bar' && (
-              <canvas ref={barCanvasRef} width={320} height={240}></canvas>
+              <canvas ref={barCanvasRef} width={220} height={160}></canvas>
             )}
             {chartType === 'line' && (
               <span className="text-zinc-400">Gráfico de linha em breve!</span>
