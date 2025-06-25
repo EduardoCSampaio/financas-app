@@ -269,7 +269,7 @@ export default function DashboardPage() {
         </div>
       </header>
       <div className="py-8">
-      {/* Header com saldo e totais */}
+      {/* Header com saldo e totais - agora sem card, borda ou sombra */}
       <div className="w-full max-w-4xl mx-auto mt-8 mb-6 flex flex-col md:flex-row items-center justify-between gap-4">
         <div className="flex flex-col items-start">
           <span className="text-lg text-zinc-400">Saldo atual</span>
@@ -286,7 +286,7 @@ export default function DashboardPage() {
           </div>
         </div>
       </div>
-      {/* Barra de filtros e botões "Previsto/Real" */}
+      {/* Barra de filtros e botões "Previsto/Real" - sem card */}
       <div className="w-full max-w-4xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4 mb-8">
         {/* Filtros */}
         <div className="flex flex-col md:flex-row gap-2 w-full md:w-auto">
@@ -329,12 +329,10 @@ export default function DashboardPage() {
           </button>
         </div>
       </div>
-      {/* Área de gráficos com tabs de seleção */}
-      {/* Bloco removido: não deve haver nenhum elemento visual (div, botões, canvas) entre os filtros e a tabela de transações. */}
-
+      {/* Tabela de Transações - sem card, borda ou sombra */}
       <main className="p-4 sm:p-6 lg:p-8">
         {!selectedAccount && !loading && (
-          <div className="text-center py-20 bg-gray-900/50 rounded-lg">
+          <div className="text-center py-20">
             <h2 className="text-2xl font-bold text-white">Nenhuma conta encontrada</h2>
             <p className="text-gray-400 mt-2">Vá para a página de gerenciamento para criar sua primeira conta.</p>
             <Link href="/accounts">
@@ -347,9 +345,8 @@ export default function DashboardPage() {
 
         {selectedAccount && (
           <>
-            {/* Tabela de Transações */}
             <section className="w-full max-w-4xl mx-auto mb-8">
-              <div className="backdrop-blur-lg bg-white/10 border border-zinc-700 rounded-2xl shadow-lg p-6">
+              <div>
                 <div className="flex justify-between items-center mb-4">
                   <h2 className="text-lg font-semibold text-white">Últimas Transações</h2>
                   <button 
@@ -430,9 +427,9 @@ export default function DashboardPage() {
       </main>
       </div>
 
-      {/* Análise Gráfica */}
+      {/* Análise Gráfica - sem card, borda ou sombra */}
       <div className="w-full max-w-4xl mx-auto mt-12">
-        <div className="bg-zinc-900 rounded-xl p-6 shadow-lg border border-zinc-800">
+        <div>
           <h2 className="text-xl font-bold text-amber-400 mb-4 text-center tracking-tight">Análise Gráfica</h2>
           {/* Seleção de período e exportação */}
           <div className="flex flex-col md:flex-row items-center justify-between gap-4 mb-6">
@@ -493,12 +490,12 @@ export default function DashboardPage() {
               Linha
             </button>
           </div>
-          <div className="flex justify-center items-center min-h-[80px]">
+          <div className="flex justify-center items-center min-h-[120px]">
             {chartType === 'pie' && (
-              <canvas ref={pizzaCanvasRef} width={80} height={60} style={{ width: '80px', height: '60px', maxWidth: '100%' }}></canvas>
+              <canvas ref={pizzaCanvasRef} width={140} height={100} style={{ width: '140px', height: '100px', maxWidth: '100%' }}></canvas>
             )}
             {chartType === 'bar' && (
-              <canvas ref={barCanvasRef} width={80} height={60} style={{ width: '80px', height: '60px', maxWidth: '100%' }}></canvas>
+              <canvas ref={barCanvasRef} width={140} height={100} style={{ width: '140px', height: '100px', maxWidth: '100%' }}></canvas>
             )}
             {chartType === 'line' && (
               <span className="text-zinc-400">Gráfico de linha em breve!</span>
