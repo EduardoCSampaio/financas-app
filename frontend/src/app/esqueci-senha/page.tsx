@@ -16,7 +16,7 @@ export default function EsqueciSenhaPage() {
       await api.post("/auth/forgot-password", { email });
       toast.success("Se o e-mail existir, um link de redefinição foi enviado!");
       router.push("/login");
-    } catch (err) {
+    } catch {
       toast.error("Erro ao solicitar redefinição de senha.");
     } finally {
       setLoading(false);
