@@ -5,10 +5,7 @@ psycopg2-binary
 python-multipart
 passlib[bcrypt]
 python-jose
-<<<<<<< HEAD
 pydantic 
-=======
 pydantic
 python-dotenv
 email-validator
->>>>>>> ea5e365 (feat: Fluxo de Esqueci minha senha)
