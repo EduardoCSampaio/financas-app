@@ -77,4 +77,11 @@ class ChangePasswordRequest(BaseModel):
 
 class ResetPasswordRequest(BaseModel):
     email: str
+    new_password: str
+
+class ForgotPasswordRequest(BaseModel):
+    email: str
+
+class ResetPasswordConfirmRequest(BaseModel):
+    token: str
     new_password: str 

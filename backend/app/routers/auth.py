@@ -1,10 +1,11 @@
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, status, Request
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from sqlalchemy.orm import Session
 from datetime import timedelta
 from jose import JWTError, jwt
 from .. import schemas, crud, models, security
 from ..database import get_db
+from ..utils_email import send_reset_email
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/auth/token")
 
@@ -51,4 +52,30 @@ def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends(), db:
     access_token = security.create_access_token(
         data={"sub": user.email}, expires_delta=access_token_expires
     )
-    return {"access_token": access_token, "token_type": "bearer", "user": schemas.User.model_validate(user)} 
+    return {"access_token": access_token, "token_type": "bearer", "user": schemas.User.model_validate(user)}
+
+@router.post("/forgot-password")
+def forgot_password(request: schemas.ForgotPasswordRequest, db: Session = Depends(get_db)):
+    user = crud.get_user_by_email(db, request.email)
+    if not user:
+        # Não revela se o e-mail existe ou não
+        return {"msg": "Se o e-mail existir, um link de redefinição foi enviado."}
+    from ..security import create_reset_password_token
+    token = create_reset_password_token(user.email)
+    reset_link = f"https://financas-app-mu.vercel.app//reset-password?token={token}"
+    subject = "Redefinição de senha"
+    body = f"<p>Para redefinir sua senha, clique no link abaixo:</p><p><a href='{reset_link}'>Redefinir senha</a></p>"
+    send_reset_email(user.email, subject, body)
+    return {"msg": "Se o e-mail existir, um link de redefinição foi enviado."}
+
+@router.post("/reset-password")
+def reset_password(request: schemas.ResetPasswordConfirmRequest, db: Session = Depends(get_db)):
+    from ..security import verify_reset_password_token
+    email = verify_reset_password_token(request.token)
+    if not email:
+        raise HTTPException(status_code=400, detail="Token inválido ou expirado")
+    user = crud.get_user_by_email(db, email)
+    if not user:
+        raise HTTPException(status_code=404, detail="Usuário não encontrado")
+    crud.reset_user_password(db, email, request.new_password)
+    return {"msg": "Senha redefinida com sucesso!"} 

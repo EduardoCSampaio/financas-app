@@ -1,0 +1,2 @@
+# O frontend usa Node.js e package.json, não Python.
+# Este arquivo é apenas para referência ou ambientes de CI que exigem requirements.txt. 
