@@ -51,6 +51,8 @@ export default function DashboardPage() {
   const [totalPages, setTotalPages] = useState(1);
   const [itemsPerPage] = useState(10); // Remover setItemsPerPage se não for usado
   const [chartType, setChartType] = useState<'pie' | 'bar' | 'line'>('pie');
+  const [startDate, setStartDate] = useState("");
+  const [endDate, setEndDate] = useState("");
 
   // Refs para os gráficos
   const pizzaChartRef = useRef<Chart | null>(null);
@@ -490,6 +492,33 @@ export default function DashboardPage() {
       <div className="w-full max-w-4xl mx-auto mt-12">
         <div className="bg-zinc-900 rounded-xl p-6 shadow-lg border border-zinc-800">
           <h2 className="text-xl font-bold text-amber-400 mb-4 text-center tracking-tight">Análise Gráfica</h2>
+          {/* Seleção de período e exportação */}
+          <div className="flex flex-col md:flex-row items-center justify-between gap-4 mb-6">
+            <div className="flex gap-2 items-center">
+              <label htmlFor="start-date" className="text-sm text-zinc-300">De:</label>
+              <input
+                id="start-date"
+                type="date"
+                value={startDate}
+                onChange={e => setStartDate(e.target.value)}
+                className="px-3 py-2 rounded-md bg-zinc-800 text-white border border-zinc-700 focus:ring-2 focus:ring-amber-400 outline-none"
+              />
+              <label htmlFor="end-date" className="text-sm text-zinc-300 ml-2">até</label>
+              <input
+                id="end-date"
+                type="date"
+                value={endDate}
+                onChange={e => setEndDate(e.target.value)}
+                className="px-3 py-2 rounded-md bg-zinc-800 text-white border border-zinc-700 focus:ring-2 focus:ring-amber-400 outline-none"
+              />
+            </div>
+            <button
+              onClick={() => alert('Exportação de PDF em breve!')}
+              className="px-6 py-2 rounded-md bg-amber-400 text-black font-bold shadow hover:bg-amber-500 transition-colors"
+            >
+              Exportar PDF
+            </button>
+          </div>
           <div className="flex gap-2 mb-4 justify-center">
             <button
               onClick={() => setChartType('pie')}
