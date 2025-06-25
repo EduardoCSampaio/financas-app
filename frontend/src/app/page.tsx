@@ -25,6 +25,13 @@ interface Transaction {
   proof_url?: string | null;
 }
 
+// Spinner de carregamento
+function Spinner() {
+  return (
+    <span className="inline-block w-6 h-6 border-2 border-t-2 border-amber-400 border-t-transparent rounded-full animate-spin"></span>
+  );
+}
+
 export default function DashboardPage() {
   const { 
     token, 
@@ -96,7 +103,7 @@ export default function DashboardPage() {
   };
 
   const debouncedFetch = useCallback(
-    debounce(async (currentAccount, currentSearch, currentCategory, page, limit) => {
+    debounce(async (currentAccount, currentSearch, currentCategory, page, limit, currentStartDate, currentEndDate) => {
       if (!currentAccount) {
         setTransactions([]);
         setTotalPages(1);
@@ -112,6 +119,8 @@ export default function DashboardPage() {
         category: currentCategory,
         page: String(page),
         limit: String(limit),
+        ...(currentStartDate ? { start_date: currentStartDate } : {}),
+        ...(currentEndDate ? { end_date: currentEndDate } : {}),
       };
 
       try {
@@ -133,14 +142,14 @@ export default function DashboardPage() {
 
   useEffect(() => {
     if (token && selectedAccount) {
-      debouncedFetch(selectedAccount, search, category, currentPage, itemsPerPage);
+      debouncedFetch(selectedAccount, search, category, currentPage, itemsPerPage, startDate, endDate);
     } else if (token && accounts.length === 0) {
       setLoading(false);
       setTransactions([]);
     } else if (!token) {
       router.push('/login');
     }
-  }, [token, selectedAccount, search, category, currentPage, itemsPerPage, router, debouncedFetch, accounts]);
+  }, [token, selectedAccount, search, category, currentPage, itemsPerPage, router, debouncedFetch, accounts, startDate, endDate]);
 
   // Resetar a página para 1 quando os filtros mudarem
   useEffect(() => {
@@ -304,6 +313,31 @@ export default function DashboardPage() {
             onChange={e => setCategory(e.target.value)}
             className="px-3 py-2 rounded-md bg-zinc-800 text-white border border-zinc-700 focus:ring-2 focus:ring-amber-400 outline-none w-full md:w-48"
           />
+          <div className="flex gap-2 items-center">
+            <label htmlFor="start-date" className="text-sm text-zinc-300">De:</label>
+            <input
+              id="start-date"
+              type="date"
+              value={startDate}
+              onChange={e => setStartDate(e.target.value)}
+              className="px-3 py-2 rounded-md bg-zinc-800 text-white border border-zinc-700 focus:ring-2 focus:ring-amber-400 outline-none"
+            />
+            <label htmlFor="end-date" className="text-sm text-zinc-300 ml-2">até</label>
+            <input
+              id="end-date"
+              type="date"
+              value={endDate}
+              onChange={e => setEndDate(e.target.value)}
+              className="px-3 py-2 rounded-md bg-zinc-800 text-white border border-zinc-700 focus:ring-2 focus:ring-amber-400 outline-none"
+            />
+            <button
+              onClick={() => debouncedFetch(selectedAccount, search, category, 1, itemsPerPage, startDate, endDate)}
+              className="ml-2 px-4 py-2 rounded-md bg-amber-400 text-black font-bold shadow hover:bg-amber-500 transition-colors flex items-center gap-2"
+              disabled={loading}
+            >
+              {loading ? <Spinner /> : 'Filtrar'}
+            </button>
+          </div>
         </div>
         {/* Botões Previsto/Real */}
         <div className="flex gap-2 w-full md:w-auto justify-end">
@@ -370,7 +404,14 @@ export default function DashboardPage() {
                       </tr>
                     </thead>
                     <tbody>
-                      {transactions.length === 0 ? (
+                      {loading ? (
+                        <tr>
+                          <td colSpan={7} className="py-16 text-center">
+                            <Spinner />
+                            <div className="mt-2 text-zinc-400">Carregando transações...</div>
+                          </td>
+                        </tr>
+                      ) : transactions.length === 0 ? (
                         <tr>
                           <td colSpan={7} className="py-12 text-center text-zinc-400">
                             <div className="flex flex-col items-center gap-3">

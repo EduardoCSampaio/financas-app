@@ -75,15 +75,22 @@ def read_transactions(
     limit: int = 10,
     category: Optional[str] = None,
     search: Optional[str] = None,
+    start_date: Optional[str] = None,
+    end_date: Optional[str] = None,
     db: Session = Depends(get_db),
     current_user: models.User = Depends(get_current_active_user)
 ):
+    """
+    Lista transações da conta, com filtros opcionais de categoria, busca, data inicial e final.
+    - start_date e end_date devem ser strings no formato ISO (ex: 2024-06-01).
+    """
     account = crud.get_account(db, account_id)
     if account is None or getattr(account, "owner_id", None) != current_user.id:
         raise HTTPException(status_code=403, detail="Conta não encontrada ou não pertence ao usuário.")
     skip = (page - 1) * limit
     transactions_data = crud.get_transactions_by_account(
-        db, account_id=account_id, category=category, search=search, skip=skip, limit=limit
+        db, account_id=account_id, category=category, search=search, skip=skip, limit=limit,
+        start_date=start_date, end_date=end_date
     )
     return {
         **transactions_data,

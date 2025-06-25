@@ -1,6 +1,7 @@
 from sqlalchemy.orm import Session
 from typing import Optional, List
 from . import models, schemas, security
+from datetime import datetime
 
 # Funções CRUD para User
 def get_user_by_email(db: Session, email: str):
@@ -64,13 +65,27 @@ def get_transactions_by_account(
     category: Optional[str] = None,
     search: Optional[str] = None,
     skip: int = 0,
-    limit: int = 100
+    limit: int = 100,
+    start_date: Optional[str] = None,
+    end_date: Optional[str] = None
 ):
     query = db.query(models.Transaction).filter(models.Transaction.account_id == account_id)
     if category:
         query = query.filter(models.Transaction.category.ilike(f"%{category}%"))
     if search:
         query = query.filter(models.Transaction.description.ilike(f"%{search}%"))
+    if start_date:
+        try:
+            start_dt = datetime.fromisoformat(start_date)
+            query = query.filter(models.Transaction.date >= start_dt)
+        except Exception:
+            pass
+    if end_date:
+        try:
+            end_dt = datetime.fromisoformat(end_date)
+            query = query.filter(models.Transaction.date <= end_dt)
+        except Exception:
+            pass
     total = query.count()
     items = query.order_by(models.Transaction.date.desc()).offset(skip).limit(limit).all()
     return {"items": items, "total": total}
