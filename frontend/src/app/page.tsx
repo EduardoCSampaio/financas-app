@@ -340,61 +340,7 @@ export default function DashboardPage() {
         </div>
       </div>
       {/* Área de gráficos com tabs de seleção */}
-      <div className="w-full max-w-4xl mx-auto mb-8">
-        <div className="flex gap-2 mb-4">
-          <button
-            onClick={() => setChartType('pie')}
-            className={`px-4 py-2 rounded-md font-semibold transition-colors ${
-              chartType === 'pie'
-                ? 'bg-amber-400 text-black shadow'
-                : 'bg-zinc-800 text-zinc-300 hover:bg-zinc-700'
-            }`}
-          >
-            Pizza
-          </button>
-          <button
-            onClick={() => setChartType('bar')}
-            className={`px-4 py-2 rounded-md font-semibold transition-colors ${
-              chartType === 'bar'
-                ? 'bg-amber-400 text-black shadow'
-                : 'bg-zinc-800 text-zinc-300 hover:bg-zinc-700'
-            }`}
-          >
-            Barras
-          </button>
-          <button
-            onClick={() => setChartType('line')}
-            className={`px-4 py-2 rounded-md font-semibold transition-colors ${
-              chartType === 'line'
-                ? 'bg-amber-400 text-black shadow'
-                : 'bg-zinc-800 text-zinc-300 hover:bg-zinc-700'
-            }`}
-          >
-            Linha
-          </button>
-        </div>
-        <div className="bg-zinc-900 rounded-xl p-6 shadow-lg flex justify-center items-center min-h-[300px]">
-          {chartType === 'pie' && (
-            <canvas ref={pizzaCanvasRef} width={320} height={240}></canvas>
-          )}
-          {chartType === 'bar' && (
-            <canvas ref={barCanvasRef} width={320} height={240}></canvas>
-          )}
-          {chartType === 'line' && (
-            <span className="text-zinc-400">Gráfico de linha em breve!</span>
-          )}
-        </div>
-      </div>
-      {/* Modais */}
-      {selectedAccount && (
-        <AddTransactionModal 
-          isOpen={isAddModalOpen} 
-          onClose={() => setIsAddModalOpen(false)} 
-          onTransactionAdded={handleTransactionAdded}
-          accountId={selectedAccount.id} 
-        />
-      )}
-      <EditTransactionModal isOpen={isEditModalOpen} onClose={() => setIsEditModalOpen(false)} transaction={selectedTransaction} onTransactionUpdated={handleTransactionUpdated} />
+      {/* REMOVIDO: Gráfico acima da tabela de transações */}
 
       <main className="p-4 sm:p-6 lg:p-8">
         {!selectedAccount && !loading && (
