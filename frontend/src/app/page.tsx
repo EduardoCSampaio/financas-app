@@ -495,10 +495,10 @@ export default function DashboardPage() {
           </div>
           <div className="flex justify-center items-center min-h-[110px]">
             {chartType === 'pie' && (
-              <canvas ref={pizzaCanvasRef} width={140} height={100}></canvas>
+              <canvas ref={pizzaCanvasRef} width={60} height={40}></canvas>
             )}
             {chartType === 'bar' && (
-              <canvas ref={barCanvasRef} width={140} height={100}></canvas>
+              <canvas ref={barCanvasRef} width={60} height={40}></canvas>
             )}
             {chartType === 'line' && (
               <span className="text-zinc-400">Gráfico de linha em breve!</span>
