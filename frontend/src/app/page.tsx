@@ -411,76 +411,64 @@ export default function DashboardPage() {
 
         {selectedAccount && (
           <>
-            {/* Gráficos e Tabela */}
-            <section className="grid grid-cols-1 lg:grid-cols-5 gap-8">
-              <div className="lg:col-span-2 space-y-8">
-                {/* Gráfico de Pizza */}
-                <div className="backdrop-blur-lg bg-white/10 border border-zinc-700 rounded-2xl shadow-lg p-6">
-                  <h2 className="text-lg font-semibold mb-4 text-white">Gastos por Categoria</h2>
-                  <canvas ref={pizzaCanvasRef} height={250}></canvas>
+            {/* Tabela de Transações */}
+            <section className="w-full max-w-4xl mx-auto mb-8">
+              <div className="backdrop-blur-lg bg-white/10 border border-zinc-700 rounded-2xl shadow-lg p-6">
+                <div className="flex justify-between items-center mb-4">
+                  <h2 className="text-lg font-semibold text-white">Últimas Transações</h2>
+                  <button 
+                    onClick={() => setIsAddModalOpen(true)}
+                    className="bg-amber-500 hover:bg-amber-600 text-black font-bold py-2 px-4 rounded-lg transition-colors"
+                  >
+                    Adicionar Transação
+                  </button>
                 </div>
-              </div>
-              <div className="lg:col-span-3">
-                 {/* Tabela de Transações */}
-                <div className="backdrop-blur-lg bg-white/10 border border-zinc-700 rounded-2xl shadow-lg p-6">
-                    <div className="flex justify-between items-center mb-4">
-                      <h2 className="text-lg font-semibold text-white">Últimas Transações</h2>
-                      <button 
-                        onClick={() => setIsAddModalOpen(true)}
-                        className="bg-amber-500 hover:bg-amber-600 text-black font-bold py-2 px-4 rounded-lg transition-colors"
-                      >
-                        Adicionar Transação
-                      </button>
-                    </div>
-                    <div className="overflow-x-auto">
-                        <table className="w-full text-left">
-                            <thead>
-                                <tr className="border-b border-zinc-700">
-                                    <th className="p-2">Status</th>
-                                    <th className="p-2">Descrição</th>
-                                    <th className="p-2">Valor</th>
-                                    <th className="p-2">Categoria</th>
-                                    <th className="p-2">Data</th>
-                                    <th className="p-2">Comprovante</th>
-                                    <th className="p-2 text-center">Ações</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {transactions.map(t => (
-                                    <tr key={t.id} className="border-b border-zinc-800 hover:bg-zinc-800/50">
-                                        <td className="p-2">
-                                          <div onClick={() => handleTogglePaid(t)} className={`w-12 h-6 flex items-center rounded-full p-1 cursor-pointer ${t.paid ? 'bg-green-500' : 'bg-zinc-700'}`}>
-                                            <div className={`bg-white w-4 h-4 rounded-full shadow-md transform duration-300 ease-in-out ${t.paid ? 'translate-x-6' : 'translate-x-0'}`}></div>
-                                          </div>
-                                        </td>
-                                        <td className="p-2">{t.description}</td>
-                                        <td className={`p-2 font-semibold ${t.type === 'income' ? 'text-green-400' : 'text-red-400'}`}>
-                                          {t.type === 'expense' && '-'} R$ {t.value.toLocaleString('pt-BR')}
-                                        </td>
-                                        <td className="p-2">{t.category}</td>
-                                        <td className="p-2">{new Date(t.date).toLocaleDateString('pt-BR')}</td>
-                                        <td className="p-2">
-                                          {t.proof_url && (
-                                            <a href={`http://localhost:8000${t.proof_url}`} target="_blank" rel="noopener noreferrer" className="text-amber-400 hover:text-amber-300">
-                                              <FaPaperclip size={18} />
-                                            </a>
-                                          )}
-                                        </td>
-                                        <td className="p-2 flex justify-center items-center gap-4">
-                                            <button onClick={() => openEditModal(t)} className="text-blue-400 hover:text-blue-300"><FaEdit /></button>
-                                            <button onClick={() => handleDelete(t.id)} className="text-red-500 hover:text-red-400"><FaTrash /></button>
-                                        </td>
-                                    </tr>
-                                ))}
-                            </tbody>
-                        </table>
-                    </div>
-                    <Pagination 
-                        currentPage={currentPage}
-                        totalPages={totalPages}
-                        onPageChange={(page) => setCurrentPage(page)}
-                    />
+                <div className="overflow-x-auto">
+                  <table className="w-full text-left">
+                    <thead>
+                      <tr className="border-b border-zinc-700">
+                        <th className="p-2">Status</th>
+                        <th className="p-2">Descrição</th>
+                        <th className="p-2">Valor</th>
+                        <th className="p-2">Categoria</th>
+                        <th className="p-2">Data</th>
+                        <th className="p-2">Comprovante</th>
+                        <th className="p-2 text-center">Ações</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {transactions.map(t => (
+                        <tr key={t.id} className="border-b border-zinc-800 hover:bg-zinc-800/50">
+                          <td className="p-2">
+                            <div onClick={() => handleTogglePaid(t)} className={`w-12 h-6 flex items-center rounded-full p-1 cursor-pointer ${t.paid ? 'bg-green-500' : 'bg-zinc-700'}`}> 
+                              <div className={`bg-white w-4 h-4 rounded-full shadow-md transform duration-300 ease-in-out ${t.paid ? 'translate-x-6' : 'translate-x-0'}`}></div>
+                            </div>
+                          </td>
+                          <td className="p-2">{t.description}</td>
+                          <td className={`p-2 font-semibold ${t.type === 'income' ? 'text-green-400' : 'text-red-400'}`}>{t.type === 'expense' && '-'} R$ {t.value.toLocaleString('pt-BR')}</td>
+                          <td className="p-2">{t.category}</td>
+                          <td className="p-2">{new Date(t.date).toLocaleDateString('pt-BR')}</td>
+                          <td className="p-2">
+                            {t.proof_url && (
+                              <a href={`http://localhost:8000${t.proof_url}`} target="_blank" rel="noopener noreferrer" className="text-amber-400 hover:text-amber-300">
+                                <FaPaperclip size={18} />
+                              </a>
+                            )}
+                          </td>
+                          <td className="p-2 flex justify-center items-center gap-4">
+                            <button onClick={() => openEditModal(t)} className="text-blue-400 hover:text-blue-300"><FaEdit /></button>
+                            <button onClick={() => handleDelete(t.id)} className="text-red-500 hover:text-red-400"><FaTrash /></button>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
                 </div>
+                <Pagination 
+                  currentPage={currentPage}
+                  totalPages={totalPages}
+                  onPageChange={(page) => setCurrentPage(page)}
+                />
               </div>
             </section>
           </>
