@@ -360,13 +360,13 @@ export default function DashboardPage() {
                   <table className="w-full text-left">
                     <thead>
                       <tr className="border-b border-zinc-700">
-                        <th className="p-2">Status</th>
-                        <th className="p-2">Descrição</th>
-                        <th className="p-2">Valor</th>
-                        <th className="p-2">Categoria</th>
-                        <th className="p-2">Data</th>
-                        <th className="p-2">Comprovante</th>
-                        <th className="p-2 text-center">Ações</th>
+                        <th className="p-2 text-zinc-200">Status</th>
+                        <th className="p-2 text-zinc-200">Descrição</th>
+                        <th className="p-2 text-zinc-200">Valor</th>
+                        <th className="p-2 text-zinc-200">Categoria</th>
+                        <th className="p-2 text-zinc-200">Data</th>
+                        <th className="p-2 text-zinc-200">Comprovante</th>
+                        <th className="p-2 text-center text-zinc-200">Ações</th>
                       </tr>
                     </thead>
                     <tbody>
@@ -394,10 +394,10 @@ export default function DashboardPage() {
                                 <div className={`bg-white w-4 h-4 rounded-full shadow-md transform duration-300 ease-in-out ${t.paid ? 'translate-x-6' : 'translate-x-0'}`}></div>
                               </div>
                             </td>
-                            <td className="p-2">{t.description}</td>
+                            <td className="p-2 text-zinc-100">{t.description}</td>
                             <td className={`p-2 font-semibold ${t.type === 'income' ? 'text-green-400' : 'text-red-400'}`}>{t.type === 'expense' && '-'} R$ {t.value.toLocaleString('pt-BR')}</td>
-                            <td className="p-2">{t.category}</td>
-                            <td className="p-2">{new Date(t.date).toLocaleDateString('pt-BR')}</td>
+                            <td className="p-2 text-zinc-100">{t.category}</td>
+                            <td className="p-2 text-zinc-100">{new Date(t.date).toLocaleDateString('pt-BR')}</td>
                             <td className="p-2">
                               {t.proof_url && (
                                 <a href={`http://localhost:8000${t.proof_url}`} target="_blank" rel="noopener noreferrer" className="text-amber-400 hover:text-amber-300">
@@ -490,12 +490,12 @@ export default function DashboardPage() {
               Linha
             </button>
           </div>
-          <div className="flex justify-center items-center min-h-[120px]">
+          <div className="flex justify-center items-center min-h-[160px]">
             {chartType === 'pie' && (
-              <canvas ref={pizzaCanvasRef} width={140} height={100} style={{ width: '140px', height: '100px', maxWidth: '100%' }}></canvas>
+              <canvas ref={pizzaCanvasRef} width={220} height={140} style={{ width: '220px', height: '140px', maxWidth: '100%' }}></canvas>
             )}
             {chartType === 'bar' && (
-              <canvas ref={barCanvasRef} width={140} height={100} style={{ width: '140px', height: '100px', maxWidth: '100%' }}></canvas>
+              <canvas ref={barCanvasRef} width={220} height={140} style={{ width: '220px', height: '140px', maxWidth: '100%' }}></canvas>
             )}
             {chartType === 'line' && (
               <span className="text-zinc-400">Gráfico de linha em breve!</span>
