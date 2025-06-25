@@ -84,7 +84,7 @@ export default function LoginPage() {
           <button
             type="submit"
             className="w-full py-3 font-semibold text-black bg-amber-400 rounded-md hover:bg-amber-500 transition-colors flex items-center justify-center gap-2"
-            disabled={error || !email || !password}
+            disabled={!!error || !email || !password}
           >
             {error ? (
               <span>Erro</span>
