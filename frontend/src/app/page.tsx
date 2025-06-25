@@ -213,7 +213,70 @@ export default function DashboardPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-black via-zinc-900 to-zinc-800 py-8">
+    <div className="min-h-screen bg-gradient-to-br from-black via-zinc-900 to-zinc-800">
+      {/* Navbar no topo */}
+      <header className="w-full bg-gradient-to-r from-zinc-900 to-zinc-800 px-6 py-3 flex flex-col sm:flex-row items-center justify-between shadow-md sticky top-0 z-20 mb-8">
+        <span className="text-xl font-bold text-amber-400">FinanceDash</span>
+        <div className="flex items-center gap-4 mt-2 sm:mt-0">
+          {/* SELETOR DE CONTAS */}
+          {accounts.length > 0 && selectedAccount && (
+            <Menu as="div" className="relative inline-block text-left">
+              <div>
+                <Menu.Button className="inline-flex w-full justify-center gap-x-1.5 rounded-md bg-white/10 px-3 py-2 text-sm font-semibold text-white shadow-sm ring-1 ring-inset ring-gray-700 hover:bg-white/20">
+                  {selectedAccount.name}
+                  <ChevronDownIcon className="-mr-1 h-5 w-5 text-gray-400" aria-hidden="true" />
+                </Menu.Button>
+              </div>
+              <Transition as={Fragment} enter="transition ease-out duration-100" enterFrom="transform opacity-0 scale-95" enterTo="transform opacity-100 scale-100" leave="transition ease-in duration-75" leaveFrom="transform opacity-100 scale-100" leaveTo="transform opacity-0 scale-95">
+                <Menu.Items className="absolute right-0 z-10 mt-2 w-56 origin-top-right rounded-md bg-gray-800 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
+                  <div className="py-1">
+                    {accounts.map((account) => (
+                      <Menu.Item key={account.id}>
+                        {({ active }) => (
+                          <button onClick={() => selectAccount(account)} className={`${active ? 'bg-gray-700' : ''} block w-full text-left px-4 py-2 text-sm text-gray-300`}>
+                            {account.name}
+                          </button>
+                        )}
+                      </Menu.Item>
+                    ))}
+                    <div className="border-t border-gray-700 my-1" />
+                    <Menu.Item>
+                       {({ active }) => (
+                         <Link href="/accounts" className={`${active ? 'bg-gray-700' : ''} block px-4 py-2 text-sm text-gray-300`}>
+                           Gerenciar Contas
+                         </Link>
+                       )}
+                     </Menu.Item>
+                  </div>
+                </Menu.Items>
+              </Transition>
+            </Menu>
+          )}
+          {/* MENU DO USUÁRIO */}
+          <Menu as="div" className="relative inline-block text-left">
+            <div>
+              <Menu.Button className="inline-flex w-full justify-center gap-x-2 rounded-md bg-amber-400/80 px-4 py-2 text-sm font-semibold text-black shadow-sm hover:bg-amber-400">
+                <FaUserCircle className="h-5 w-5" aria-hidden="true" />
+                {user?.email}
+              </Menu.Button>
+            </div>
+            <Transition as={Fragment} enter="transition ease-out duration-100" enterFrom="transform opacity-0 scale-95" enterTo="transform opacity-100 scale-100" leave="transition ease-in duration-75" leaveFrom="transform opacity-100 scale-100" leaveTo="transform opacity-0 scale-95">
+              <Menu.Items className="absolute right-0 z-10 mt-2 w-56 origin-top-right rounded-md bg-gray-800 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
+                <div className="py-1">
+                  <Menu.Item>
+                    {({ active }) => (
+                      <button onClick={logout} className={`${active ? 'bg-gray-700' : ''} block w-full text-left px-4 py-2 text-sm text-gray-300`}>
+                        Sair
+                      </button>
+                    )}
+                  </Menu.Item>
+                </div>
+              </Menu.Items>
+            </Transition>
+          </Menu>
+        </div>
+      </header>
+      <div className="py-8">
       {/* Header com saldo e totais */}
       <div className="w-full max-w-4xl mx-auto mt-8 mb-6 flex flex-col md:flex-row items-center justify-between gap-4">
         <div className="flex flex-col items-start">
@@ -331,70 +394,6 @@ export default function DashboardPage() {
       )}
       <EditTransactionModal isOpen={isEditModalOpen} onClose={() => setIsEditModalOpen(false)} transaction={selectedTransaction} onTransactionUpdated={handleTransactionUpdated} />
 
-      <header className="bg-gray-900/50 backdrop-blur-md p-4 flex justify-between items-center sticky top-0 z-20">
-        <h1 className="text-xl font-bold text-amber-400">Finance<span className="text-white">Dash</span></h1>
-        
-        <div className="flex items-center gap-4">
-          {/* SELETOR DE CONTAS */}
-          {accounts.length > 0 && selectedAccount && (
-            <Menu as="div" className="relative inline-block text-left">
-              <div>
-                <Menu.Button className="inline-flex w-full justify-center gap-x-1.5 rounded-md bg-white/10 px-3 py-2 text-sm font-semibold text-white shadow-sm ring-1 ring-inset ring-gray-700 hover:bg-white/20">
-                  {selectedAccount.name}
-                  <ChevronDownIcon className="-mr-1 h-5 w-5 text-gray-400" aria-hidden="true" />
-                </Menu.Button>
-              </div>
-              <Transition as={Fragment} enter="transition ease-out duration-100" enterFrom="transform opacity-0 scale-95" enterTo="transform opacity-100 scale-100" leave="transition ease-in duration-75" leaveFrom="transform opacity-100 scale-100" leaveTo="transform opacity-0 scale-95">
-                <Menu.Items className="absolute right-0 z-10 mt-2 w-56 origin-top-right rounded-md bg-gray-800 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
-                  <div className="py-1">
-                    {accounts.map((account) => (
-                      <Menu.Item key={account.id}>
-                        {({ active }) => (
-                          <button onClick={() => selectAccount(account)} className={`${active ? 'bg-gray-700' : ''} block w-full text-left px-4 py-2 text-sm text-gray-300`}>
-                            {account.name}
-                          </button>
-                        )}
-                      </Menu.Item>
-                    ))}
-                    <div className="border-t border-gray-700 my-1" />
-                    <Menu.Item>
-                       {({ active }) => (
-                         <Link href="/accounts" className={`${active ? 'bg-gray-700' : ''} block px-4 py-2 text-sm text-gray-300`}>
-                           Gerenciar Contas
-                         </Link>
-                       )}
-                     </Menu.Item>
-                  </div>
-                </Menu.Items>
-              </Transition>
-            </Menu>
-          )}
-
-          {/* MENU DO USUÁRIO */}
-          <Menu as="div" className="relative inline-block text-left">
-            <div>
-              <Menu.Button className="inline-flex w-full justify-center gap-x-2 rounded-md bg-amber-400/80 px-4 py-2 text-sm font-semibold text-black shadow-sm hover:bg-amber-400">
-                <FaUserCircle className="h-5 w-5" aria-hidden="true" />
-                {user?.email}
-              </Menu.Button>
-            </div>
-            <Transition as={Fragment} enter="transition ease-out duration-100" enterFrom="transform opacity-0 scale-95" enterTo="transform opacity-100 scale-100" leave="transition ease-in duration-75" leaveFrom="transform opacity-100 scale-100" leaveTo="transform opacity-0 scale-95">
-              <Menu.Items className="absolute right-0 z-10 mt-2 w-56 origin-top-right rounded-md bg-gray-800 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
-                <div className="py-1">
-                  <Menu.Item>
-                    {({ active }) => (
-                      <button onClick={logout} className={`${active ? 'bg-gray-700' : ''} block w-full text-left px-4 py-2 text-sm text-gray-300`}>
-                        Sair
-                      </button>
-                    )}
-                  </Menu.Item>
-                </div>
-              </Menu.Items>
-            </Transition>
-          </Menu>
-        </div>
-      </header>
-
       <main className="p-4 sm:p-6 lg:p-8">
         {!selectedAccount && !loading && (
           <div className="text-center py-20 bg-gray-900/50 rounded-lg">
@@ -501,6 +500,57 @@ export default function DashboardPage() {
           </>
         )}
       </main>
+      </div>
+
+      {/* Análise Gráfica */}
+      <div className="w-full max-w-4xl mx-auto mt-12">
+        <div className="bg-zinc-900 rounded-xl p-6 shadow-lg border border-zinc-800">
+          <h2 className="text-xl font-bold text-amber-400 mb-4 text-center tracking-tight">Análise Gráfica</h2>
+          <div className="flex gap-2 mb-4 justify-center">
+            <button
+              onClick={() => setChartType('pie')}
+              className={`px-4 py-2 rounded-md font-semibold transition-colors ${
+                chartType === 'pie'
+                  ? 'bg-amber-400 text-black shadow'
+                  : 'bg-zinc-800 text-zinc-300 hover:bg-zinc-700'
+              }`}
+            >
+              Pizza
+            </button>
+            <button
+              onClick={() => setChartType('bar')}
+              className={`px-4 py-2 rounded-md font-semibold transition-colors ${
+                chartType === 'bar'
+                  ? 'bg-amber-400 text-black shadow'
+                  : 'bg-zinc-800 text-zinc-300 hover:bg-zinc-700'
+              }`}
+            >
+              Barras
+            </button>
+            <button
+              onClick={() => setChartType('line')}
+              className={`px-4 py-2 rounded-md font-semibold transition-colors ${
+                chartType === 'line'
+                  ? 'bg-amber-400 text-black shadow'
+                  : 'bg-zinc-800 text-zinc-300 hover:bg-zinc-700'
+              }`}
+            >
+              Linha
+            </button>
+          </div>
+          <div className="flex justify-center items-center min-h-[300px]">
+            {chartType === 'pie' && (
+              <canvas ref={pizzaCanvasRef} width={320} height={240}></canvas>
+            )}
+            {chartType === 'bar' && (
+              <canvas ref={barCanvasRef} width={320} height={240}></canvas>
+            )}
+            {chartType === 'line' && (
+              <span className="text-zinc-400">Gráfico de linha em breve!</span>
+            )}
+          </div>
+        </div>
+      </div>
     </div>
   );
 }
