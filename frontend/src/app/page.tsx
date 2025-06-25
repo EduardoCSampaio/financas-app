@@ -176,7 +176,7 @@ export default function DashboardPage() {
             labels: Object.keys(gastosPorCategoria),
             datasets: [{ data: Object.values(gastosPorCategoria), backgroundColor: ["#FFD700", "#222", "#444", "#666", "#888"] }],
           },
-          options: { plugins: { legend: { labels: { color: "#fff" } } } },
+          options: { responsive: false, plugins: { legend: { labels: { color: "#fff" } } } },
         });
       }
       // Gráfico de Barras (simplificado, apenas para exemplo)
@@ -191,7 +191,7 @@ export default function DashboardPage() {
                     { label: "Despesas", data: [despesas], backgroundColor: "#ef4444" },
                 ],
             },
-            options: { plugins: { legend: { labels: { color: "#fff" } } }, scales: { x: { ticks: { color: "#fff" } }, y: { ticks: { color: "#fff" } } } },
+            options: { responsive: false, plugins: { legend: { labels: { color: "#fff" } } }, scales: { x: { ticks: { color: "#fff" } }, y: { ticks: { color: "#fff" } } } },
         });
       }
     }
@@ -493,12 +493,12 @@ export default function DashboardPage() {
               Linha
             </button>
           </div>
-          <div className="flex justify-center items-center min-h-[110px]">
+          <div className="flex justify-center items-center min-h-[80px]">
             {chartType === 'pie' && (
-              <canvas ref={pizzaCanvasRef} width={60} height={40}></canvas>
+              <canvas ref={pizzaCanvasRef} width={80} height={60} style={{ width: '80px', height: '60px', maxWidth: '100%' }}></canvas>
             )}
             {chartType === 'bar' && (
-              <canvas ref={barCanvasRef} width={60} height={40}></canvas>
+              <canvas ref={barCanvasRef} width={80} height={60} style={{ width: '80px', height: '60px', maxWidth: '100%' }}></canvas>
             )}
             {chartType === 'line' && (
               <span className="text-zinc-400">Gráfico de linha em breve!</span>
