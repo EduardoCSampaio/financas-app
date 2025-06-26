@@ -129,9 +129,9 @@ export const CategoriesProvider: React.FC<{ children: React.ReactNode }> = ({ ch
   const fetchCategories = React.useCallback(async () => {
     setLoading(true);
     try {
-      const data = await getCategories(token);
+      const data = await getCategories(token || undefined);
       setCategories(data);
-    } catch (e) {
+    } catch (_) {
       setCategories([]);
     } finally {
       setLoading(false);
