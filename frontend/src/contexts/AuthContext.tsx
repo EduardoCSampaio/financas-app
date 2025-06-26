@@ -131,7 +131,7 @@ export const CategoriesProvider: React.FC<{ children: React.ReactNode }> = ({ ch
     try {
       const data = await getCategories(token || undefined);
       setCategories(data);
-    } catch (_) {
+    } catch {
       setCategories([]);
     } finally {
       setLoading(false);
