@@ -129,7 +129,12 @@ export const CategoriesProvider: React.FC<{ children: React.ReactNode }> = ({ ch
   const fetchCategories = React.useCallback(async () => {
     setLoading(true);
     try {
-      const data = await getCategories(token || undefined);
+      let data = await getCategories(token || undefined);
+      if (Array.isArray(data) && data.length === 0) {
+        // Popula categorias comuns se não houver nenhuma
+        await api.post('/categories/populate-common', {}, { headers: token ? { Authorization: `Bearer ${token}` } : {} });
+        data = await getCategories(token || undefined);
+      }
       setCategories(data);
     } catch {
       setCategories([]);
