@@ -11,6 +11,7 @@ import { Menu, Transition } from '@headlessui/react';
 import Link from "next/link";
 import { ChevronDownIcon } from '@heroicons/react/20/solid';
 import api from "@/lib/api"; // Importando o cliente API
+import AddTransactionModal from '@/components/AddTransactionModal';
 
 // Tipagem para as transações
 interface Transaction {
@@ -64,6 +65,7 @@ export default function DashboardPage() {
   const [chartType, setChartType] = useState<'pie' | 'bar' | 'line'>('pie');
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
+  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
 
   // Refs para os gráficos
   const pizzaChartRef = useRef<Chart | null>(null);
@@ -224,6 +226,12 @@ export default function DashboardPage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-black via-zinc-900 to-zinc-800">
+      <AddTransactionModal
+        isOpen={isAddModalOpen}
+        onClose={() => setIsAddModalOpen(false)}
+        onTransactionAdded={handleTransactionAdded}
+        accountId={selectedAccount?.id ?? null}
+      />
       {/* Navbar no topo */}
       <header className="w-full bg-gradient-to-r from-zinc-900 to-zinc-800 px-6 py-3 flex flex-col sm:flex-row items-center justify-between shadow-md sticky top-0 z-20 mb-8">
         <span className="text-xl font-bold text-amber-400">FinanceDash</span>
@@ -392,8 +400,9 @@ export default function DashboardPage() {
               <div>
                 <div className="flex justify-between items-center mb-4">
                   <h2 className="text-lg font-semibold text-white">Últimas Transações</h2>
-                  <button 
-                    onClick={() => handleTransactionAdded({ id: 0, description: '', value: 0, type: 'income', category: '', date: '', paid: false, account_id: selectedAccount.id })}
+                  <button
+                    type="button"
+                    onClick={() => setIsAddModalOpen(true)}
                     className="bg-amber-500 hover:bg-amber-600 text-black font-bold py-2 px-4 rounded-lg transition-colors"
                   >
                     Adicionar Transação
@@ -428,7 +437,7 @@ export default function DashboardPage() {
                               <span className="text-lg font-semibold">Nenhuma transação encontrada</span>
                               <span className="text-sm text-zinc-500">Comece adicionando sua primeira transação!</span>
                               <button
-                                onClick={() => handleTransactionAdded({ id: 0, description: '', value: 0, type: 'income', category: '', date: '', paid: false, account_id: selectedAccount.id })}
+                                onClick={() => setIsAddModalOpen(true)}
                                 className="mt-4 px-5 py-2 bg-amber-500 text-black font-semibold rounded-lg hover:bg-amber-600 transition-colors"
                               >
                                 Adicionar Transação
