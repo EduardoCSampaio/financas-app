@@ -32,6 +32,10 @@ function Spinner() {
   );
 }
 
+function isCategoryObject(category: unknown): category is { name: string } {
+  return typeof category === 'object' && category !== null && 'name' in category && typeof (category as any).name === 'string';
+}
+
 export default function DashboardPage() {
   const { 
     token, 
@@ -438,7 +442,7 @@ export default function DashboardPage() {
                             <td className="p-2 text-zinc-100">{t.description}</td>
                             <td className={`p-2 font-semibold ${t.type === 'income' ? 'text-green-400' : 'text-red-400'}`}>{t.type === 'expense' && '-'} R$ {t.value.toLocaleString('pt-BR')}</td>
                             <td className="p-2 text-zinc-100">
-                              {typeof t.category === 'object' && t.category !== null
+                              {isCategoryObject(t.category)
                                 ? t.category.name
                                 : typeof t.category === 'string'
                                   ? t.category
