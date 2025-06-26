@@ -168,9 +168,15 @@ export default function DashboardPage() {
   const receitas = visibleTransactions.filter(t => t.type === 'income').reduce((acc, t) => acc + t.value, 0);
   const despesas = visibleTransactions.filter(t => t.type === 'expense').reduce((acc, t) => acc + t.value, 0);
   const gastosPorCategoria = visibleTransactions.filter(t => t.type === 'expense').reduce((acc, t) => {
-      acc[t.category] = (acc[t.category] || 0) + t.value;
-      return acc;
-    }, {} as Record<string, number>);
+    let key = '';
+    if (typeof t.category === 'string') {
+      key = t.category;
+    } else if (t.category && typeof t.category === 'object' && 'name' in t.category) {
+      key = t.category.name;
+    }
+    acc[key] = (acc[key] || 0) + t.value;
+    return acc;
+  }, {} as Record<string, number>);
   
   // Atualiza Gráficos
   useEffect(() => {
