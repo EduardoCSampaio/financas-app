@@ -437,7 +437,13 @@ export default function DashboardPage() {
                             </td>
                             <td className="p-2 text-zinc-100">{t.description}</td>
                             <td className={`p-2 font-semibold ${t.type === 'income' ? 'text-green-400' : 'text-red-400'}`}>{t.type === 'expense' && '-'} R$ {t.value.toLocaleString('pt-BR')}</td>
-                            <td className="p-2 text-zinc-100">{t.category?.name || ''}</td>
+                            <td className="p-2 text-zinc-100">
+                              {typeof t.category === 'object' && t.category !== null
+                                ? t.category.name
+                                : typeof t.category === 'string'
+                                  ? t.category
+                                  : ''}
+                            </td>
                             <td className="p-2 text-zinc-100">{new Date(t.date).toLocaleDateString('pt-BR')}</td>
                             <td className="p-2">
                               {t.proof_url && (
