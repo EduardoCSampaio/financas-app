@@ -7,7 +7,7 @@ import api from '@/lib/api';
 import { FaUser, FaLock, FaArrowLeft, FaEye, FaEyeSlash, FaCheckCircle } from 'react-icons/fa';
 import { motion } from 'framer-motion';
 import Image from 'next/image';
-import InputMask from 'react-input-mask';
+import { IMaskInput } from 'react-imask';
 
 export default function RegisterPage() {
   const [email, setEmail] = useState('');
@@ -91,11 +91,11 @@ export default function RegisterPage() {
             <label htmlFor="document" className="text-sm font-medium text-zinc-400 flex items-center gap-2">
               {accountType === 'cpf' ? 'CPF' : 'CNPJ'}
             </label>
-            <InputMask
+            <IMaskInput
               id="document"
-              mask={accountType === 'cpf' ? '999.999.999-99' : '99.999.999/9999-99'}
+              mask={accountType === 'cpf' ? '000.000.000-00' : '00.000.000/0000-00'}
               value={document}
-              onChange={e => setDocument(e.target.value)}
+              onAccept={(value: any) => setDocument(value)}
               placeholder={accountType === 'cpf' ? 'Digite seu CPF' : 'Digite seu CNPJ'}
               className={`w-full px-3 py-2 mt-1 text-white bg-white/5 border ${error ? 'border-red-500' : 'border-zinc-600'} rounded-md focus:outline-none focus:ring-2 focus:ring-amber-400`}
               required

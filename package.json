@@ -1,7 +1,7 @@
 {
   "dependencies": {
     "@heroicons/react": "^2.2.0",
-    "react-input-mask": "^3.0.0-alpha.2",
+    "react-imask": "^7.6.1",
     "react-tooltip": "^5.29.1"
   },
   "devDependencies": {
