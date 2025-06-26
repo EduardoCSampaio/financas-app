@@ -14,6 +14,7 @@ import api from "@/lib/api"; // Importando o cliente API
 import AddTransactionModal from '@/components/AddTransactionModal';
 import EditTransactionModal from '@/components/EditTransactionModal';
 import { Transaction } from '@/types';
+import { Tooltip } from 'react-tooltip';
 
 // Spinner de carregamento
 function Spinner() {
@@ -381,6 +382,18 @@ export default function DashboardPage() {
             >
               {loading ? <Spinner /> : 'Filtrar'}
             </button>
+            <button
+              type="button"
+              onClick={() => {
+                setPendingSearch('');
+                setPendingCategory('');
+                setPendingStartDate('');
+                setPendingEndDate('');
+              }}
+              className="ml-2 px-4 py-2 rounded-md bg-zinc-700 text-white font-bold shadow hover:bg-zinc-600 transition-colors flex items-center gap-2"
+            >
+              Limpar Filtros
+            </button>
           </div>
         </div>
         {/* Botões Previsto/Real */}
@@ -462,7 +475,7 @@ export default function DashboardPage() {
                             <div className="flex flex-col items-center gap-3">
                               <span className="text-5xl">🗒️</span>
                               <span className="text-lg font-semibold">Nenhuma transação encontrada</span>
-                              <span className="text-sm text-zinc-500">Comece adicionando sua primeira transação!</span>
+                              <span className="text-sm text-zinc-500">Tente ajustar os filtros ou adicione uma nova transação!</span>
                               <button
                                 onClick={() => setIsAddModalOpen(true)}
                                 className="mt-4 px-5 py-2 bg-amber-500 text-black font-semibold rounded-lg hover:bg-amber-600 transition-colors"
@@ -495,8 +508,16 @@ export default function DashboardPage() {
                             <td className="p-2 text-zinc-100">{new Date(t.date).toLocaleDateString('pt-BR')}</td>
                             <td className="p-2">
                               {t.proof_url && (
-                                <a href={`http://localhost:8000${t.proof_url}`} target="_blank" rel="noopener noreferrer" className="text-amber-400 hover:text-amber-300">
+                                <a
+                                  href={`http://localhost:8000${t.proof_url}`}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  className="text-amber-400 hover:text-amber-300"
+                                  data-tooltip-id={`proof-tooltip-${t.id}`}
+                                  data-tooltip-content="Ver comprovante"
+                                >
                                   <FaPaperclip size={18} />
+                                  <Tooltip id={`proof-tooltip-${t.id}`} />
                                 </a>
                               )}
                             </td>
@@ -507,10 +528,21 @@ export default function DashboardPage() {
                                   setIsEditModalOpen(true);
                                 }}
                                 className="text-blue-400 hover:text-blue-300"
+                                data-tooltip-id={`edit-tooltip-${t.id}`}
+                                data-tooltip-content="Editar transação"
                               >
                                 <FaEdit />
+                                <Tooltip id={`edit-tooltip-${t.id}`} />
                               </button>
-                              <button onClick={() => handleDelete(t.id)} className="text-red-500 hover:text-red-400"><FaTrash /></button>
+                              <button
+                                onClick={() => handleDelete(t.id)}
+                                className="text-red-500 hover:text-red-400"
+                                data-tooltip-id={`delete-tooltip-${t.id}`}
+                                data-tooltip-content="Excluir transação"
+                              >
+                                <FaTrash />
+                                <Tooltip id={`delete-tooltip-${t.id}`} />
+                              </button>
                             </td>
                           </tr>
                         ))
