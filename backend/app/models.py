@@ -9,6 +9,8 @@ class User(Base):
     email = Column(String, unique=True, index=True)
     hashed_password = Column(String)
     is_active = Column(Boolean, default=True)
+    account_type = Column(String, default="cpf")  # 'cpf' ou 'cnpj'
+    document = Column(String, unique=True, index=True)
     accounts = relationship("Account", back_populates="owner", cascade="all, delete-orphan")
 
 class Account(Base):

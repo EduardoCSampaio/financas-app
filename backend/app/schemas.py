@@ -65,6 +65,8 @@ class Account(AccountBase):
 # --- User Schemas ---
 class UserBase(BaseModel):
     email: str
+    account_type: str = 'cpf'
+    document: str
 
 class UserCreate(UserBase):
     password: str

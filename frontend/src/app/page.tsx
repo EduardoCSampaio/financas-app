@@ -84,6 +84,9 @@ export default function DashboardPage() {
   const [pendingStartDate, setPendingStartDate] = useState("");
   const [pendingEndDate, setPendingEndDate] = useState("");
 
+  // Header de boas-vindas e diferenciação de layout
+  const isCNPJ = user?.account_type === 'cnpj';
+
   const handleTransactionAdded = (newTransaction: Transaction) => {
     if(selectedAccount && newTransaction.account_id === selectedAccount.id) {
       setTransactions(prev => [newTransaction, ...prev]);
@@ -248,6 +251,41 @@ export default function DashboardPage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-black via-zinc-900 to-zinc-800">
+      {/* Header de boas-vindas diferenciado */}
+      <div className="w-full max-w-4xl mx-auto mt-4 mb-2">
+        <div className="rounded-xl bg-white/10 border border-zinc-700 px-6 py-4 flex flex-col sm:flex-row items-center justify-between gap-4 shadow-lg">
+          <div>
+            <h1 className="text-2xl font-bold text-amber-400 drop-shadow mb-1">
+              {isCNPJ ? 'Bem-vindo ao Painel Empresarial' : 'Bem-vindo ao seu Controle Pessoal'}
+            </h1>
+            <p className="text-zinc-300 text-sm">
+              {isCNPJ
+                ? 'Aqui você pode gerenciar saldos futuros, previsões, relatórios e muito mais para sua empresa.'
+                : 'Acompanhe suas finanças pessoais de forma simples e rápida.'}
+            </p>
+          </div>
+          <div className="flex flex-col items-end">
+            <span className="text-xs text-zinc-400">Tipo de conta:</span>
+            <span className="text-base font-semibold text-white uppercase tracking-wider">{user?.account_type === 'cnpj' ? 'CNPJ' : 'CPF'}</span>
+            <span className="text-xs text-zinc-400 mt-1">{user?.document}</span>
+          </div>
+        </div>
+      </div>
+      {/* Cards/menus extras para CNPJ */}
+      {isCNPJ && (
+        <div className="w-full max-w-4xl mx-auto grid grid-cols-1 sm:grid-cols-2 gap-4 mt-4 mb-8">
+          <div className="rounded-xl bg-gradient-to-br from-amber-400/80 to-yellow-200/60 border border-amber-300 px-6 py-4 shadow flex flex-col items-start">
+            <span className="text-lg font-bold text-zinc-900 mb-1">Previsão de Saldos</span>
+            <span className="text-zinc-700 text-sm">Veja quanto sua empresa terá em caixa em datas futuras.</span>
+            <span className="text-xs text-zinc-500 mt-2">(Em breve)</span>
+          </div>
+          <div className="rounded-xl bg-gradient-to-br from-blue-400/80 to-cyan-200/60 border border-blue-300 px-6 py-4 shadow flex flex-col items-start">
+            <span className="text-lg font-bold text-zinc-900 mb-1">Relatórios Avançados</span>
+            <span className="text-zinc-700 text-sm">Gere relatórios detalhados de contas, receitas e despesas.</span>
+            <span className="text-xs text-zinc-500 mt-2">(Em breve)</span>
+          </div>
+        </div>
+      )}
       <EditTransactionModal
         isOpen={isEditModalOpen}
         onClose={() => setIsEditModalOpen(false)}
@@ -323,11 +361,11 @@ export default function DashboardPage() {
         </div>
       </header>
       <div className="py-8">
-      {/* Container principal centralizado e limitado */}
+      {/* Container principal responsivo */}
       <div className="w-full flex flex-col items-center px-2">
-        <div className="w-full max-w-2xl">
-          {/* Header centralizado e responsivo */}
-          <div className="mt-8 mb-6 flex flex-col sm:flex-row items-center justify-between gap-6">
+        <div className="w-full max-w-4xl mx-auto">
+          {/* Header responsivo */}
+          <div className="mt-8 mb-6 flex flex-col sm:flex-row items-center sm:items-end justify-between gap-4 w-full">
             <div className="flex flex-col items-center sm:items-start w-full sm:w-auto">
               <span className="text-lg text-zinc-400">Saldo atual</span>
               <span className="text-3xl font-bold text-amber-400 drop-shadow">{saldo.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</span>
@@ -344,7 +382,7 @@ export default function DashboardPage() {
             </div>
           </div>
           {/* Filtros responsivos */}
-          <div className="flex flex-col sm:flex-row items-center justify-between gap-4 mb-8">
+          <div className="flex flex-col sm:flex-row items-center justify-between gap-4 mb-8 w-full">
             <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto items-center">
               <input
                 type="text"
@@ -423,7 +461,7 @@ export default function DashboardPage() {
               </button>
             </div>
           </div>
-          {/* Tabela e botão juntos, centralizados */}
+          {/* Tabela e botão juntos, centralizados e responsivos */}
           <div className="flex flex-col gap-4 w-full">
             <div className="flex flex-col sm:flex-row justify-between items-center mb-4 gap-4 w-full">
               <h2 className="text-lg font-semibold text-white w-full sm:w-auto text-center sm:text-left">Últimas Transações</h2>

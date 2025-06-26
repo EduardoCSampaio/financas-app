@@ -7,6 +7,7 @@ import api from '@/lib/api';
 import { FaUser, FaLock, FaArrowLeft, FaEye, FaEyeSlash, FaCheckCircle } from 'react-icons/fa';
 import { motion } from 'framer-motion';
 import Image from 'next/image';
+import InputMask from 'react-input-mask';
 
 export default function RegisterPage() {
   const [email, setEmail] = useState('');
@@ -18,6 +19,8 @@ export default function RegisterPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [success, setSuccess] = useState(false);
+  const [accountType, setAccountType] = useState<'cpf' | 'cnpj'>('cpf');
+  const [document, setDocument] = useState('');
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -28,9 +31,14 @@ export default function RegisterPage() {
       return;
     }
 
+    if (!document) {
+      setError(accountType === 'cpf' ? 'CPF obrigatório!' : 'CNPJ obrigatório!');
+      return;
+    }
+
     try {
       setLoading(true);
-      await api.post('/users/', { email, password });
+      await api.post('/users/', { email, password, account_type: accountType, document });
       setSuccess(true);
       toast.success('Usuário criado com sucesso! Por favor, faça o login.');
       setTimeout(() => router.push('/login'), 1500);
@@ -71,6 +79,28 @@ export default function RegisterPage() {
           <FaUser className="inline mb-1 mr-2 text-amber-400" /> Criar Conta
         </h1>
         <form onSubmit={handleSubmit} className="space-y-6">
+          <div className="flex gap-4 mb-2">
+            <label className="flex items-center gap-1 text-zinc-400">
+              <input type="radio" name="accountType" value="cpf" checked={accountType === 'cpf'} onChange={() => setAccountType('cpf')} /> CPF
+            </label>
+            <label className="flex items-center gap-1 text-zinc-400">
+              <input type="radio" name="accountType" value="cnpj" checked={accountType === 'cnpj'} onChange={() => setAccountType('cnpj')} /> CNPJ
+            </label>
+          </div>
+          <div>
+            <label htmlFor="document" className="text-sm font-medium text-zinc-400 flex items-center gap-2">
+              {accountType === 'cpf' ? 'CPF' : 'CNPJ'}
+            </label>
+            <InputMask
+              id="document"
+              mask={accountType === 'cpf' ? '999.999.999-99' : '99.999.999/9999-99'}
+              value={document}
+              onChange={e => setDocument(e.target.value)}
+              placeholder={accountType === 'cpf' ? 'Digite seu CPF' : 'Digite seu CNPJ'}
+              className={`w-full px-3 py-2 mt-1 text-white bg-white/5 border ${error ? 'border-red-500' : 'border-zinc-600'} rounded-md focus:outline-none focus:ring-2 focus:ring-amber-400`}
+              required
+            />
+          </div>
           <div>
             <label htmlFor="email" className="text-sm font-medium text-zinc-400 flex items-center gap-2">
               <FaUser className="inline mr-1" /> Email

@@ -27,4 +27,6 @@ export interface User {
   email: string;
   id: number;
   is_active: boolean;
+  account_type: 'cpf' | 'cnpj';
+  document: string;
 } 
