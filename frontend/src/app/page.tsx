@@ -12,6 +12,7 @@ import Link from "next/link";
 import { ChevronDownIcon } from '@heroicons/react/20/solid';
 import api from "@/lib/api"; // Importando o cliente API
 import AddTransactionModal from '@/components/AddTransactionModal';
+import EditTransactionModal from '@/components/EditTransactionModal';
 import { Transaction } from '@/types';
 
 // Spinner de carregamento
@@ -28,6 +29,19 @@ function isCategoryObject(category: unknown): category is { name: string } {
     'name' in category &&
     typeof (category as { name?: unknown }).name === 'string'
   );
+}
+
+// Função para gerar cor baseada no nome da categoria
+function getCategoryColor(name: string) {
+  const colors = [
+    'bg-blue-500', 'bg-green-500', 'bg-amber-500', 'bg-purple-500', 'bg-pink-500', 'bg-red-500', 'bg-cyan-500', 'bg-lime-500', 'bg-orange-500', 'bg-teal-500'
+  ];
+  let hash = 0;
+  for (let i = 0; i < name.length; i++) {
+    hash = name.charCodeAt(i) + ((hash << 5) - hash);
+  }
+  const idx = Math.abs(hash) % colors.length;
+  return colors[idx];
 }
 
 export default function DashboardPage() {
@@ -54,12 +68,20 @@ export default function DashboardPage() {
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [selectedTransactionForEdit, setSelectedTransactionForEdit] = useState<Transaction | null>(null);
 
   // Refs para os gráficos
   const pizzaChartRef = useRef<Chart | null>(null);
   const barChartRef = useRef<Chart | null>(null);
   const pizzaCanvasRef = useRef<HTMLCanvasElement>(null);
   const barCanvasRef = useRef<HTMLCanvasElement>(null);
+
+  // Estados para filtros
+  const [pendingSearch, setPendingSearch] = useState('');
+  const [pendingCategory, setPendingCategory] = useState('');
+  const [pendingStartDate, setPendingStartDate] = useState("");
+  const [pendingEndDate, setPendingEndDate] = useState("");
 
   const handleTransactionAdded = (newTransaction: Transaction) => {
     if(selectedAccount && newTransaction.account_id === selectedAccount.id) {
@@ -139,6 +161,16 @@ export default function DashboardPage() {
     [api, fetchAccounts]
   );
 
+  // Atualizar filtros só ao clicar em Filtrar
+  const handleFilter = () => {
+    setSearch(pendingSearch);
+    setCategory(pendingCategory);
+    setStartDate(pendingStartDate);
+    setEndDate(pendingEndDate);
+    setCurrentPage(1);
+    // O useEffect de fetch por search/category/startDate/endDate já vai rodar
+  };
+
   useEffect(() => {
     if (token && selectedAccount) {
       debouncedFetch(selectedAccount, search, category, currentPage, itemsPerPage, startDate, endDate);
@@ -149,11 +181,6 @@ export default function DashboardPage() {
       router.push('/login');
     }
   }, [token, selectedAccount, search, category, currentPage, itemsPerPage, router, debouncedFetch, accounts, startDate, endDate]);
-
-  // Resetar a página para 1 quando os filtros mudarem
-  useEffect(() => {
-    setCurrentPage(1);
-  }, [search, category]);
 
   // Filtra as transações com base na visão selecionada
   const visibleTransactions = viewMode === 'real' 
@@ -220,6 +247,12 @@ export default function DashboardPage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-black via-zinc-900 to-zinc-800">
+      <EditTransactionModal
+        isOpen={isEditModalOpen}
+        onClose={() => setIsEditModalOpen(false)}
+        transaction={selectedTransactionForEdit}
+        onTransactionUpdated={handleTransactionUpdated}
+      />
       <AddTransactionModal
         isOpen={isAddModalOpen}
         onClose={() => setIsAddModalOpen(false)}
@@ -313,15 +346,15 @@ export default function DashboardPage() {
           <input
             type="text"
             placeholder="Buscar descrição..."
-            value={search}
-            onChange={e => setSearch(e.target.value)}
+            value={pendingSearch}
+            onChange={e => setPendingSearch(e.target.value)}
             className="px-3 py-2 rounded-md bg-zinc-800 text-white border border-zinc-700 focus:ring-2 focus:ring-amber-400 outline-none w-full md:w-64"
           />
           <input
             type="text"
             placeholder="Filtrar por categoria..."
-            value={category}
-            onChange={e => setCategory(e.target.value)}
+            value={pendingCategory}
+            onChange={e => setPendingCategory(e.target.value)}
             className="px-3 py-2 rounded-md bg-zinc-800 text-white border border-zinc-700 focus:ring-2 focus:ring-amber-400 outline-none w-full md:w-48"
           />
           <div className="flex gap-2 items-center">
@@ -329,20 +362,20 @@ export default function DashboardPage() {
             <input
               id="start-date"
               type="date"
-              value={startDate}
-              onChange={e => setStartDate(e.target.value)}
+              value={pendingStartDate}
+              onChange={e => setPendingStartDate(e.target.value)}
               className="px-3 py-2 rounded-md bg-zinc-800 text-white border border-zinc-700 focus:ring-2 focus:ring-amber-400 outline-none"
             />
             <label htmlFor="end-date" className="text-sm text-zinc-300 ml-2">até</label>
             <input
               id="end-date"
               type="date"
-              value={endDate}
-              onChange={e => setEndDate(e.target.value)}
+              value={pendingEndDate}
+              onChange={e => setPendingEndDate(e.target.value)}
               className="px-3 py-2 rounded-md bg-zinc-800 text-white border border-zinc-700 focus:ring-2 focus:ring-amber-400 outline-none"
             />
             <button
-              onClick={() => debouncedFetch(selectedAccount, search, category, 1, itemsPerPage, startDate, endDate)}
+              onClick={handleFilter}
               className="ml-2 px-4 py-2 rounded-md bg-amber-400 text-black font-bold shadow hover:bg-amber-500 transition-colors flex items-center gap-2"
               disabled={loading}
             >
@@ -450,11 +483,14 @@ export default function DashboardPage() {
                             <td className="p-2 text-zinc-100">{t.description}</td>
                             <td className={`p-2 font-semibold ${t.type === 'income' ? 'text-green-400' : 'text-red-400'}`}>{t.type === 'expense' && '-'} R$ {t.value.toLocaleString('pt-BR')}</td>
                             <td className="p-2 text-zinc-100">
-                              {isCategoryObject(t.category)
-                                ? t.category.name
-                                : typeof t.category === 'string'
-                                  ? t.category
-                                  : ''}
+                              {(() => {
+                                let catName = '';
+                                if (isCategoryObject(t.category)) catName = t.category.name;
+                                else if (typeof t.category === 'string') catName = t.category;
+                                if (catName)
+                                  return <span className={`inline-block px-2 py-1 rounded text-xs font-semibold ${getCategoryColor(catName)} text-black`}>{catName}</span>;
+                                return '';
+                              })()}
                             </td>
                             <td className="p-2 text-zinc-100">{new Date(t.date).toLocaleDateString('pt-BR')}</td>
                             <td className="p-2">
@@ -465,7 +501,15 @@ export default function DashboardPage() {
                               )}
                             </td>
                             <td className="p-2 flex justify-center items-center gap-4">
-                              <button onClick={() => handleTransactionUpdated({ ...t, description: '' })} className="text-blue-400 hover:text-blue-300"><FaEdit /></button>
+                              <button
+                                onClick={() => {
+                                  setSelectedTransactionForEdit(t);
+                                  setIsEditModalOpen(true);
+                                }}
+                                className="text-blue-400 hover:text-blue-300"
+                              >
+                                <FaEdit />
+                              </button>
                               <button onClick={() => handleDelete(t.id)} className="text-red-500 hover:text-red-400"><FaTrash /></button>
                             </td>
                           </tr>
