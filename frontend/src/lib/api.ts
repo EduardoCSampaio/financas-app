@@ -23,9 +23,8 @@ api.interceptors.request.use(
 export default api;
 
 export async function getCategories(token?: string) {
-  const res = await fetch(`${API_URL}/categories/`, {
+  const res = await api.get('/categories/', {
     headers: token ? { Authorization: `Bearer ${token}` } : {},
   });
-  if (!res.ok) throw new Error('Erro ao buscar categorias');
-  return res.json();
+  return res.data;
 }
