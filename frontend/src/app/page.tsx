@@ -324,7 +324,7 @@ export default function DashboardPage() {
       </header>
       <div className="py-8">
       {/* Header com saldo e totais - agora sem card, borda ou sombra */}
-      <div className="w-full max-w-4xl mx-auto mt-8 mb-6 flex flex-col md:flex-row items-center justify-between gap-4">
+      <div className="w-full max-w-4xl mx-auto mt-8 mb-6 flex flex-col md:flex-row items-center justify-between gap-4 px-2 sm:px-0">
         <div className="flex flex-col items-start">
           <span className="text-lg text-zinc-400">Saldo atual</span>
           <span className="text-3xl font-bold text-amber-400 drop-shadow">{saldo.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</span>
@@ -341,7 +341,7 @@ export default function DashboardPage() {
         </div>
       </div>
       {/* Barra de filtros e botões "Previsto/Real" - sem card */}
-      <div className="w-full max-w-4xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4 mb-8">
+      <div className="w-full max-w-4xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4 mb-8 px-2 sm:px-0">
         {/* Filtros */}
         <div className="flex flex-col md:flex-row gap-2 w-full md:w-auto">
           <input
@@ -349,23 +349,23 @@ export default function DashboardPage() {
             placeholder="Buscar descrição..."
             value={pendingSearch}
             onChange={e => setPendingSearch(e.target.value)}
-            className="px-3 py-2 rounded-md bg-zinc-800 text-white border border-zinc-700 focus:ring-2 focus:ring-amber-400 outline-none w-full md:w-64"
+            className="px-3 py-2 rounded-md bg-zinc-800 text-white border border-zinc-700 focus:ring-2 focus:ring-amber-400 outline-none w-full md:w-64 text-sm"
           />
           <input
             type="text"
             placeholder="Filtrar por categoria..."
             value={pendingCategory}
             onChange={e => setPendingCategory(e.target.value)}
-            className="px-3 py-2 rounded-md bg-zinc-800 text-white border border-zinc-700 focus:ring-2 focus:ring-amber-400 outline-none w-full md:w-48"
+            className="px-3 py-2 rounded-md bg-zinc-800 text-white border border-zinc-700 focus:ring-2 focus:ring-amber-400 outline-none w-full md:w-48 text-sm"
           />
-          <div className="flex gap-2 items-center">
+          <div className="flex flex-col sm:flex-row gap-2 items-center w-full sm:w-auto">
             <label htmlFor="start-date" className="text-sm text-zinc-300">De:</label>
             <input
               id="start-date"
               type="date"
               value={pendingStartDate}
               onChange={e => setPendingStartDate(e.target.value)}
-              className="px-3 py-2 rounded-md bg-zinc-800 text-white border border-zinc-700 focus:ring-2 focus:ring-amber-400 outline-none"
+              className="px-3 py-2 rounded-md bg-zinc-800 text-white border border-zinc-700 focus:ring-2 focus:ring-amber-400 outline-none text-sm w-full sm:w-auto"
             />
             <label htmlFor="end-date" className="text-sm text-zinc-300 ml-2">até</label>
             <input
@@ -373,11 +373,13 @@ export default function DashboardPage() {
               type="date"
               value={pendingEndDate}
               onChange={e => setPendingEndDate(e.target.value)}
-              className="px-3 py-2 rounded-md bg-zinc-800 text-white border border-zinc-700 focus:ring-2 focus:ring-amber-400 outline-none"
+              className="px-3 py-2 rounded-md bg-zinc-800 text-white border border-zinc-700 focus:ring-2 focus:ring-amber-400 outline-none text-sm w-full sm:w-auto"
             />
+          </div>
+          <div className="flex gap-2 w-full sm:w-auto mt-2 sm:mt-0">
             <button
               onClick={handleFilter}
-              className="ml-2 px-4 py-2 rounded-md bg-amber-400 text-black font-bold shadow hover:bg-amber-500 transition-colors flex items-center gap-2"
+              className="px-4 py-2 rounded-md bg-amber-400 text-black font-bold shadow hover:bg-amber-500 transition-colors flex items-center gap-2 w-full sm:w-auto text-sm"
               disabled={loading}
             >
               {loading ? <Spinner /> : 'Filtrar'}
@@ -390,14 +392,14 @@ export default function DashboardPage() {
                 setPendingStartDate('');
                 setPendingEndDate('');
               }}
-              className="ml-2 px-4 py-2 rounded-md bg-zinc-700 text-white font-bold shadow hover:bg-zinc-600 transition-colors flex items-center gap-2"
+              className="px-4 py-2 rounded-md bg-zinc-700 text-white font-bold shadow hover:bg-zinc-600 transition-colors flex items-center gap-2 w-full sm:w-auto text-sm"
             >
               Limpar Filtros
             </button>
           </div>
         </div>
         {/* Botões Previsto/Real */}
-        <div className="flex gap-2 w-full md:w-auto justify-end">
+        <div className="flex gap-2 w-full md:w-auto justify-end mt-2 md:mt-0">
           <button
             onClick={() => setViewMode('real')}
             className={`px-4 py-2 rounded-md font-semibold transition-colors ${
@@ -448,8 +450,8 @@ export default function DashboardPage() {
                     Adicionar Transação
                   </button>
                 </div>
-                <div className="overflow-x-auto">
-                  <table className="w-full text-left">
+                <div className="overflow-x-auto rounded-lg border border-zinc-800">
+                  <table className="w-full min-w-[600px] text-left text-sm">
                     <thead>
                       <tr className="border-b border-zinc-700">
                         <th className="p-2 text-zinc-200">Status</th>
@@ -471,14 +473,14 @@ export default function DashboardPage() {
                         </tr>
                       ) : transactions.length === 0 ? (
                         <tr>
-                          <td colSpan={7} className="py-12 text-center text-zinc-400">
-                            <div className="flex flex-col items-center gap-3">
-                              <span className="text-5xl">🗒️</span>
-                              <span className="text-lg font-semibold">Nenhuma transação encontrada</span>
-                              <span className="text-sm text-zinc-500">Tente ajustar os filtros ou adicione uma nova transação!</span>
+                          <td colSpan={7} className="py-12 text-center text-zinc-400 text-sm sm:text-base">
+                            <div className="flex flex-col items-center gap-3 px-2">
+                              <span className="text-4xl sm:text-5xl">🗒️</span>
+                              <span className="text-base sm:text-lg font-semibold">Nenhuma transação encontrada</span>
+                              <span className="text-xs sm:text-sm text-zinc-500">Tente ajustar os filtros ou adicione uma nova transação!</span>
                               <button
                                 onClick={() => setIsAddModalOpen(true)}
-                                className="mt-4 px-5 py-2 bg-amber-500 text-black font-semibold rounded-lg hover:bg-amber-600 transition-colors"
+                                className="mt-4 px-4 py-2 bg-amber-500 text-black font-semibold rounded-lg hover:bg-amber-600 transition-colors text-xs sm:text-sm"
                               >
                                 Adicionar Transação
                               </button>
@@ -493,7 +495,7 @@ export default function DashboardPage() {
                                 <div className={`bg-white w-4 h-4 rounded-full shadow-md transform duration-300 ease-in-out ${t.paid ? 'translate-x-6' : 'translate-x-0'}`}></div>
                               </div>
                             </td>
-                            <td className="p-2 text-zinc-100">{t.description}</td>
+                            <td className="p-2 sm:p-3 text-zinc-100 text-xs sm:text-sm">{t.description}</td>
                             <td className={`p-2 font-semibold ${t.type === 'income' ? 'text-green-400' : 'text-red-400'}`}>{t.type === 'expense' && '-'} R$ {t.value.toLocaleString('pt-BR')}</td>
                             <td className="p-2 text-zinc-100">
                               {(() => {

@@ -84,24 +84,24 @@ export default function AddTransactionModal({ isOpen, onClose, onTransactionAdde
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50">
-      <div className="w-full max-w-lg p-8 space-y-6 bg-zinc-900 border border-zinc-700 rounded-2xl shadow-lg relative">
+      <div className="w-full max-w-lg sm:max-w-md p-4 sm:p-8 space-y-6 bg-zinc-900 border border-zinc-700 rounded-2xl shadow-lg relative overflow-y-auto max-h-[90vh]">
         <button onClick={onClose} className="absolute top-4 right-4 text-zinc-400 hover:text-white">&times;</button>
-        <h2 className="text-2xl font-bold text-center text-white">Adicionar Transação</h2>
+        <h2 className="text-xl sm:text-2xl font-bold text-center text-white">Adicionar Transação</h2>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
             <label htmlFor="description" className="text-sm font-medium text-zinc-400">Descrição</label>
-            <input id="description" type="text" value={description} onChange={(e) => setDescription(e.target.value)} required className="w-full mt-1 input-style" />
+            <input id="description" type="text" value={description} onChange={(e) => setDescription(e.target.value)} required className="w-full mt-1 input-style text-sm" />
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
               <label htmlFor="value" className="text-sm font-medium text-zinc-400">Valor (R$)</label>
-              <input id="value" type="number" step="0.01" value={value} onChange={(e) => setValue(e.target.value)} required className="w-full mt-1 input-style" />
+              <input id="value" type="number" step="0.01" value={value} onChange={(e) => setValue(e.target.value)} required className="w-full mt-1 input-style text-sm" />
             </div>
             <div>
               <label htmlFor="type" className="text-sm font-medium text-zinc-400">Tipo</label>
               <select id="type" value={type} onChange={(e) => setType(e.target.value as "income" | "expense")}
                 required
-                className="w-full mt-1 input-style bg-zinc-900 text-white border-amber-400"
+                className="w-full mt-1 input-style bg-zinc-900 text-white border-amber-400 text-sm"
               >
                 <option value="expense" className="bg-zinc-900 text-white">Despesa</option>
                 <option value="income" className="bg-zinc-900 text-white">Receita</option>
@@ -116,7 +116,7 @@ export default function AddTransactionModal({ isOpen, onClose, onTransactionAdde
                 value={categoryId}
                 onChange={e => setCategoryId(e.target.value ? Number(e.target.value) : '')}
                 required
-                className="w-full mt-1 input-style bg-zinc-900 text-white border-amber-400"
+                className="w-full mt-1 input-style bg-zinc-900 text-white border-amber-400 text-sm"
                 disabled={loading}
               >
                 <option value="" className="bg-zinc-900 text-white">Selecione...</option>
@@ -127,7 +127,7 @@ export default function AddTransactionModal({ isOpen, onClose, onTransactionAdde
             </div>
             <div>
               <label htmlFor="date" className="text-sm font-medium text-zinc-400">Data</label>
-              <input id="date" type="date" value={date} onChange={(e) => setDate(e.target.value)} required className="w-full mt-1 input-style" />
+              <input id="date" type="date" value={date} onChange={(e) => setDate(e.target.value)} required className="w-full mt-1 input-style text-sm" />
             </div>
           </div>
           <div>
@@ -151,7 +151,7 @@ export default function AddTransactionModal({ isOpen, onClose, onTransactionAdde
               <span className="ml-2 text-zinc-300">{type === 'income' ? 'Recebido?' : 'Pago?'}</span>
             </label>
           </div>
-          <button type="submit" className="w-full py-3 font-semibold text-black bg-amber-400 rounded-md hover:bg-amber-500 transition-colors">Adicionar</button>
+          <button type="submit" className="w-full py-2 sm:py-3 font-semibold text-black bg-amber-400 rounded-md hover:bg-amber-500 transition-colors text-sm sm:text-base">Adicionar</button>
           {error && <p className="text-sm text-center text-red-500">{error}</p>}
         </form>
       </div>

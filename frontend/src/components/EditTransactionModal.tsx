@@ -86,24 +86,24 @@ const EditTransactionModal: React.FC<EditTransactionModalProps> = ({
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50">
-      <div className="w-full max-w-lg p-8 space-y-6 bg-zinc-900 border border-zinc-700 rounded-2xl shadow-lg relative">
+      <div className="w-full max-w-lg sm:max-w-md p-4 sm:p-8 space-y-6 bg-zinc-900 border border-zinc-700 rounded-2xl shadow-lg relative overflow-y-auto max-h-[90vh]">
         <button onClick={onClose} className="absolute top-4 right-4 text-zinc-400 hover:text-white">&times;</button>
-        <h2 className="text-2xl font-bold text-center text-white">Editar Transação</h2>
+        <h2 className="text-xl sm:text-2xl font-bold text-center text-white">Editar Transação</h2>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
             <label htmlFor="edit-description" className="text-sm font-medium text-zinc-400">Descrição</label>
-            <input id="edit-description" type="text" value={description} onChange={(e) => setDescription(e.target.value)} required className="w-full mt-1 input-style" />
+            <input id="edit-description" type="text" value={description} onChange={(e) => setDescription(e.target.value)} required className="w-full mt-1 input-style text-sm" />
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
               <label htmlFor="edit-value" className="text-sm font-medium text-zinc-400">Valor (R$)</label>
-              <input id="edit-value" type="number" step="0.01" value={value} onChange={(e) => setValue(e.target.value)} required className="w-full mt-1 input-style" />
+              <input id="edit-value" type="number" step="0.01" value={value} onChange={(e) => setValue(e.target.value)} required className="w-full mt-1 input-style text-sm" />
             </div>
             <div>
               <label htmlFor="edit-type" className="text-sm font-medium text-zinc-400">Tipo</label>
               <select id="edit-type" value={type} onChange={(e) => setType(e.target.value as "income" | "expense")}
                 required
-                className="w-full mt-1 input-style bg-zinc-900 text-white border-amber-400"
+                className="w-full mt-1 input-style bg-zinc-900 text-white border-amber-400 text-sm"
               >
                 <option value="expense" className="bg-zinc-900 text-white">Despesa</option>
                 <option value="income" className="bg-zinc-900 text-white">Receita</option>
@@ -118,7 +118,7 @@ const EditTransactionModal: React.FC<EditTransactionModalProps> = ({
                 value={categoryId}
                 onChange={e => setCategoryId(e.target.value ? Number(e.target.value) : '')}
                 required
-                className="w-full mt-1 input-style bg-zinc-900 text-white border-amber-400"
+                className="w-full mt-1 input-style bg-zinc-900 text-white border-amber-400 text-sm"
                 disabled={loading}
               >
                 <option value="" className="bg-zinc-900 text-white">Selecione...</option>
@@ -129,7 +129,7 @@ const EditTransactionModal: React.FC<EditTransactionModalProps> = ({
             </div>
             <div>
               <label htmlFor="edit-date" className="text-sm font-medium text-zinc-400">Data</label>
-              <input id="edit-date" type="date" value={date} onChange={(e) => setDate(e.target.value)} required className="w-full mt-1 input-style" />
+              <input id="edit-date" type="date" value={date} onChange={(e) => setDate(e.target.value)} required className="w-full mt-1 input-style text-sm" />
             </div>
           </div>
           <div className="flex items-center justify-center pt-2">
@@ -160,7 +160,7 @@ const EditTransactionModal: React.FC<EditTransactionModalProps> = ({
                 </p>
             )}
           </div>
-          <button type="submit" className="w-full py-3 font-semibold text-black bg-amber-400 rounded-md hover:bg-amber-500 transition-colors">Salvar Alterações</button>
+          <button type="submit" className="w-full py-2 sm:py-3 font-semibold text-black bg-amber-400 rounded-md hover:bg-amber-500 transition-colors text-sm sm:text-base">Salvar Alterações</button>
           {error && <p className="text-sm text-center text-red-500">{error}</p>}
         </form>
       </div>
