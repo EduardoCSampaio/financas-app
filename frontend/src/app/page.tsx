@@ -12,19 +12,7 @@ import Link from "next/link";
 import { ChevronDownIcon } from '@heroicons/react/20/solid';
 import api from "@/lib/api"; // Importando o cliente API
 import AddTransactionModal from '@/components/AddTransactionModal';
-
-// Tipagem para as transações
-interface Transaction {
-  id: number;
-  description: string;
-  value: number;
-  type: 'income' | 'expense';
-  category: string;
-  date: string;
-  paid: boolean;
-  account_id: number;
-  proof_url?: string | null;
-}
+import { Transaction } from '@/types';
 
 // Spinner de carregamento
 function Spinner() {
