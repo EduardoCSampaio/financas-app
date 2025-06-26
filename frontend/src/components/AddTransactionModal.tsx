@@ -99,9 +99,12 @@ export default function AddTransactionModal({ isOpen, onClose, onTransactionAdde
             </div>
             <div>
               <label htmlFor="type" className="text-sm font-medium text-zinc-400">Tipo</label>
-              <select id="type" value={type} onChange={(e) => setType(e.target.value as "income" | "expense")} required className="w-full mt-1 input-style">
-                <option value="expense">Despesa</option>
-                <option value="income">Receita</option>
+              <select id="type" value={type} onChange={(e) => setType(e.target.value as "income" | "expense")}
+                required
+                className="w-full mt-1 input-style bg-zinc-900 text-white border-amber-400"
+              >
+                <option value="expense" className="bg-zinc-900 text-white">Despesa</option>
+                <option value="income" className="bg-zinc-900 text-white">Receita</option>
               </select>
             </div>
           </div>
