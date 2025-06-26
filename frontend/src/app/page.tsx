@@ -324,12 +324,12 @@ export default function DashboardPage() {
       </header>
       <div className="py-8">
       {/* Header com saldo e totais - agora sem card, borda ou sombra */}
-      <div className="w-full max-w-4xl mx-auto mt-8 mb-6 flex flex-col md:flex-row items-center justify-between gap-4 px-2 sm:px-0">
-        <div className="flex flex-col items-start">
+      <div className="w-full max-w-4xl mx-auto mt-8 mb-6 flex flex-col sm:flex-row items-center justify-between gap-6 px-2 sm:px-0">
+        <div className="flex flex-col items-center sm:items-start w-full sm:w-auto">
           <span className="text-lg text-zinc-400">Saldo atual</span>
           <span className="text-3xl font-bold text-amber-400 drop-shadow">{saldo.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</span>
         </div>
-        <div className="flex gap-6">
+        <div className="flex flex-row gap-8 w-full sm:w-auto justify-center sm:justify-end">
           <div className="flex flex-col items-center">
             <span className="text-sm text-zinc-400">Receitas</span>
             <span className="text-xl font-semibold text-green-400">{receitas.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</span>
@@ -341,22 +341,22 @@ export default function DashboardPage() {
         </div>
       </div>
       {/* Barra de filtros e botões "Previsto/Real" - sem card */}
-      <div className="w-full max-w-4xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4 mb-8 px-2 sm:px-0">
+      <div className="w-full max-w-4xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4 mb-8 px-2 sm:px-0">
         {/* Filtros */}
-        <div className="flex flex-col md:flex-row gap-2 w-full md:w-auto">
+        <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto items-center">
           <input
             type="text"
             placeholder="Buscar descrição..."
             value={pendingSearch}
             onChange={e => setPendingSearch(e.target.value)}
-            className="px-3 py-2 rounded-md bg-zinc-800 text-white border border-zinc-700 focus:ring-2 focus:ring-amber-400 outline-none w-full md:w-64 text-sm"
+            className="px-3 py-2 rounded-md bg-zinc-800 text-white border border-zinc-700 focus:ring-2 focus:ring-amber-400 outline-none w-full sm:w-64 text-sm"
           />
           <input
             type="text"
             placeholder="Filtrar por categoria..."
             value={pendingCategory}
             onChange={e => setPendingCategory(e.target.value)}
-            className="px-3 py-2 rounded-md bg-zinc-800 text-white border border-zinc-700 focus:ring-2 focus:ring-amber-400 outline-none w-full md:w-48 text-sm"
+            className="px-3 py-2 rounded-md bg-zinc-800 text-white border border-zinc-700 focus:ring-2 focus:ring-amber-400 outline-none w-full sm:w-48 text-sm"
           />
           <div className="flex flex-col sm:flex-row gap-2 items-center w-full sm:w-auto">
             <label htmlFor="start-date" className="text-sm text-zinc-300">De:</label>
@@ -399,7 +399,7 @@ export default function DashboardPage() {
           </div>
         </div>
         {/* Botões Previsto/Real */}
-        <div className="flex gap-2 w-full md:w-auto justify-end mt-2 md:mt-0">
+        <div className="flex gap-2 w-full sm:w-auto justify-end mt-2 sm:mt-0">
           <button
             onClick={() => setViewMode('real')}
             className={`px-4 py-2 rounded-md font-semibold transition-colors ${
@@ -439,125 +439,123 @@ export default function DashboardPage() {
         {selectedAccount && (
           <>
             <section className="w-full max-w-4xl mx-auto mb-8">
-              <div>
-                <div className="flex justify-between items-center mb-4">
-                  <h2 className="text-lg font-semibold text-white">Últimas Transações</h2>
-                  <button
-                    type="button"
-                    onClick={() => setIsAddModalOpen(true)}
-                    className="bg-amber-500 hover:bg-amber-600 text-black font-bold py-2 px-4 rounded-lg transition-colors"
-                  >
-                    Adicionar Transação
-                  </button>
-                </div>
-                <div className="overflow-x-auto rounded-lg border border-zinc-800">
-                  <table className="w-full min-w-[600px] text-left text-xs sm:text-sm">
-                    <thead>
-                      <tr className="border-b border-zinc-700 bg-zinc-900">
-                        <th className="p-2 sm:p-3 text-zinc-200">Status</th>
-                        <th className="p-2 sm:p-3 text-zinc-200">Descrição</th>
-                        <th className="p-2 sm:p-3 text-zinc-200">Valor</th>
-                        <th className="p-2 sm:p-3 text-zinc-200">Categoria</th>
-                        <th className="p-2 sm:p-3 text-zinc-200">Data</th>
-                        <th className="p-2 sm:p-3 text-zinc-200 hidden xs:table-cell">Comprovante</th>
-                        <th className="p-2 sm:p-3 text-center text-zinc-200 hidden xs:table-cell">Ações</th>
+              <div className="flex flex-col sm:flex-row justify-between items-center mb-4 gap-4">
+                <h2 className="text-lg font-semibold text-white w-full sm:w-auto text-center sm:text-left">Últimas Transações</h2>
+                <button
+                  type="button"
+                  onClick={() => setIsAddModalOpen(true)}
+                  className="bg-amber-500 hover:bg-amber-600 text-black font-bold py-2 px-6 rounded-lg transition-colors w-full sm:w-auto"
+                >
+                  Adicionar Transação
+                </button>
+              </div>
+              <div className="overflow-x-auto rounded-lg border border-zinc-800 max-w-4xl mx-auto">
+                <table className="w-full min-w-[600px] text-left text-xs sm:text-sm">
+                  <thead>
+                    <tr className="border-b border-zinc-700 bg-zinc-900">
+                      <th className="p-2 sm:p-3 text-zinc-200">Status</th>
+                      <th className="p-2 sm:p-3 text-zinc-200">Descrição</th>
+                      <th className="p-2 sm:p-3 text-zinc-200">Valor</th>
+                      <th className="p-2 sm:p-3 text-zinc-200">Categoria</th>
+                      <th className="p-2 sm:p-3 text-zinc-200">Data</th>
+                      <th className="p-2 sm:p-3 text-zinc-200 hidden xs:table-cell">Comprovante</th>
+                      <th className="p-2 sm:p-3 text-center text-zinc-200 hidden xs:table-cell">Ações</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {loading ? (
+                      <tr>
+                        <td colSpan={7} className="py-16 text-center">
+                          <Spinner />
+                          <div className="mt-2 text-zinc-400">Carregando transações...</div>
+                        </td>
                       </tr>
-                    </thead>
-                    <tbody>
-                      {loading ? (
-                        <tr>
-                          <td colSpan={7} className="py-16 text-center">
-                            <Spinner />
-                            <div className="mt-2 text-zinc-400">Carregando transações...</div>
-                          </td>
-                        </tr>
-                      ) : transactions.length === 0 ? (
-                        <tr>
-                          <td colSpan={7} className="py-12 text-center text-zinc-400 text-sm sm:text-base">
-                            <div className="flex flex-col items-center gap-3 px-2">
-                              <span className="text-4xl sm:text-5xl">🗒️</span>
-                              <span className="text-base sm:text-lg font-semibold">Nenhuma transação encontrada</span>
-                              <span className="text-xs sm:text-sm text-zinc-500">Tente ajustar os filtros ou adicione uma nova transação!</span>
-                              <button
-                                onClick={() => setIsAddModalOpen(true)}
-                                className="mt-4 px-4 py-2 bg-amber-500 text-black font-semibold rounded-lg hover:bg-amber-600 transition-colors text-xs sm:text-sm"
-                              >
-                                Adicionar Transação
-                              </button>
+                    ) : transactions.length === 0 ? (
+                      <tr>
+                        <td colSpan={7} className="py-12 text-center text-zinc-400 text-sm sm:text-base">
+                          <div className="flex flex-col items-center gap-3 px-2">
+                            <span className="text-4xl sm:text-5xl">🗒️</span>
+                            <span className="text-base sm:text-lg font-semibold">Nenhuma transação encontrada</span>
+                            <span className="text-xs sm:text-sm text-zinc-500">Tente ajustar os filtros ou adicione uma nova transação!</span>
+                            <button
+                              onClick={() => setIsAddModalOpen(true)}
+                              className="mt-4 px-4 py-2 bg-amber-500 text-black font-semibold rounded-lg hover:bg-amber-600 transition-colors text-xs sm:text-sm"
+                            >
+                              Adicionar Transação
+                            </button>
+                          </div>
+                        </td>
+                      </tr>
+                    ) : (
+                      transactions.map((t, idx) => (
+                        <tr key={t.id} className={`border-b border-zinc-800 hover:bg-zinc-800/50 ${idx % 2 === 0 ? 'bg-zinc-900/60' : 'bg-zinc-800/40'}`}>
+                          <td className="p-2 sm:p-3 text-zinc-100 text-xs sm:text-sm text-center">
+                            <div onClick={() => handleTogglePaid(t)} className={`w-10 h-5 flex items-center rounded-full p-1 cursor-pointer ${t.paid ? 'bg-green-500' : 'bg-zinc-700'}`}> 
+                              <div className={`bg-white w-4 h-4 rounded-full shadow-md transform duration-300 ease-in-out ${t.paid ? 'translate-x-5' : 'translate-x-0'}`}></div>
                             </div>
                           </td>
+                          <td className="p-2 sm:p-3 text-zinc-100 text-xs sm:text-sm break-words max-w-[120px] sm:max-w-[200px] align-middle">{t.description}</td>
+                          <td className={`p-2 sm:p-3 font-bold ${t.type === 'income' ? 'text-green-400' : 'text-red-400'} text-xs sm:text-base align-middle`}>{t.type === 'expense' && '-'} R$ {t.value.toLocaleString('pt-BR')}</td>
+                          <td className="p-2 sm:p-3 text-zinc-100 text-xs sm:text-sm align-middle">
+                            {(() => {
+                              let catName = '';
+                              if (isCategoryObject(t.category)) catName = t.category.name;
+                              else if (typeof t.category === 'string') catName = t.category;
+                              if (catName)
+                                return <span className={`inline-block px-2 py-1 rounded text-xs font-semibold shadow-sm ${getCategoryColor(catName)} text-black bg-opacity-80`}>{catName}</span>;
+                              return '';
+                            })()}
+                          </td>
+                          <td className="p-2 sm:p-3 text-zinc-100 text-xs sm:text-sm align-middle">{new Date(t.date).toLocaleDateString('pt-BR')}</td>
+                          <td className="p-2 sm:p-3 hidden xs:table-cell align-middle">
+                            {t.proof_url && (
+                              <a
+                                href={`http://localhost:8000${t.proof_url}`}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="text-amber-400 hover:text-amber-300"
+                                data-tooltip-id={`proof-tooltip-${t.id}`}
+                                data-tooltip-content="Ver comprovante"
+                              >
+                                <FaPaperclip size={18} />
+                                <Tooltip id={`proof-tooltip-${t.id}`} />
+                              </a>
+                            )}
+                          </td>
+                          <td className="p-2 sm:p-3 flex justify-center items-center gap-4 hidden xs:table-cell align-middle">
+                            <button
+                              onClick={() => {
+                                setSelectedTransactionForEdit(t);
+                                setIsEditModalOpen(true);
+                              }}
+                              className="text-blue-400 hover:text-blue-300"
+                              data-tooltip-id={`edit-tooltip-${t.id}`}
+                              data-tooltip-content="Editar transação"
+                            >
+                              <FaEdit />
+                              <Tooltip id={`edit-tooltip-${t.id}`} />
+                            </button>
+                            <button
+                              onClick={() => handleDelete(t.id)}
+                              className="text-red-500 hover:text-red-400"
+                              data-tooltip-id={`delete-tooltip-${t.id}`}
+                              data-tooltip-content="Excluir transação"
+                            >
+                              <FaTrash />
+                              <Tooltip id={`delete-tooltip-${t.id}`} />
+                            </button>
+                          </td>
                         </tr>
-                      ) : (
-                        transactions.map((t, idx) => (
-                          <tr key={t.id} className={`border-b border-zinc-800 hover:bg-zinc-800/50 ${idx % 2 === 0 ? 'bg-zinc-900/60' : 'bg-zinc-800/40'}`}>
-                            <td className="p-2 sm:p-3 text-zinc-100 text-xs sm:text-sm text-center">
-                              <div onClick={() => handleTogglePaid(t)} className={`w-10 h-5 flex items-center rounded-full p-1 cursor-pointer ${t.paid ? 'bg-green-500' : 'bg-zinc-700'}`}> 
-                                <div className={`bg-white w-4 h-4 rounded-full shadow-md transform duration-300 ease-in-out ${t.paid ? 'translate-x-5' : 'translate-x-0'}`}></div>
-                              </div>
-                            </td>
-                            <td className="p-2 sm:p-3 text-zinc-100 text-xs sm:text-sm break-words max-w-[120px] sm:max-w-[200px] align-middle">{t.description}</td>
-                            <td className={`p-2 sm:p-3 font-bold ${t.type === 'income' ? 'text-green-400' : 'text-red-400'} text-xs sm:text-base align-middle`}>{t.type === 'expense' && '-'} R$ {t.value.toLocaleString('pt-BR')}</td>
-                            <td className="p-2 sm:p-3 text-zinc-100 text-xs sm:text-sm align-middle">
-                              {(() => {
-                                let catName = '';
-                                if (isCategoryObject(t.category)) catName = t.category.name;
-                                else if (typeof t.category === 'string') catName = t.category;
-                                if (catName)
-                                  return <span className={`inline-block px-2 py-1 rounded text-xs font-semibold shadow-sm ${getCategoryColor(catName)} text-black`}>{catName}</span>;
-                                return '';
-                              })()}
-                            </td>
-                            <td className="p-2 sm:p-3 text-zinc-100 text-xs sm:text-sm align-middle">{new Date(t.date).toLocaleDateString('pt-BR')}</td>
-                            <td className="p-2 sm:p-3 hidden xs:table-cell align-middle">
-                              {t.proof_url && (
-                                <a
-                                  href={`http://localhost:8000${t.proof_url}`}
-                                  target="_blank"
-                                  rel="noopener noreferrer"
-                                  className="text-amber-400 hover:text-amber-300"
-                                  data-tooltip-id={`proof-tooltip-${t.id}`}
-                                  data-tooltip-content="Ver comprovante"
-                                >
-                                  <FaPaperclip size={18} />
-                                  <Tooltip id={`proof-tooltip-${t.id}`} />
-                                </a>
-                              )}
-                            </td>
-                            <td className="p-2 sm:p-3 flex justify-center items-center gap-4 hidden xs:table-cell align-middle">
-                              <button
-                                onClick={() => {
-                                  setSelectedTransactionForEdit(t);
-                                  setIsEditModalOpen(true);
-                                }}
-                                className="text-blue-400 hover:text-blue-300"
-                                data-tooltip-id={`edit-tooltip-${t.id}`}
-                                data-tooltip-content="Editar transação"
-                              >
-                                <FaEdit />
-                                <Tooltip id={`edit-tooltip-${t.id}`} />
-                              </button>
-                              <button
-                                onClick={() => handleDelete(t.id)}
-                                className="text-red-500 hover:text-red-400"
-                                data-tooltip-id={`delete-tooltip-${t.id}`}
-                                data-tooltip-content="Excluir transação"
-                              >
-                                <FaTrash />
-                                <Tooltip id={`delete-tooltip-${t.id}`} />
-                              </button>
-                            </td>
-                          </tr>
-                        ))
-                      )}
-                    </tbody>
-                  </table>
-                </div>
-                <Pagination 
-                  currentPage={currentPage}
-                  totalPages={totalPages}
-                  onPageChange={(page) => setCurrentPage(page)}
-                />
+                      ))
+                    )}
+                  </tbody>
+                </table>
               </div>
+              <Pagination 
+                currentPage={currentPage}
+                totalPages={totalPages}
+                onPageChange={(page) => setCurrentPage(page)}
+              />
             </section>
           </>
         )}
