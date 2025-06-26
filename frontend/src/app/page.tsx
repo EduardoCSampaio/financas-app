@@ -33,7 +33,12 @@ function Spinner() {
 }
 
 function isCategoryObject(category: unknown): category is { name: string } {
-  return typeof category === 'object' && category !== null && 'name' in category && typeof (category as any).name === 'string';
+  return (
+    typeof category === 'object' &&
+    category !== null &&
+    'name' in category &&
+    typeof (category as { name?: unknown }).name === 'string'
+  );
 }
 
 export default function DashboardPage() {
