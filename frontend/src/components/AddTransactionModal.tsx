@@ -113,12 +113,12 @@ export default function AddTransactionModal({ isOpen, onClose, onTransactionAdde
                 value={categoryId}
                 onChange={e => setCategoryId(e.target.value ? Number(e.target.value) : '')}
                 required
-                className="w-full mt-1 input-style"
+                className="w-full mt-1 input-style bg-zinc-900 text-white border-amber-400"
                 disabled={loading}
               >
-                <option value="">Selecione...</option>
+                <option value="" className="bg-zinc-900 text-white">Selecione...</option>
                 {categories.map(cat => (
-                  <option key={cat.id} value={cat.id}>{cat.name}</option>
+                  <option key={cat.id} value={cat.id} className="bg-zinc-900 text-white">{cat.name}</option>
                 ))}
               </select>
             </div>
