@@ -1,3 +1,8 @@
+export interface Category {
+  id: number;
+  name: string;
+}
+
 export interface Account {
   id: number;
   name: string;
@@ -10,7 +15,8 @@ export interface Transaction {
   description: string;
   value: number;
   type: 'income' | 'expense';
-  category: string;
+  category_id?: number | null;
+  category?: Category | null;
   date: string;
   paid: boolean;
   account_id: number;

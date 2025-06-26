@@ -3,6 +3,7 @@ import React, { useState, useEffect, FormEvent } from 'react';
 import { toast } from 'react-toastify';
 import api from '@/lib/api';
 import { Transaction } from '@/types';
+import { useCategories } from '@/contexts/AuthContext';
 
 interface EditTransactionModalProps {
   isOpen: boolean;
@@ -22,18 +23,19 @@ const EditTransactionModal: React.FC<EditTransactionModalProps> = ({
   const [description, setDescription] = useState('');
   const [value, setValue] = useState('');
   const [type, setType] = useState<'income' | 'expense'>('expense');
-  const [category, setCategory] = useState('');
+  const [categoryId, setCategoryId] = useState<number | ''>('');
   const [date, setDate] = useState('');
   const [paid, setPaid] = useState(false);
   const [proof, setProof] = useState<File | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const { categories, loading } = useCategories();
 
   useEffect(() => {
     if (transaction) {
       setDescription(transaction.description);
       setValue(String(transaction.value));
       setType(transaction.type);
-      setCategory(transaction.category);
+      setCategoryId(transaction.category_id ?? '');
       setDate(new Date(transaction.date).toISOString().split('T')[0]);
       setPaid(transaction.paid);
     }
@@ -58,9 +60,9 @@ const EditTransactionModal: React.FC<EditTransactionModalProps> = ({
     formData.append('description', description);
     formData.append('value', value);
     formData.append('type', type);
-    formData.append('category', category);
     formData.append('date', new Date(date).toISOString());
     formData.append('paid', String(paid));
+    if (categoryId) formData.append('category_id', String(categoryId));
     if (proof) {
       formData.append('proof', proof);
     }
@@ -108,7 +110,19 @@ const EditTransactionModal: React.FC<EditTransactionModalProps> = ({
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
               <label htmlFor="edit-category" className="text-sm font-medium text-zinc-400">Categoria</label>
-              <input id="edit-category" type="text" value={category} onChange={(e) => setCategory(e.target.value)} required className="w-full mt-1 input-style" />
+              <select
+                id="edit-category"
+                value={categoryId}
+                onChange={e => setCategoryId(e.target.value ? Number(e.target.value) : '')}
+                required
+                className="w-full mt-1 input-style"
+                disabled={loading}
+              >
+                <option value="">Selecione...</option>
+                {categories.map(cat => (
+                  <option key={cat.id} value={cat.id}>{cat.name}</option>
+                ))}
+              </select>
             </div>
             <div>
               <label htmlFor="edit-date" className="text-sm font-medium text-zinc-400">Data</label>

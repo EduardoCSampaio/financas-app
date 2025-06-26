@@ -1,6 +1,6 @@
 import { Inter } from "next/font/google";
 import "./globals.css";
-import { AuthProvider } from "@/contexts/AuthContext";
+import { AuthProvider, CategoriesProvider } from "@/contexts/AuthContext";
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
@@ -43,21 +43,23 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
     <html lang="pt-br">
       <body className={inter.className}>
         <AuthProvider>
-          {children}
-          <ToastContainer
-            position="bottom-right"
-            autoClose={5000}
-            hideProgressBar={false}
-            newestOnTop={false}
-            closeOnClick
-            rtl={false}
-            pauseOnFocusLoss
-            draggable
-            pauseOnHover
-            theme="dark"
-            toastClassName="rounded-lg shadow-lg"
-            className="text-sm"
-          />
+          <CategoriesProvider>
+            {children}
+            <ToastContainer
+              position="bottom-right"
+              autoClose={5000}
+              hideProgressBar={false}
+              newestOnTop={false}
+              closeOnClick
+              rtl={false}
+              pauseOnFocusLoss
+              draggable
+              pauseOnHover
+              theme="dark"
+              toastClassName="rounded-lg shadow-lg"
+              className="text-sm"
+            />
+          </CategoriesProvider>
         </AuthProvider>
       </body>
     </html>

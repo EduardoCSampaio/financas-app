@@ -37,10 +37,10 @@ def create_transaction(
     description: str = Form(...),
     value: float = Form(...),
     type: str = Form(...),
-    category: str = Form(...),
     date: datetime = Form(...),
     paid: bool = Form(...),
     account_id: int = Form(...),
+    category_id: Optional[int] = Form(None),
     proof: Optional[UploadFile] = File(None),
     db: Session = Depends(get_db),
     current_user: models.User = Depends(get_current_active_user)
@@ -59,11 +59,11 @@ def create_transaction(
         description=description,
         value=value,
         type=type,
-        category=category,
         date=date,
         paid=paid,
         account_id=account_id,
-        proof_url=proof_url
+        proof_url=proof_url,
+        category_id=category_id
     )
     
     return crud.create_transaction(db=db, transaction=transaction_data)
@@ -106,9 +106,9 @@ def update_transaction_route(
     description: str = Form(...),
     value: float = Form(...),
     type: str = Form(...),
-    category: str = Form(...),
     date: datetime = Form(...),
     paid: bool = Form(...),
+    category_id: Optional[int] = Form(None),
     proof: Optional[UploadFile] = File(None),
 ):
     db_transaction = crud.get_transaction(db, transaction_id=transaction_id)
@@ -124,20 +124,18 @@ def update_transaction_route(
     if not account or getattr(account, 'owner_id', None) != current_user.id:
         raise HTTPException(status_code=403, detail="Not authorized to update this transaction")
     
-    proof_url = db_transaction.proof_url # type: ignore
+    proof_url = db_transaction.proof_url if db_transaction.proof_url is None or isinstance(db_transaction.proof_url, str) else str(db_transaction.proof_url)
     if proof and proof.filename:
-        # Se um novo arquivo for enviado, salve-o.
-        # Opcional: deletar o arquivo antigo do sistema de arquivos aqui.
         proof_url = save_upload_file(proof)
 
     transaction_data = schemas.TransactionUpdate(
         description=description,
         value=value,
         type=type,
-        category=category,
         date=date,
         paid=paid,
-        proof_url=proof_url
+        proof_url=proof_url,
+        category_id=category_id
     )
     
     return crud.update_transaction(db=db, transaction_id=transaction_id, transaction_data=transaction_data)
@@ -187,4 +185,31 @@ def toggle_transaction_paid_status(
     if not account or getattr(account, 'owner_id', None) != current_user.id:
         raise HTTPException(status_code=403, detail="Não autorizado")
 
-    return crud.update_transaction_paid_status(db=db, transaction_id=transaction_id, paid=update_data.paid) 
+    return crud.update_transaction_paid_status(db=db, transaction_id=transaction_id, paid=update_data.paid)
+
+# --- NOVO: Rotas para categorias ---
+from fastapi import APIRouter
+category_router = APIRouter(prefix="/categories", tags=["categories"])
+
+@category_router.get("/", response_model=List[schemas.Category])
+def list_categories(db: Session = Depends(get_db), current_user: models.User = Depends(get_current_active_user)):
+    return crud.get_categories(db)
+
+@category_router.post("/", response_model=schemas.Category)
+def create_category(category: schemas.CategoryCreate, db: Session = Depends(get_db), current_user: models.User = Depends(get_current_active_user)):
+    db_category = crud.create_category(db, category)
+    return db_category
+
+@category_router.put("/{category_id}", response_model=schemas.Category)
+def update_category(category_id: int, category: schemas.CategoryCreate, db: Session = Depends(get_db), current_user: models.User = Depends(get_current_active_user)):
+    db_category = crud.update_category(db, category_id, category)
+    if not db_category:
+        raise HTTPException(status_code=404, detail="Categoria não encontrada")
+    return db_category
+
+@category_router.delete("/{category_id}", status_code=204)
+def delete_category(category_id: int, db: Session = Depends(get_db), current_user: models.User = Depends(get_current_active_user)):
+    db_category = crud.delete_category(db, category_id)
+    if not db_category:
+        raise HTTPException(status_code=404, detail="Categoria não encontrada")
+    return None 

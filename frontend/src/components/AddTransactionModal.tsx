@@ -3,6 +3,7 @@ import { useState, FormEvent, useEffect } from 'react';
 import { toast } from 'react-toastify';
 import api from '@/lib/api';
 import { Transaction } from '@/types';
+import { useCategories } from '@/contexts/AuthContext';
 
 interface AddTransactionModalProps {
   isOpen: boolean;
@@ -15,11 +16,12 @@ export default function AddTransactionModal({ isOpen, onClose, onTransactionAdde
   const [description, setDescription] = useState('');
   const [value, setValue] = useState('');
   const [type, setType] = useState<'income' | 'expense'>('expense');
-  const [category, setCategory] = useState('');
+  const [categoryId, setCategoryId] = useState<number | ''>('');
   const [date, setDate] = useState(new Date().toISOString().split('T')[0]);
   const [paid, setPaid] = useState(true);
   const [proof, setProof] = useState<File | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const { categories, loading } = useCategories();
 
   useEffect(() => {
     if (isOpen) {
@@ -27,7 +29,7 @@ export default function AddTransactionModal({ isOpen, onClose, onTransactionAdde
       setDescription('');
       setValue('');
       setType('expense');
-      setCategory('');
+      setCategoryId('');
       setDate(new Date().toISOString().split('T')[0]);
       setPaid(true);
       setProof(null);
@@ -55,10 +57,10 @@ export default function AddTransactionModal({ isOpen, onClose, onTransactionAdde
     formData.append('description', description);
     formData.append('value', value);
     formData.append('type', type);
-    formData.append('category', category);
     formData.append('date', new Date(date).toISOString());
     formData.append('paid', String(paid));
     formData.append('account_id', String(accountId));
+    if (categoryId) formData.append('category_id', String(categoryId));
     if (proof) {
       formData.append('proof', proof);
     }
@@ -106,7 +108,19 @@ export default function AddTransactionModal({ isOpen, onClose, onTransactionAdde
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
               <label htmlFor="category" className="text-sm font-medium text-zinc-400">Categoria</label>
-              <input id="category" type="text" value={category} onChange={(e) => setCategory(e.target.value)} required className="w-full mt-1 input-style" />
+              <select
+                id="category"
+                value={categoryId}
+                onChange={e => setCategoryId(e.target.value ? Number(e.target.value) : '')}
+                required
+                className="w-full mt-1 input-style"
+                disabled={loading}
+              >
+                <option value="">Selecione...</option>
+                {categories.map(cat => (
+                  <option key={cat.id} value={cat.id}>{cat.name}</option>
+                ))}
+              </select>
             </div>
             <div>
               <label htmlFor="date" className="text-sm font-medium text-zinc-400">Data</label>

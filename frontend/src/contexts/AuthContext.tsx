@@ -3,6 +3,8 @@ import React, { createContext, useState, useContext, useEffect, useCallback, Rea
 import { useRouter } from 'next/navigation';
 import api from '@/lib/api';
 import { Account, User } from '@/types';
+import { getCategories } from '../lib/api';
+import { Category } from '../types';
 
 interface AuthContextType {
   token: string | null;
@@ -17,6 +19,14 @@ interface AuthContextType {
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
+
+interface CategoriesContextType {
+  categories: Category[];
+  refreshCategories: () => Promise<void>;
+  loading: boolean;
+}
+
+const CategoriesContext = React.createContext<CategoriesContextType | undefined>(undefined);
 
 export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [token, setToken] = useState<string | null>(null);
@@ -109,4 +119,38 @@ export function useAuth() {
     throw new Error('useAuth must be used within an AuthProvider');
   }
   return context;
+}
+
+export const CategoriesProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  const [categories, setCategories] = React.useState<Category[]>([]);
+  const [loading, setLoading] = React.useState(false);
+  const { token } = useAuth();
+
+  const fetchCategories = React.useCallback(async () => {
+    setLoading(true);
+    try {
+      const data = await getCategories(token);
+      setCategories(data);
+    } catch (e) {
+      setCategories([]);
+    } finally {
+      setLoading(false);
+    }
+  }, [token]);
+
+  React.useEffect(() => {
+    fetchCategories();
+  }, [fetchCategories]);
+
+  return (
+    <CategoriesContext.Provider value={{ categories, refreshCategories: fetchCategories, loading }}>
+      {children}
+    </CategoriesContext.Provider>
+  );
+};
+
+export function useCategories() {
+  const ctx = React.useContext(CategoriesContext);
+  if (!ctx) throw new Error('useCategories must be used within a CategoriesProvider');
+  return ctx;
 } 

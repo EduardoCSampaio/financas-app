@@ -2,15 +2,26 @@ from pydantic import BaseModel, ConfigDict
 from datetime import datetime
 from typing import List, Optional
 
+# --- Category Schemas ---
+class CategoryBase(BaseModel):
+    name: str
+
+class CategoryCreate(CategoryBase):
+    pass
+
+class Category(CategoryBase):
+    id: int
+    model_config = ConfigDict(from_attributes=True)
+
 # --- Transaction Schemas ---
 class TransactionBase(BaseModel):
     description: str
     value: float
     type: str  # 'receita' ou 'despesa'
-    category: str
     date: datetime
     paid: bool = False
     proof_url: Optional[str] = None
+    category_id: Optional[int] = None
 
 class TransactionCreate(TransactionBase):
     account_id: int # Para qual conta essa transação vai
@@ -19,14 +30,15 @@ class TransactionUpdate(BaseModel):
     description: Optional[str] = None
     value: Optional[float] = None
     type: Optional[str] = None
-    category: Optional[str] = None
     date: Optional[datetime] = None
     paid: Optional[bool] = None
     proof_url: Optional[str] = None
+    category_id: Optional[int] = None
 
 class Transaction(TransactionBase):
     id: int
     account_id: int
+    category: Optional[Category] = None
     model_config = ConfigDict(from_attributes=True)
 
 class PaginatedTransactions(BaseModel):

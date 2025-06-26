@@ -35,6 +35,8 @@ app.include_router(auth.router, prefix="/auth", tags=["Autenticação"])
 app.include_router(transactions.router, prefix="/transactions", tags=["Transações"])
 app.include_router(users.router, prefix="/users", tags=["Usuários"])
 app.include_router(accounts.router, prefix="/accounts", tags=["Contas"])
+from .routers.transactions import category_router
+app.include_router(category_router)
 
 @app.get("/", tags=["Root"])
 def read_root():
