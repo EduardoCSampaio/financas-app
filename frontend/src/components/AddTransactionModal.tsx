@@ -84,9 +84,9 @@ export default function AddTransactionModal({ isOpen, onClose, onTransactionAdde
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50">
-      <div className="w-full max-w-lg sm:max-w-md p-4 sm:p-8 space-y-6 bg-zinc-900 border border-zinc-700 rounded-2xl shadow-lg relative overflow-y-auto max-h-[90vh]">
-        <button onClick={onClose} className="absolute top-4 right-4 text-zinc-400 hover:text-white">&times;</button>
-        <h2 className="text-xl sm:text-2xl font-bold text-center text-white">Adicionar Transação</h2>
+      <div className="w-full max-w-lg sm:max-w-md p-2 sm:p-8 space-y-6 bg-zinc-900 border border-zinc-700 rounded-2xl sm:rounded-2xl rounded-none shadow-lg relative overflow-y-auto max-h-[95vh]">
+        <button onClick={onClose} className="absolute top-2 right-2 sm:top-4 sm:right-4 text-zinc-400 hover:text-white text-3xl sm:text-2xl">&times;</button>
+        <h2 className="text-lg sm:text-2xl font-bold text-center text-white">Adicionar Transação</h2>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
             <label htmlFor="description" className="text-sm font-medium text-zinc-400">Descrição</label>
@@ -151,7 +151,7 @@ export default function AddTransactionModal({ isOpen, onClose, onTransactionAdde
               <span className="ml-2 text-zinc-300">{type === 'income' ? 'Recebido?' : 'Pago?'}</span>
             </label>
           </div>
-          <button type="submit" className="w-full py-2 sm:py-3 font-semibold text-black bg-amber-400 rounded-md hover:bg-amber-500 transition-colors text-sm sm:text-base">Adicionar</button>
+          <button type="submit" className="w-full py-3 font-semibold text-black bg-amber-400 rounded-md hover:bg-amber-500 transition-colors text-base sm:text-lg">Adicionar</button>
           {error && <p className="text-sm text-center text-red-500">{error}</p>}
         </form>
       </div>

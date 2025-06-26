@@ -451,16 +451,16 @@ export default function DashboardPage() {
                   </button>
                 </div>
                 <div className="overflow-x-auto rounded-lg border border-zinc-800">
-                  <table className="w-full min-w-[600px] text-left text-sm">
+                  <table className="w-full min-w-[600px] text-left text-xs sm:text-sm">
                     <thead>
-                      <tr className="border-b border-zinc-700">
-                        <th className="p-2 text-zinc-200">Status</th>
-                        <th className="p-2 text-zinc-200">Descrição</th>
-                        <th className="p-2 text-zinc-200">Valor</th>
-                        <th className="p-2 text-zinc-200">Categoria</th>
-                        <th className="p-2 text-zinc-200">Data</th>
-                        <th className="p-2 text-zinc-200">Comprovante</th>
-                        <th className="p-2 text-center text-zinc-200">Ações</th>
+                      <tr className="border-b border-zinc-700 bg-zinc-900">
+                        <th className="p-2 sm:p-3 text-zinc-200">Status</th>
+                        <th className="p-2 sm:p-3 text-zinc-200">Descrição</th>
+                        <th className="p-2 sm:p-3 text-zinc-200">Valor</th>
+                        <th className="p-2 sm:p-3 text-zinc-200">Categoria</th>
+                        <th className="p-2 sm:p-3 text-zinc-200">Data</th>
+                        <th className="p-2 sm:p-3 text-zinc-200 hidden xs:table-cell">Comprovante</th>
+                        <th className="p-2 sm:p-3 text-center text-zinc-200 hidden xs:table-cell">Ações</th>
                       </tr>
                     </thead>
                     <tbody>
@@ -488,27 +488,27 @@ export default function DashboardPage() {
                           </td>
                         </tr>
                       ) : (
-                        transactions.map(t => (
-                          <tr key={t.id} className="border-b border-zinc-800 hover:bg-zinc-800/50">
-                            <td className="p-2">
-                              <div onClick={() => handleTogglePaid(t)} className={`w-12 h-6 flex items-center rounded-full p-1 cursor-pointer ${t.paid ? 'bg-green-500' : 'bg-zinc-700'}`}> 
-                                <div className={`bg-white w-4 h-4 rounded-full shadow-md transform duration-300 ease-in-out ${t.paid ? 'translate-x-6' : 'translate-x-0'}`}></div>
+                        transactions.map((t, idx) => (
+                          <tr key={t.id} className={`border-b border-zinc-800 hover:bg-zinc-800/50 ${idx % 2 === 0 ? 'bg-zinc-900/60' : 'bg-zinc-800/40'}`}>
+                            <td className="p-2 sm:p-3 text-zinc-100 text-xs sm:text-sm text-center">
+                              <div onClick={() => handleTogglePaid(t)} className={`w-10 h-5 flex items-center rounded-full p-1 cursor-pointer ${t.paid ? 'bg-green-500' : 'bg-zinc-700'}`}> 
+                                <div className={`bg-white w-4 h-4 rounded-full shadow-md transform duration-300 ease-in-out ${t.paid ? 'translate-x-5' : 'translate-x-0'}`}></div>
                               </div>
                             </td>
-                            <td className="p-2 sm:p-3 text-zinc-100 text-xs sm:text-sm">{t.description}</td>
-                            <td className={`p-2 font-semibold ${t.type === 'income' ? 'text-green-400' : 'text-red-400'}`}>{t.type === 'expense' && '-'} R$ {t.value.toLocaleString('pt-BR')}</td>
-                            <td className="p-2 text-zinc-100">
+                            <td className="p-2 sm:p-3 text-zinc-100 text-xs sm:text-sm break-words max-w-[120px] sm:max-w-[200px] align-middle">{t.description}</td>
+                            <td className={`p-2 sm:p-3 font-bold ${t.type === 'income' ? 'text-green-400' : 'text-red-400'} text-xs sm:text-base align-middle`}>{t.type === 'expense' && '-'} R$ {t.value.toLocaleString('pt-BR')}</td>
+                            <td className="p-2 sm:p-3 text-zinc-100 text-xs sm:text-sm align-middle">
                               {(() => {
                                 let catName = '';
                                 if (isCategoryObject(t.category)) catName = t.category.name;
                                 else if (typeof t.category === 'string') catName = t.category;
                                 if (catName)
-                                  return <span className={`inline-block px-2 py-1 rounded text-xs font-semibold ${getCategoryColor(catName)} text-black`}>{catName}</span>;
+                                  return <span className={`inline-block px-2 py-1 rounded text-xs font-semibold shadow-sm ${getCategoryColor(catName)} text-black`}>{catName}</span>;
                                 return '';
                               })()}
                             </td>
-                            <td className="p-2 text-zinc-100">{new Date(t.date).toLocaleDateString('pt-BR')}</td>
-                            <td className="p-2">
+                            <td className="p-2 sm:p-3 text-zinc-100 text-xs sm:text-sm align-middle">{new Date(t.date).toLocaleDateString('pt-BR')}</td>
+                            <td className="p-2 sm:p-3 hidden xs:table-cell align-middle">
                               {t.proof_url && (
                                 <a
                                   href={`http://localhost:8000${t.proof_url}`}
@@ -523,7 +523,7 @@ export default function DashboardPage() {
                                 </a>
                               )}
                             </td>
-                            <td className="p-2 flex justify-center items-center gap-4">
+                            <td className="p-2 sm:p-3 flex justify-center items-center gap-4 hidden xs:table-cell align-middle">
                               <button
                                 onClick={() => {
                                   setSelectedTransactionForEdit(t);
