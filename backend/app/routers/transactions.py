@@ -212,4 +212,17 @@ def delete_category(category_id: int, db: Session = Depends(get_db), current_use
     db_category = crud.delete_category(db, category_id)
     if not db_category:
         raise HTTPException(status_code=404, detail="Categoria não encontrada")
-    return None 
+    return None
+
+@category_router.post("/populate-common", tags=["categories"])
+def populate_common_categories(db: Session = Depends(get_db), current_user: models.User = Depends(get_current_active_user)):
+    common_names = ["Empréstimo", "Aluguel", "Água", "Luz", "Outros"]
+    created = []
+    for name in common_names:
+        existing = db.query(models.Category).filter(models.Category.name == name).first()
+        if not existing:
+            cat = models.Category(name=name)
+            db.add(cat)
+            created.append(name)
+    db.commit()
+    return {"created": created, "message": "Categorias comuns populadas."} 
