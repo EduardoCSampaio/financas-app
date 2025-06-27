@@ -2,7 +2,7 @@
 import { useEffect, useState, useCallback } from "react";
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
-import { FaEdit, FaTrash, FaChevronDown } from 'react-icons/fa';
+import { FaEdit, FaTrash, FaChevronDown, FaFileAlt, FaExternalLinkAlt } from 'react-icons/fa';
 import debounce from 'lodash.debounce';
 import Pagination from "@/components/Pagination";
 import { toast } from 'react-toastify';
@@ -323,6 +323,8 @@ export default function DashboardPage() {
                     <th className="text-left py-3 px-4 text-slate-600 font-semibold">Descrição</th>
                     <th className="text-left py-3 px-4 text-slate-600 font-semibold">Categoria</th>
                     <th className="text-left py-3 px-4 text-slate-600 font-semibold">Valor</th>
+                    <th className="text-left py-3 px-4 text-slate-600 font-semibold">Comprovante</th>
+                    <th className="text-left py-3 px-4 text-slate-600 font-semibold">Status</th>
                     <th className="text-left py-3 px-4 text-slate-600 font-semibold">Ações</th>
                   </tr>
                 </thead>
@@ -346,6 +348,23 @@ export default function DashboardPage() {
                       </td>
                       <td className={`py-3 px-4 font-semibold ${transaction.type === 'income' ? 'amount-positive' : 'amount-negative'}`}>
                         {transaction.type === 'income' ? '+' : '-'}R$ {transaction.value.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
+                      </td>
+                      <td className="py-3 px-4">
+                        {transaction.proof_url ? (
+                          <a href={transaction.proof_url} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 text-indigo-600 hover:underline">
+                            <FaFileAlt className="inline-block" />
+                            <FaExternalLinkAlt className="inline-block text-xs" />
+                          </a>
+                        ) : (
+                          <span className="text-slate-400">-</span>
+                        )}
+                      </td>
+                      <td className="py-3 px-4">
+                        {transaction.paid ? (
+                          <span className="inline-block px-3 py-1 rounded-full bg-green-100 text-green-700 text-xs font-semibold">Pago</span>
+                        ) : (
+                          <span className="inline-block px-3 py-1 rounded-full bg-yellow-100 text-yellow-700 text-xs font-semibold">Pendente</span>
+                        )}
                       </td>
                       <td className="py-3 px-4">
                         <div className="flex gap-2">
