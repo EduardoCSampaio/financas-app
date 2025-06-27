@@ -1,7 +1,7 @@
 "use client";
 import { useEffect, useState, useCallback } from "react";
 import { useRouter } from 'next/navigation';
-import { useAuth, useCategories } from '@/contexts/AuthContext';
+import { useAuth } from '@/contexts/AuthContext';
 import { FaEdit, FaTrash, FaChevronDown, FaFileAlt, FaExternalLinkAlt } from 'react-icons/fa';
 import debounce from 'lodash.debounce';
 import Pagination from "@/components/Pagination";
@@ -79,7 +79,6 @@ export default function DashboardPage() {
     selectedAccount, 
     selectAccount,
     fetchAccounts,
-    categories
   } = useAuth();
   const router = useRouter();
   
@@ -371,9 +370,9 @@ export default function DashboardPage() {
               <label className="text-xs text-slate-600 mb-1">Categoria</label>
               <select value={filterCategory} onChange={e => setFilterCategory(e.target.value)} className="apple-input w-40">
                 <option value="">Todas</option>
-                {categories.map(cat => (
+                {/* categories.map(cat => (
                   <option key={cat.id} value={cat.id}>{cat.name}</option>
-                ))}
+                )) */}
               </select>
             </div>
             <div className="flex flex-col">
