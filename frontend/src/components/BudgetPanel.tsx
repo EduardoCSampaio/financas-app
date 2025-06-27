@@ -10,11 +10,6 @@ interface Budget {
   month?: string;
 }
 
-interface Category {
-  id: number;
-  name: string;
-}
-
 interface BudgetPanelProps {
   userId: number;
   currentMonth: string;
@@ -94,9 +89,6 @@ const BudgetPanel: React.FC<BudgetPanelProps> = ({ userId, currentMonth, expense
   // Só mostrar categorias que têm orçamento definido
   const budgetedCategories = budgets.map(b => b.category_id);
   const availableCategories = userCategories.filter(cat => !budgetedCategories.includes(cat.id));
-
-  const getBudgetForCategory = (catId: number) =>
-    budgets.find((b) => b.category_id === catId && (!b.month || b.month === currentMonth));
 
   return (
     <div className="apple-card p-6 mb-8">
