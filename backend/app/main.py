@@ -4,7 +4,8 @@ from fastapi.staticfiles import StaticFiles
 from .database import engine, Base
 from .routers import auth, transactions, users, accounts
 import os
-import subprocess
+from alembic.config import Config
+from alembic import command
 
 # Criar diretório de uploads se não existir
 if not os.path.exists("backend/static/uploads"):
@@ -48,5 +49,9 @@ def read_root():
 
 @app.get("/run-migrations")
 def run_migrations():
-    result = subprocess.run(["alembic", "upgrade", "head"], capture_output=True, text=True)
-    return {"stdout": result.stdout, "stderr": result.stderr}
+    alembic_cfg = Config("alembic.ini")
+    try:
+        command.upgrade(alembic_cfg, "head")
+        return {"status": "success"}
+    except Exception as e:
+        return {"status": "error", "detail": str(e)}
