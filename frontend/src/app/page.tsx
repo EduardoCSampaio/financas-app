@@ -262,81 +262,72 @@ export default function DashboardPage() {
   return (
     <div className="space-y-8">
       {/* Header com saudação e seletor de contas */}
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-6">
-          <div>
-            <h1 className="apple-title">
-              Olá, {user?.name || user?.email || 'Usuário'} 
-            </h1>
-            <p className="text-lg text-slate-600 mt-1">
-              Bem-vindo ao seu dashboard premium
-            </p>
-          </div>
-          
-          {/* Seletor de contas */}
-          {accounts.length > 0 && (
-            <Menu as="div" className="relative">
-              <Menu.Button className="apple-btn-secondary inline-flex items-center gap-2">
-                {selectedAccount ? selectedAccount.name : 'Selecionar Conta'}
-                <FaChevronDown className="text-sm" />
-              </Menu.Button>
-              <Transition
-                as={Fragment}
-                enter="transition ease-out duration-100"
-                enterFrom="transform opacity-0 scale-95"
-                enterTo="transform opacity-100 scale-100"
-                leave="transition ease-in duration-75"
-                leaveFrom="transform opacity-100 scale-100"
-                leaveTo="transform opacity-0 scale-95"
-              >
-                <Menu.Items className="absolute right-0 z-10 mt-2 w-56 origin-top-right bg-white rounded-xl shadow-lg border border-slate-200 focus:outline-none">
-                  <div className="py-1">
-                    {accounts.map((account) => (
-                      <Menu.Item key={account.id}>
-                        {({ active }) => (
-                          <button
-                            onClick={() => selectAccount(account)}
-                            className={`${
-                              active ? 'bg-slate-50 text-slate-900' : 'text-slate-700'
-                            } ${
-                              selectedAccount?.id === account.id ? 'bg-indigo-50 text-indigo-700' : ''
-                            } block w-full text-left px-4 py-2 text-sm font-medium`}
-                          >
-                            {account.name}
-                          </button>
-                        )}
-                      </Menu.Item>
-                    ))}
-                    <div className="border-t border-slate-200 my-1" />
-                    <Menu.Item>
-                      {({ active }) => (
-                        <Link
-                          href="/accounts"
-                          className={`${
-                            active ? 'bg-slate-50 text-slate-900' : 'text-slate-700'
-                          } block px-4 py-2 text-sm font-medium`}
-                        >
-                          Gerenciar Contas
-                        </Link>
-                      )}
-                    </Menu.Item>
-                  </div>
-                </Menu.Items>
-              </Transition>
-            </Menu>
-          )}
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+        <div className="flex flex-col gap-2">
+          <h1 className="apple-title text-2xl sm:text-3xl">
+            Olá, {user?.name || user?.email || 'Usuário'}
+          </h1>
+          <p className="text-base sm:text-lg text-slate-600 mt-1">
+            Bem-vindo ao seu dashboard premium
+          </p>
         </div>
         
-        <button 
-          onClick={() => setIsAddModalOpen(true)}
-          className="apple-btn"
-        >
-          Nova Transação
-        </button>
+        {/* Seletor de contas */}
+        {accounts.length > 0 && (
+          <Menu as="div" className="relative">
+            <Menu.Button className="apple-btn-secondary inline-flex items-center gap-2">
+              {selectedAccount ? selectedAccount.name : 'Selecionar Conta'}
+              <FaChevronDown className="text-sm" />
+            </Menu.Button>
+            <Transition
+              as={Fragment}
+              enter="transition ease-out duration-100"
+              enterFrom="transform opacity-0 scale-95"
+              enterTo="transform opacity-100 scale-100"
+              leave="transition ease-in duration-75"
+              leaveFrom="transform opacity-100 scale-100"
+              leaveTo="transform opacity-0 scale-95"
+            >
+              <Menu.Items className="absolute right-0 z-10 mt-2 w-56 origin-top-right bg-white rounded-xl shadow-lg border border-slate-200 focus:outline-none">
+                <div className="py-1">
+                  {accounts.map((account) => (
+                    <Menu.Item key={account.id}>
+                      {({ active }) => (
+                        <button
+                          onClick={() => selectAccount(account)}
+                          className={`${
+                            active ? 'bg-slate-50 text-slate-900' : 'text-slate-700'
+                          } ${
+                            selectedAccount?.id === account.id ? 'bg-indigo-50 text-indigo-700' : ''
+                          } block w-full text-left px-4 py-2 text-sm font-medium`}
+                        >
+                          {account.name}
+                        </button>
+                      )}
+                    </Menu.Item>
+                  ))}
+                  <div className="border-t border-slate-200 my-1" />
+                  <Menu.Item>
+                    {({ active }) => (
+                      <Link
+                        href="/accounts"
+                        className={`${
+                          active ? 'bg-slate-50 text-slate-900' : 'text-slate-700'
+                        } block px-4 py-2 text-sm font-medium`}
+                      >
+                        Gerenciar Contas
+                      </Link>
+                    )}
+                  </Menu.Item>
+                </div>
+              </Menu.Items>
+            </Transition>
+          </Menu>
+        )}
       </div>
 
       {/* Cards de resumo */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6">
         <div className="apple-card">
           <div className="text-slate-600 font-medium mb-2">Saldo Atual</div>
           <div className="text-3xl font-bold text-slate-800 mb-1">
@@ -386,8 +377,8 @@ export default function DashboardPage() {
       {/* Conteúdo principal */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         {/* Tabela de transações */}
-        <div className="lg:col-span-2 apple-card">
-          <div className="apple-subtitle mb-6">Transações Recentes</div>
+        <div className="lg:col-span-2 apple-card p-2 sm:p-6">
+          <div className="apple-subtitle mb-4 sm:mb-6">Transações Recentes</div>
           
           {/* Filtros avançados */}
           <div className="apple-card mb-6 flex flex-wrap gap-4 items-end p-6">
@@ -445,28 +436,28 @@ export default function DashboardPage() {
             </div>
           ) : (
             <div className="overflow-x-auto">
-              <table className="w-full">
+              <table className="w-full min-w-[600px] sm:min-w-0 text-sm">
                 <thead>
                   <tr className="border-b border-slate-200">
-                    <th className="text-left py-3 px-4 text-slate-600 font-semibold">Data</th>
-                    <th className="text-left py-3 px-4 text-slate-600 font-semibold">Descrição</th>
-                    <th className="text-left py-3 px-4 text-slate-600 font-semibold">Categoria</th>
-                    <th className="text-left py-3 px-4 text-slate-600 font-semibold">Valor</th>
-                    <th className="text-left py-3 px-4 text-slate-600 font-semibold">Comprovante</th>
-                    <th className="text-left py-3 px-4 text-slate-600 font-semibold">Status</th>
-                    <th className="text-left py-3 px-4 text-slate-600 font-semibold">Ações</th>
+                    <th className="py-2 px-2 sm:py-3 sm:px-4 text-slate-600 font-semibold">Data</th>
+                    <th className="py-2 px-2 sm:py-3 sm:px-4 text-slate-600 font-semibold">Descrição</th>
+                    <th className="py-2 px-2 sm:py-3 sm:px-4 text-slate-600 font-semibold hidden xs:table-cell">Categoria</th>
+                    <th className="py-2 px-2 sm:py-3 sm:px-4 text-slate-600 font-semibold">Valor</th>
+                    <th className="py-2 px-2 sm:py-3 sm:px-4 text-slate-600 font-semibold hidden md:table-cell">Comprovante</th>
+                    <th className="py-2 px-2 sm:py-3 sm:px-4 text-slate-600 font-semibold hidden md:table-cell">Status</th>
+                    <th className="py-2 px-2 sm:py-3 sm:px-4 text-slate-600 font-semibold">Ações</th>
                   </tr>
                 </thead>
                 <tbody>
                   {transactions.map((transaction) => (
                     <tr key={transaction.id} className="border-b border-slate-100 hover:bg-slate-50">
-                      <td className="py-3 px-4 text-slate-700">
+                      <td className="py-2 px-2 sm:py-3 sm:px-4 text-slate-700 whitespace-nowrap">
                         {new Date(transaction.date).toLocaleDateString('pt-BR')}
                       </td>
-                      <td className="py-3 px-4 text-slate-800 font-medium">
+                      <td className="py-2 px-2 sm:py-3 sm:px-4 text-slate-800 font-medium">
                         {transaction.description}
                       </td>
-                      <td className="py-3 px-4">
+                      <td className="py-2 px-2 sm:py-3 sm:px-4 text-slate-700 hidden xs:table-cell">
                         {isCategoryObject(transaction.category) ? (
                           <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium text-white ${getCategoryColor(transaction.category.name)}`}>
                             {transaction.category.name}
@@ -475,10 +466,10 @@ export default function DashboardPage() {
                           <span className="text-slate-500">-</span>
                         )}
                       </td>
-                      <td className={`py-3 px-4 font-semibold ${transaction.type === 'income' ? 'amount-positive' : 'amount-negative'}`}>
+                      <td className={`py-2 px-2 sm:py-3 sm:px-4 font-semibold ${transaction.type === 'income' ? 'amount-positive' : 'amount-negative'}`}>
                         {transaction.type === 'income' ? '+' : '-'}R$ {transaction.value.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
                       </td>
-                      <td className="py-3 px-4">
+                      <td className="py-2 px-2 sm:py-3 sm:px-4 hidden md:table-cell">
                         {transaction.proof_url ? (
                           <a href={transaction.proof_url} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 text-indigo-600 hover:underline">
                             <FaFileAlt className="inline-block" />
@@ -488,15 +479,15 @@ export default function DashboardPage() {
                           <span className="text-slate-400">-</span>
                         )}
                       </td>
-                      <td className="py-3 px-4">
+                      <td className="py-2 px-2 sm:py-3 sm:px-4 hidden md:table-cell">
                         {transaction.paid ? (
                           <span className="inline-block px-3 py-1 rounded-full bg-green-100 text-green-700 text-xs font-semibold">Pago</span>
                         ) : (
                           <span className="inline-block px-3 py-1 rounded-full bg-yellow-100 text-yellow-700 text-xs font-semibold">Pendente</span>
                         )}
                       </td>
-                      <td className="py-3 px-4">
-                        <div className="flex gap-2">
+                      <td className="py-2 px-2 sm:py-3 sm:px-4">
+                        <div className="flex gap-2 flex-wrap">
                           <button
                             onClick={() => {
                               setSelectedTransactionForEdit(transaction);
@@ -533,9 +524,9 @@ export default function DashboardPage() {
         </div>
 
         {/* Gráfico */}
-        <div className="apple-card">
-          <div className="apple-subtitle mb-6">Resumo Gráfico</div>
-          <div className="w-full h-64 flex items-center justify-center">
+        <div className="apple-card mt-8 lg:mt-0">
+          <div className="apple-subtitle mb-4 sm:mb-6">Resumo Gráfico</div>
+          <div className="w-full h-64 bg-gradient-to-br from-indigo-50 to-blue-50 rounded-xl flex items-center justify-center">
             {Object.keys(despesasPorCategoria).length > 0 ? (
               <Pie data={pieData} options={{
                 plugins: {

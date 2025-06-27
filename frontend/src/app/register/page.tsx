@@ -71,13 +71,13 @@ export default function RegisterPage() {
   }
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-slate-50 to-slate-100">
-      <div className="w-full max-w-md p-8 bg-white rounded-2xl shadow-xl border border-slate-200">
+    <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 px-2">
+      <div className="w-full max-w-md p-4 sm:p-8 bg-white rounded-2xl shadow-xl border border-slate-200">
         <div className="flex flex-col items-center mb-6">
           <Image src="/logo.svg" alt="Logo" width={44} height={44} />
           <span className="text-2xl font-extrabold text-indigo-600 tracking-tight mt-2 select-none" style={{letterSpacing: '-0.03em'}}>FinançasPro</span>
         </div>
-        <h1 className="apple-title text-center mb-6">Criar conta</h1>
+        <h1 className="apple-title text-center mb-6 text-xl sm:text-2xl">Criar conta</h1>
         <form onSubmit={handleSubmit} className="space-y-6">
           <div className="flex gap-4 mb-4">
             <label className="flex items-center gap-2 text-slate-700 font-medium">
@@ -186,11 +186,7 @@ export default function RegisterPage() {
             </div>
             {error && <span className="text-xs text-red-500 mt-1 block">{error}</span>}
           </div>
-          <button
-            type="submit"
-            className="apple-btn w-full flex items-center justify-center"
-            disabled={loading}
-          >
+          <button type="submit" className="apple-btn w-full flex items-center justify-center text-base py-3" disabled={loading}>
             {loading ? <span className="loader ml-2 w-4 h-4 border-2 border-t-2 border-indigo-600 border-t-transparent rounded-full animate-spin"></span> : "Criar conta"}
           </button>
         </form>
