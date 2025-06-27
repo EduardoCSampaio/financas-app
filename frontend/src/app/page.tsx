@@ -166,11 +166,17 @@ export default function DashboardPage() {
 
   // Agrupar despesas por categoria
   const despesasPorCategoria: Record<string, number> = {};
-  transactions.filter(t => t.type === 'expense' && t.category && typeof t.category === 'object' && t.category.name)
-    .forEach(t => {
-      const cat = t.category.name;
+  transactions.forEach(t => {
+    if (
+      t.type === 'expense' &&
+      t.category &&
+      typeof t.category === 'object' &&
+      (t.category as { name?: string }).name
+    ) {
+      const cat = (t.category as { name: string }).name;
       despesasPorCategoria[cat] = (despesasPorCategoria[cat] || 0) + t.value;
-    });
+    }
+  });
   const pieData = {
     labels: Object.keys(despesasPorCategoria),
     datasets: [
