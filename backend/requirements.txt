@@ -9,3 +9,4 @@ pydantic
 pydantic
 python-dotenv
 email-validator
+alembic
