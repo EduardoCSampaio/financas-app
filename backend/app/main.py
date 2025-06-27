@@ -46,3 +46,12 @@ app.include_router(category_router)
 @app.get("/", tags=["Root"])
 def read_root():
     return {"message": "Bem-vindo à API Financeira Premium!"}
+
+@app.get("/run-migrations")
+def run_migrations():
+    alembic_cfg = Config("alembic.ini")
+    try:
+        command.upgrade(alembic_cfg, "head")
+        return {"status": "success"}
+    except Exception as e:
+        return {"status": "error", "detail": str(e)}
