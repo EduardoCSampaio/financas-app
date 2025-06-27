@@ -1,7 +1,7 @@
 "use client";
 import { useEffect, useState, useCallback } from "react";
 import { useRouter } from 'next/navigation';
-import { useAuth } from '@/contexts/AuthContext';
+import { useAuth, useCategories } from '@/contexts/AuthContext';
 import { FaEdit, FaTrash, FaChevronDown, FaFileAlt, FaExternalLinkAlt } from 'react-icons/fa';
 import debounce from 'lodash.debounce';
 import Pagination from "@/components/Pagination";
@@ -20,6 +20,8 @@ import {
   Tooltip,
   Legend
 } from 'chart.js';
+import BudgetPanel from '@/components/BudgetPanel';
+import { saveAs } from 'file-saver';
 ChartJS.register(ArcElement, Tooltip, Legend);
 
 // Spinner de carregamento
@@ -51,6 +53,24 @@ function getCategoryColor(name: string) {
   return colors[idx];
 }
 
+// Função para exportar CSV
+function exportCSV() {
+  const headers = [
+    'Data', 'Descrição', 'Categoria', 'Valor', 'Comprovante', 'Status'
+  ];
+  const rows = transactions.map(t => [
+    new Date(t.date).toLocaleDateString('pt-BR'),
+    t.description,
+    isCategoryObject(t.category) ? t.category.name : '-',
+    (t.type === 'income' ? '+' : '-') + 'R$ ' + t.value.toLocaleString('pt-BR', { minimumFractionDigits: 2 }),
+    t.proof_url || '-',
+    t.paid ? 'Pago' : 'Pendente',
+  ]);
+  const csv = [headers, ...rows].map(r => r.map(v => '"' + String(v).replace(/"/g, '""') + '"').join(',')).join('\n');
+  const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+  saveAs(blob, 'transacoes.csv');
+}
+
 export default function DashboardPage() {
   const { 
     token, 
@@ -58,8 +78,10 @@ export default function DashboardPage() {
     accounts, 
     selectedAccount, 
     selectAccount,
-    fetchAccounts 
+    fetchAccounts,
+    categories
   } = useAuth();
+  const { categories: authCategories } = useCategories();
   const router = useRouter();
   
   const [transactions, setTransactions] = useState<Transaction[]>([]);
@@ -74,6 +96,12 @@ export default function DashboardPage() {
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [selectedTransactionForEdit, setSelectedTransactionForEdit] = useState<Transaction | null>(null);
+  const [filterText, setFilterText] = useState('');
+  const [filterCategory, setFilterCategory] = useState('');
+  const [filterType, setFilterType] = useState('');
+  const [filterStatus, setFilterStatus] = useState('');
+  const [filterStartDate, setFilterStartDate] = useState('');
+  const [filterEndDate, setFilterEndDate] = useState('');
 
   const handleTransactionAdded = (newTransaction: Transaction) => {
     if(selectedAccount && newTransaction.account_id === selectedAccount.id) {
@@ -103,7 +131,7 @@ export default function DashboardPage() {
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const debouncedFetch = useCallback(
-    debounce(async (currentAccount, currentSearch, currentCategory, page, limit, currentStartDate, currentEndDate) => {
+    debounce(async (currentAccount, currentSearch, currentCategory, page, limit, currentStartDate, currentEndDate, currentType, currentStatus) => {
       if (!currentAccount) {
         setTransactions([]);
         setTotalPages(1);
@@ -121,6 +149,8 @@ export default function DashboardPage() {
         limit: String(limit),
         ...(currentStartDate ? { start_date: currentStartDate } : {}),
         ...(currentEndDate ? { end_date: currentEndDate } : {}),
+        ...(currentType ? { type: currentType } : {}),
+        ...(currentStatus ? { status: currentStatus } : {}),
       };
 
       try {
@@ -142,14 +172,24 @@ export default function DashboardPage() {
 
   useEffect(() => {
     if (token && selectedAccount) {
-      debouncedFetch(selectedAccount, search, category, currentPage, itemsPerPage, startDate, endDate);
+      debouncedFetch(
+        selectedAccount,
+        filterText,
+        filterCategory,
+        currentPage,
+        itemsPerPage,
+        filterStartDate,
+        filterEndDate,
+        filterType,
+        filterStatus
+      );
     } else if (token && accounts.length === 0) {
       setLoading(false);
       setTransactions([]);
     } else if (!token) {
       router.push('/login');
     }
-  }, [token, selectedAccount, search, category, currentPage, itemsPerPage, router, debouncedFetch, accounts, startDate, endDate]);
+  }, [token, selectedAccount, filterText, filterCategory, currentPage, itemsPerPage, router, debouncedFetch, accounts, filterStartDate, filterEndDate, filterType, filterStatus]);
 
   // Cálculos derivados usam 'transactions'
   const saldo = transactions.reduce(
@@ -190,6 +230,23 @@ export default function DashboardPage() {
       },
     ],
   };
+
+  // Calcular gastos do mês atual por categoria
+  const now = new Date();
+  const currentMonth = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
+  const expensesByCategory: Record<number, number> = {};
+  transactions.forEach(t => {
+    if (
+      t.type === 'expense' &&
+      t.category &&
+      typeof t.category === 'object' &&
+      (t.category as { id?: number }).id &&
+      t.date.startsWith(currentMonth)
+    ) {
+      const catId = (t.category as { id: number }).id;
+      expensesByCategory[catId] = (expensesByCategory[catId] || 0) + t.value;
+    }
+  });
 
   return (
     <div className="space-y-8">
@@ -300,11 +357,60 @@ export default function DashboardPage() {
         </div>
       </div>
 
+      {/* Painel de orçamento por categoria */}
+      <BudgetPanel userId={user?.id} currentMonth={currentMonth} expensesByCategory={expensesByCategory} />
+
       {/* Conteúdo principal */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         {/* Tabela de transações */}
         <div className="lg:col-span-2 apple-card">
           <div className="apple-subtitle mb-6">Transações Recentes</div>
+          
+          {/* Filtros avançados */}
+          <div className="apple-card mb-6 flex flex-wrap gap-4 items-end p-6">
+            <div className="flex flex-col">
+              <label className="text-xs text-slate-600 mb-1">Buscar</label>
+              <input type="text" value={filterText} onChange={e => setFilterText(e.target.value)} placeholder="Descrição..." className="apple-input w-40" />
+            </div>
+            <div className="flex flex-col">
+              <label className="text-xs text-slate-600 mb-1">Categoria</label>
+              <select value={filterCategory} onChange={e => setFilterCategory(e.target.value)} className="apple-input w-40">
+                <option value="">Todas</option>
+                {categories.map(cat => (
+                  <option key={cat.id} value={cat.id}>{cat.name}</option>
+                ))}
+              </select>
+            </div>
+            <div className="flex flex-col">
+              <label className="text-xs text-slate-600 mb-1">Tipo</label>
+              <select value={filterType} onChange={e => setFilterType(e.target.value)} className="apple-input w-32">
+                <option value="">Todos</option>
+                <option value="income">Receita</option>
+                <option value="expense">Despesa</option>
+              </select>
+            </div>
+            <div className="flex flex-col">
+              <label className="text-xs text-slate-600 mb-1">Status</label>
+              <select value={filterStatus} onChange={e => setFilterStatus(e.target.value)} className="apple-input w-32">
+                <option value="">Todos</option>
+                <option value="paid">Pago</option>
+                <option value="pending">Pendente</option>
+              </select>
+            </div>
+            <div className="flex flex-col">
+              <label className="text-xs text-slate-600 mb-1">Data Inicial</label>
+              <input type="date" value={filterStartDate} onChange={e => setFilterStartDate(e.target.value)} className="apple-input w-36" />
+            </div>
+            <div className="flex flex-col">
+              <label className="text-xs text-slate-600 mb-1">Data Final</label>
+              <input type="date" value={filterEndDate} onChange={e => setFilterEndDate(e.target.value)} className="apple-input w-36" />
+            </div>
+          </div>
+          
+          {/* Botão de exportação */}
+          <div className="flex justify-end mb-2">
+            <button onClick={exportCSV} className="apple-btn-secondary px-4 py-2 text-sm">Exportar CSV</button>
+          </div>
           
           {loading ? (
             <div className="flex justify-center py-8">

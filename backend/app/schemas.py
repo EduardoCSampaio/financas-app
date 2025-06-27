@@ -98,4 +98,22 @@ class ForgotPasswordRequest(BaseModel):
 
 class ResetPasswordConfirmRequest(BaseModel):
     token: str
-    new_password: str 
+    new_password: str
+
+class CategoryBudgetBase(BaseModel):
+    category_id: int
+    limit: float
+    month: str | None = None
+
+class CategoryBudgetCreate(CategoryBudgetBase):
+    pass
+
+class CategoryBudgetUpdate(BaseModel):
+    limit: float
+    month: str | None = None
+
+class CategoryBudgetOut(CategoryBudgetBase):
+    id: int
+    user_id: int
+    class Config:
+        orm_mode = True 

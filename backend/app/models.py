@@ -41,4 +41,14 @@ class Transaction(Base):
     account_id = Column(Integer, ForeignKey("accounts.id"))
     account = relationship("Account", back_populates="transactions")
     category_id = Column(Integer, ForeignKey("categories.id"), nullable=True)
-    category = relationship("Category", back_populates="transactions") 
+    category = relationship("Category", back_populates="transactions")
+
+class CategoryBudget(Base):
+    __tablename__ = "category_budgets"
+    id = Column(Integer, primary_key=True, index=True)
+    user_id = Column(Integer, ForeignKey("users.id"), nullable=False)
+    category_id = Column(Integer, ForeignKey("categories.id"), nullable=False)
+    limit = Column(Float, nullable=False)
+    month = Column(String, nullable=True)  # Ex: '2024-06' para orçamentos mensais específicos
+    user = relationship("User")
+    category = relationship("Category") 

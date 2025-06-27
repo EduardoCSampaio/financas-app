@@ -2,6 +2,8 @@ from sqlalchemy.orm import Session
 from typing import Optional, List
 from . import models, schemas, security
 from datetime import datetime
+from .models import CategoryBudget
+from .schemas import CategoryBudgetCreate, CategoryBudgetUpdate
 
 # Funções CRUD para User
 def get_user_by_email(db: Session, email: str):
@@ -165,4 +167,33 @@ def delete_category(db: Session, category_id: int):
     if db_category:
         db.delete(db_category)
         db.commit()
-    return db_category 
+    return db_category
+
+def get_category_budget(db: Session, user_id: int, category_id: int, month: str | None = None):
+    query = db.query(CategoryBudget).filter(CategoryBudget.user_id == user_id, CategoryBudget.category_id == category_id)
+    if month:
+        query = query.filter(CategoryBudget.month == month)
+    return query.first()
+
+def get_category_budgets(db: Session, user_id: int):
+    return db.query(CategoryBudget).filter(CategoryBudget.user_id == user_id).all()
+
+def create_or_update_category_budget(db: Session, user_id: int, data: CategoryBudgetCreate):
+    budget = get_category_budget(db, user_id, data.category_id, data.month)
+    if budget:
+        budget.limit = data.limit
+        budget.month = data.month
+    else:
+        budget = CategoryBudget(user_id=user_id, **data.dict())
+        db.add(budget)
+    db.commit()
+    db.refresh(budget)
+    return budget
+
+def delete_category_budget(db: Session, user_id: int, category_id: int, month: str | None = None):
+    budget = get_category_budget(db, user_id, category_id, month)
+    if budget:
+        db.delete(budget)
+        db.commit()
+        return True
+    return False 

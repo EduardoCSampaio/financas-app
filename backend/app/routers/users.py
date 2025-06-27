@@ -2,7 +2,8 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 from .. import schemas, crud, models, security
 from ..database import get_db
-from .auth import get_current_active_user
+from .auth import get_current_active_user, get_current_user
+from typing import Optional
 
 router = APIRouter()
 
@@ -45,4 +46,19 @@ def reset_password(
     user = crud.reset_user_password(db, data.email, data.new_password)
     if not user:
         raise HTTPException(status_code=404, detail="Usuário não encontrado")
-    return user 
+    return user
+
+@router.get("/budgets", response_model=list[schemas.CategoryBudgetOut])
+def list_category_budgets(db: Session = Depends(get_db), current_user: models.User = Depends(get_current_user)):
+    return crud.get_category_budgets(db, current_user.id)
+
+@router.post("/budgets", response_model=schemas.CategoryBudgetOut)
+def set_category_budget(data: schemas.CategoryBudgetCreate, db: Session = Depends(get_db), current_user: models.User = Depends(get_current_user)):
+    return crud.create_or_update_category_budget(db, current_user.id, data)
+
+@router.delete("/budgets/{category_id}")
+def delete_category_budget(category_id: int, month: Optional[str] = None, db: Session = Depends(get_db), current_user: models.User = Depends(get_current_user)):
+    ok = crud.delete_category_budget(db, current_user.id, category_id, month)
+    if not ok:
+        raise HTTPException(status_code=404, detail="Budget not found")
+    return {"ok": True} 
