@@ -2,7 +2,7 @@
 import { useEffect, useState, useCallback } from "react";
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
-import { FaEdit, FaTrash } from 'react-icons/fa';
+import { FaEdit, FaTrash, FaChevronDown } from 'react-icons/fa';
 import debounce from 'lodash.debounce';
 import Pagination from "@/components/Pagination";
 import { toast } from 'react-toastify';
@@ -10,6 +10,9 @@ import api from "@/lib/api"; // Importando o cliente API
 import AddTransactionModal from '@/components/AddTransactionModal';
 import EditTransactionModal from '@/components/EditTransactionModal';
 import { Transaction } from '@/types';
+import { Menu, Transition } from '@headlessui/react';
+import { Fragment } from 'react';
+import Link from 'next/link';
 
 // Spinner de carregamento
 function Spinner() {
@@ -46,6 +49,7 @@ export default function DashboardPage() {
     user, 
     accounts, 
     selectedAccount, 
+    selectAccount,
     fetchAccounts 
   } = useAuth();
   const router = useRouter();
@@ -154,16 +158,72 @@ export default function DashboardPage() {
 
   return (
     <div className="space-y-8">
-      {/* Header com saudação */}
+      {/* Header com saudação e seletor de contas */}
       <div className="flex items-center justify-between">
-        <div>
-          <h1 className="apple-title">
-            Olá, {user?.email || 'Usuário'} 👋
-          </h1>
-          <p className="text-lg text-slate-600 mt-1">
-            Bem-vindo ao seu dashboard premium
-          </p>
+        <div className="flex items-center gap-6">
+          <div>
+            <h1 className="apple-title">
+              Olá, {user?.email || 'Usuário'} 👋
+            </h1>
+            <p className="text-lg text-slate-600 mt-1">
+              Bem-vindo ao seu dashboard premium
+            </p>
+          </div>
+          
+          {/* Seletor de contas */}
+          {accounts.length > 0 && (
+            <Menu as="div" className="relative">
+              <Menu.Button className="apple-btn-secondary inline-flex items-center gap-2">
+                {selectedAccount ? selectedAccount.name : 'Selecionar Conta'}
+                <FaChevronDown className="text-sm" />
+              </Menu.Button>
+              <Transition
+                as={Fragment}
+                enter="transition ease-out duration-100"
+                enterFrom="transform opacity-0 scale-95"
+                enterTo="transform opacity-100 scale-100"
+                leave="transition ease-in duration-75"
+                leaveFrom="transform opacity-100 scale-100"
+                leaveTo="transform opacity-0 scale-95"
+              >
+                <Menu.Items className="absolute right-0 z-10 mt-2 w-56 origin-top-right bg-white rounded-xl shadow-lg border border-slate-200 focus:outline-none">
+                  <div className="py-1">
+                    {accounts.map((account) => (
+                      <Menu.Item key={account.id}>
+                        {({ active }) => (
+                          <button
+                            onClick={() => selectAccount(account)}
+                            className={`${
+                              active ? 'bg-slate-50 text-slate-900' : 'text-slate-700'
+                            } ${
+                              selectedAccount?.id === account.id ? 'bg-indigo-50 text-indigo-700' : ''
+                            } block w-full text-left px-4 py-2 text-sm font-medium`}
+                          >
+                            {account.name}
+                          </button>
+                        )}
+                      </Menu.Item>
+                    ))}
+                    <div className="border-t border-slate-200 my-1" />
+                    <Menu.Item>
+                      {({ active }) => (
+                        <Link
+                          href="/accounts"
+                          className={`${
+                            active ? 'bg-slate-50 text-slate-900' : 'text-slate-700'
+                          } block px-4 py-2 text-sm font-medium`}
+                        >
+                          Gerenciar Contas
+                        </Link>
+                      )}
+                    </Menu.Item>
+                  </div>
+                </Menu.Items>
+              </Transition>
+            </Menu>
+          )}
         </div>
+        
         <button 
           onClick={() => setIsAddModalOpen(true)}
           className="apple-btn"
