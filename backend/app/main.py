@@ -4,6 +4,7 @@ from fastapi.staticfiles import StaticFiles
 from .database import engine, Base
 from .routers import auth, transactions, users, accounts
 import os
+import subprocess
 
 # Criar diretório de uploads se não existir
 if not os.path.exists("backend/static/uploads"):
@@ -44,3 +45,8 @@ app.include_router(category_router)
 @app.get("/", tags=["Root"])
 def read_root():
     return {"message": "Bem-vindo à API Financeira Premium!"}
+
+@app.get("/run-migrations")
+def run_migrations():
+    result = subprocess.run(["alembic", "upgrade", "head"], capture_output=True, text=True)
+    return {"stdout": result.stdout, "stderr": result.stderr}
