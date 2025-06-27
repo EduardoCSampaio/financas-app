@@ -13,6 +13,14 @@ import { Transaction } from '@/types';
 import { Menu, Transition } from '@headlessui/react';
 import { Fragment } from 'react';
 import Link from 'next/link';
+import { Pie } from 'react-chartjs-2';
+import {
+  Chart as ChartJS,
+  ArcElement,
+  Tooltip,
+  Legend
+} from 'chart.js';
+ChartJS.register(ArcElement, Tooltip, Legend);
 
 // Spinner de carregamento
 function Spinner() {
@@ -156,6 +164,27 @@ export default function DashboardPage() {
   const receitasTrend = 2.1;
   const despesasTrend = -1.3;
 
+  // Agrupar despesas por categoria
+  const despesasPorCategoria: Record<string, number> = {};
+  transactions.filter(t => t.type === 'expense' && t.category && typeof t.category === 'object' && t.category.name)
+    .forEach(t => {
+      const cat = t.category.name;
+      despesasPorCategoria[cat] = (despesasPorCategoria[cat] || 0) + t.value;
+    });
+  const pieData = {
+    labels: Object.keys(despesasPorCategoria),
+    datasets: [
+      {
+        data: Object.values(despesasPorCategoria),
+        backgroundColor: [
+          '#6366f1', '#818cf8', '#a5b4fc', '#f472b6', '#fbbf24', '#34d399', '#60a5fa', '#f87171', '#facc15', '#38bdf8'
+        ],
+        borderWidth: 2,
+        borderColor: '#fff',
+      },
+    ],
+  };
+
   return (
     <div className="space-y-8">
       {/* Header com saudação e seletor de contas */}
@@ -163,7 +192,7 @@ export default function DashboardPage() {
         <div className="flex items-center gap-6">
           <div>
             <h1 className="apple-title">
-              Olá, {user?.name || user?.email || 'Usuário'} ��
+              Olá, {user?.name || user?.email || 'Usuário'} 
             </h1>
             <p className="text-lg text-slate-600 mt-1">
               Bem-vindo ao seu dashboard premium
@@ -352,10 +381,28 @@ export default function DashboardPage() {
         {/* Gráfico */}
         <div className="apple-card">
           <div className="apple-subtitle mb-6">Resumo Gráfico</div>
-          <div className="w-full h-64 bg-gradient-to-br from-indigo-50 to-blue-50 rounded-xl flex items-center justify-center">
-            <div className="text-indigo-600 font-semibold opacity-70">
-              [ Gráfico de barras aqui ]
-            </div>
+          <div className="w-full h-64 flex items-center justify-center">
+            {Object.keys(despesasPorCategoria).length > 0 ? (
+              <Pie data={pieData} options={{
+                plugins: {
+                  legend: {
+                    display: true,
+                    position: 'right',
+                    labels: {
+                      color: '#334155',
+                      font: { family: 'Inter, sans-serif', size: 14, weight: 'bold' },
+                      padding: 20,
+                    },
+                  },
+                },
+                responsive: true,
+                maintainAspectRatio: false,
+              }} />
+            ) : (
+              <div className="text-indigo-600 font-semibold opacity-70 text-center">
+                Nenhuma despesa para exibir no gráfico
+              </div>
+            )}
           </div>
         </div>
       </div>
