@@ -61,31 +61,14 @@ export default function DashboardPage() {
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
   const [category, setCategory] = useState('');
-  const [viewMode, setViewMode] = useState<'real' | 'previsto'>('real');
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [itemsPerPage] = useState(10);
-  const [chartType, setChartType] = useState<'pie' | 'bar' | 'line'>('pie');
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [selectedTransactionForEdit, setSelectedTransactionForEdit] = useState<Transaction | null>(null);
-
-  // Refs para os gráficos
-  const pizzaChartRef = useRef<Chart | null>(null);
-  const barChartRef = useRef<Chart | null>(null);
-  const pizzaCanvasRef = useRef<HTMLCanvasElement>(null);
-  const barCanvasRef = useRef<HTMLCanvasElement>(null);
-
-  // Estados para filtros
-  const [pendingSearch, setPendingSearch] = useState('');
-  const [pendingCategory, setPendingCategory] = useState('');
-  const [pendingStartDate, setPendingStartDate] = useState("");
-  const [pendingEndDate, setPendingEndDate] = useState("");
-
-  // Header de boas-vindas e diferenciação de layout
-  const isCNPJ = user?.account_type === 'cnpj';
 
   const handleTransactionAdded = (newTransaction: Transaction) => {
     if(selectedAccount && newTransaction.account_id === selectedAccount.id) {
@@ -109,20 +92,6 @@ export default function DashboardPage() {
       } catch (error) {
         console.error(error);
         toast.error('Erro ao excluir transação.');
-      }
-    }
-  };
-
-  const handleTogglePaid = async (transaction: Transaction) => {
-    try {
-      const response = await api.patch(`/transactions/${transaction.id}/toggle-paid`, { paid: !transaction.paid });
-      handleTransactionUpdated(response.data);
-      toast.success('Status da transação atualizado!');
-    } catch (error: unknown) {
-      if (error instanceof Error) {
-        toast.error(error.message);
-      } else {
-        toast.error('Erro ao atualizar status.');
       }
     }
   };
@@ -166,15 +135,6 @@ export default function DashboardPage() {
     [api, fetchAccounts]
   );
 
-  // Atualizar filtros só ao clicar em Filtrar
-  const handleFilter = () => {
-    setSearch(pendingSearch);
-    setCategory(pendingCategory);
-    setStartDate(pendingStartDate);
-    setEndDate(pendingEndDate);
-    setCurrentPage(1);
-  };
-
   useEffect(() => {
     if (token && selectedAccount) {
       debouncedFetch(selectedAccount, search, category, currentPage, itemsPerPage, startDate, endDate);
@@ -186,18 +146,13 @@ export default function DashboardPage() {
     }
   }, [token, selectedAccount, search, category, currentPage, itemsPerPage, router, debouncedFetch, accounts, startDate, endDate]);
 
-  // Filtra as transações com base na visão selecionada
-  const visibleTransactions = viewMode === 'real' 
-    ? transactions.filter(t => t.paid) 
-    : transactions;
-
-  // Cálculos derivados usam 'visibleTransactions'
-  const saldo = visibleTransactions.reduce(
+  // Cálculos derivados usam 'transactions'
+  const saldo = transactions.reduce(
     (acc, t) => t.type === 'income' ? acc + t.value : acc - t.value, 
     selectedAccount?.initial_balance || 0
   );
-  const receitas = visibleTransactions.filter(t => t.type === 'income').reduce((acc, t) => acc + t.value, 0);
-  const despesas = visibleTransactions.filter(t => t.type === 'expense').reduce((acc, t) => acc + t.value, 0);
+  const receitas = transactions.filter(t => t.type === 'income').reduce((acc, t) => acc + t.value, 0);
+  const despesas = transactions.filter(t => t.type === 'expense').reduce((acc, t) => acc + t.value, 0);
 
   // Cálculo de tendências (simulado)
   const saldoTrend = 5.2;
@@ -284,7 +239,7 @@ export default function DashboardPage() {
                   </tr>
                 </thead>
                 <tbody>
-                  {visibleTransactions.map((transaction) => (
+                  {transactions.map((transaction) => (
                     <tr key={transaction.id} className="border-b border-slate-100 hover:bg-slate-50">
                       <td className="py-3 px-4 text-slate-700">
                         {new Date(transaction.date).toLocaleDateString('pt-BR')}
