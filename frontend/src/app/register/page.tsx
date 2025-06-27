@@ -95,7 +95,7 @@ export default function RegisterPage() {
               id="document"
               mask={accountType === 'cpf' ? '000.000.000-00' : '00.000.000/0000-00'}
               value={document}
-              onAccept={(value: any) => setDocument(value)}
+              onAccept={(value: string) => setDocument(value)}
               placeholder={accountType === 'cpf' ? 'Digite seu CPF' : 'Digite seu CNPJ'}
               className={`w-full px-3 py-2 mt-1 text-white bg-white/5 border ${error ? 'border-red-500' : 'border-zinc-600'} rounded-md focus:outline-none focus:ring-2 focus:ring-amber-400`}
               required

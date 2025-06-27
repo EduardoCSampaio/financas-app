@@ -127,6 +127,7 @@ export default function DashboardPage() {
     }
   };
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   const debouncedFetch = useCallback(
     debounce(async (currentAccount, currentSearch, currentCategory, page, limit, currentStartDate, currentEndDate) => {
       if (!currentAccount) {
