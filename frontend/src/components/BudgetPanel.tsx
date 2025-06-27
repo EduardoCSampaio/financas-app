@@ -9,11 +9,6 @@ interface Budget {
   month?: string;
 }
 
-interface Category {
-  id: number;
-  name: string;
-}
-
 interface BudgetPanelProps {
   userId: number;
   currentMonth: string;
@@ -25,19 +20,15 @@ const BudgetPanel: React.FC<BudgetPanelProps> = ({ userId, currentMonth, expense
   const [budgets, setBudgets] = useState<Budget[]>([]);
   const [editing, setEditing] = useState<{ [catId: number]: boolean }>({});
   const [inputValues, setInputValues] = useState<{ [catId: number]: string }>({});
-  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     fetchBudgets();
   }, [userId]);
 
   const fetchBudgets = async () => {
-    setLoading(true);
     try {
       const res = await api.get('/users/budgets');
       setBudgets(res.data);
-    } finally {
-      setLoading(false);
     }
   };
 
@@ -49,7 +40,6 @@ const BudgetPanel: React.FC<BudgetPanelProps> = ({ userId, currentMonth, expense
   const handleSave = async (catId: number) => {
     const value = parseFloat(inputValues[catId]);
     if (isNaN(value) || value < 0) return;
-    setLoading(true);
     try {
       await api.post('/users/budgets', {
         category_id: catId,
@@ -58,8 +48,6 @@ const BudgetPanel: React.FC<BudgetPanelProps> = ({ userId, currentMonth, expense
       });
       await fetchBudgets();
       setEditing((prev) => ({ ...prev, [catId]: false }));
-    } finally {
-      setLoading(false);
     }
   };
 

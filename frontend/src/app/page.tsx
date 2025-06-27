@@ -81,18 +81,13 @@ export default function DashboardPage() {
     fetchAccounts,
     categories
   } = useAuth();
-  const { categories: authCategories } = useCategories();
   const router = useRouter();
   
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [loading, setLoading] = useState(true);
-  const [search] = useState('');
-  const [category] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [itemsPerPage] = useState(10);
-  const [startDate] = useState("");
-  const [endDate] = useState("");
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [selectedTransactionForEdit, setSelectedTransactionForEdit] = useState<Transaction | null>(null);
