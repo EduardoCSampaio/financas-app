@@ -10,6 +10,7 @@ import { IMaskInput } from 'react-imask';
 
 export default function RegisterPage() {
   const [email, setEmail] = useState('');
+  const [name, setName] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [error, setError] = useState('');
@@ -34,10 +35,14 @@ export default function RegisterPage() {
       setError(accountType === 'cpf' ? 'CPF obrigatório!' : 'CNPJ obrigatório!');
       return;
     }
+    if (!name.trim()) {
+      setError('Nome obrigatório!');
+      return;
+    }
 
     try {
       setLoading(true);
-      await api.post('/users/', { email, password, account_type: accountType, document });
+      await api.post('/users/', { name, email, password, account_type: accountType, document });
       setSuccess(true);
       toast.success('Usuário criado com sucesso! Por favor, faça o login.');
       setTimeout(() => router.push('/login'), 1500);
@@ -110,6 +115,20 @@ export default function RegisterPage() {
               placeholder={accountType === 'cpf' ? 'Digite seu CPF' : 'Digite seu CNPJ'}
               className={`apple-input w-full ${error ? 'border-red-500' : ''}`}
               required
+            />
+          </div>
+          <div>
+            <label htmlFor="name" className="block text-sm font-medium text-slate-700 mb-2">
+              Nome completo
+            </label>
+            <input
+              id="name"
+              type="text"
+              required
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              placeholder="Digite seu nome completo"
+              className={`apple-input w-full ${error ? 'border-red-500' : ''}`}
             />
           </div>
           <div>

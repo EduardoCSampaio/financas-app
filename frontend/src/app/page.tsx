@@ -163,7 +163,7 @@ export default function DashboardPage() {
         <div className="flex items-center gap-6">
           <div>
             <h1 className="apple-title">
-              Olá, {user?.email || 'Usuário'} 👋
+              Olá, {user?.name || user?.email || 'Usuário'} ��
             </h1>
             <p className="text-lg text-slate-600 mt-1">
               Bem-vindo ao seu dashboard premium
