@@ -3,7 +3,7 @@ import { useEffect, useRef, useState, useCallback, Fragment } from "react";
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
 import Chart from 'chart.js/auto';
-import { FaEdit, FaTrash, FaUserCircle, FaPaperclip } from 'react-icons/fa';
+import { FaEdit, FaTrash, FaUserCircle, FaPaperclip, FaWallet, FaArrowUp, FaArrowDown } from 'react-icons/fa';
 import debounce from 'lodash.debounce';
 import Pagination from "@/components/Pagination";
 import { toast } from 'react-toastify';
@@ -251,42 +251,47 @@ export default function DashboardPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-black via-zinc-900 to-zinc-800">
+    <div className="min-h-screen bg-gradient-to-br from-black via-primary-dark to-gray-900">
       {/* Header de boas-vindas diferenciado */}
-      <div className="w-full max-w-4xl mx-auto mt-4 mb-2">
-        <div className="rounded-xl bg-white/10 border border-zinc-700 px-6 py-4 flex flex-col sm:flex-row items-center justify-between gap-4 shadow-lg">
+      <div className="w-full max-w-6xl mx-auto mt-8 mb-4">
+        <div className="rounded-3xl bg-white/10 backdrop-blur-md border border-gold/40 px-8 py-6 flex flex-col sm:flex-row items-center justify-between gap-6 shadow-2xl">
           <div>
-            <h1 className="text-2xl font-bold text-amber-400 drop-shadow mb-1">
-              {isCNPJ ? 'Bem-vindo ao Painel Empresarial' : 'Bem-vindo ao seu Controle Pessoal'}
+            <h1 className="text-3xl font-extrabold text-gold drop-shadow mb-2 tracking-tight">
+              {isCNPJ ? 'Painel Empresarial' : 'Seu Controle Pessoal'}
             </h1>
-            <p className="text-zinc-300 text-sm">
+            <p className="text-gray-200 text-base font-medium">
               {isCNPJ
-                ? 'Aqui você pode gerenciar saldos futuros, previsões, relatórios e muito mais para sua empresa.'
-                : 'Acompanhe suas finanças pessoais de forma simples e rápida.'}
+                ? 'Gerencie saldos futuros, previsões, relatórios e muito mais para sua empresa.'
+                : 'Acompanhe suas finanças pessoais de forma simples, rápida e elegante.'}
             </p>
           </div>
           <div className="flex flex-col items-end">
-            <span className="text-xs text-zinc-400">Tipo de conta:</span>
-            <span className="text-base font-semibold text-white uppercase tracking-wider">{user?.account_type === 'cnpj' ? 'CNPJ' : 'CPF'}</span>
-            <span className="text-xs text-zinc-400 mt-1">{user?.document}</span>
+            <span className="text-xs text-gray-400">Tipo de conta:</span>
+            <span className="text-lg font-bold text-white uppercase tracking-wider">{user?.account_type === 'cnpj' ? 'CNPJ' : 'CPF'}</span>
+            <span className="text-xs text-gray-400 mt-1">{user?.document}</span>
           </div>
         </div>
       </div>
-      {/* Cards/menus extras para CNPJ */}
-      {isCNPJ && (
-        <div className="w-full max-w-4xl mx-auto grid grid-cols-1 sm:grid-cols-2 gap-4 mt-4 mb-8">
-          <div className="rounded-xl bg-gradient-to-br from-amber-400/80 to-yellow-200/60 border border-amber-300 px-6 py-4 shadow flex flex-col items-start">
-            <span className="text-lg font-bold text-zinc-900 mb-1">Previsão de Saldos</span>
-            <span className="text-zinc-700 text-sm">Veja quanto sua empresa terá em caixa em datas futuras.</span>
-            <span className="text-xs text-zinc-500 mt-2">(Em breve)</span>
-          </div>
-          <div className="rounded-xl bg-gradient-to-br from-blue-400/80 to-cyan-200/60 border border-blue-300 px-6 py-4 shadow flex flex-col items-start">
-            <span className="text-lg font-bold text-zinc-900 mb-1">Relatórios Avançados</span>
-            <span className="text-zinc-700 text-sm">Gere relatórios detalhados de contas, receitas e despesas.</span>
-            <span className="text-xs text-zinc-500 mt-2">(Em breve)</span>
-          </div>
+
+      {/* Cards premium de saldo, receitas e despesas */}
+      <div className="w-full max-w-6xl mx-auto grid grid-cols-1 sm:grid-cols-3 gap-6 mt-8 mb-10 px-2">
+        <div className="rounded-2xl bg-gradient-to-br from-primary-light/60 via-primary/80 to-gray-900/80 shadow-xl border border-gold/30 p-6 flex flex-col items-center justify-center glass-card animate-fade-in">
+          <FaWallet className="text-gold text-4xl mb-2 drop-shadow-lg" />
+          <span className="text-lg text-gray-200">Saldo Atual</span>
+          <span className="text-3xl font-extrabold text-gold drop-shadow-lg">{saldo.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</span>
         </div>
-      )}
+        <div className="rounded-2xl bg-gradient-to-br from-green-400/30 via-green-600/60 to-primary/80 shadow-xl border border-green-400/30 p-6 flex flex-col items-center justify-center glass-card animate-fade-in delay-100">
+          <FaArrowUp className="text-green-300 text-4xl mb-2 drop-shadow-lg" />
+          <span className="text-lg text-gray-200">Receitas</span>
+          <span className="text-2xl font-bold text-green-300 drop-shadow">{receitas.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</span>
+        </div>
+        <div className="rounded-2xl bg-gradient-to-br from-red-400/30 via-red-600/60 to-primary/80 shadow-xl border border-red-400/30 p-6 flex flex-col items-center justify-center glass-card animate-fade-in delay-200">
+          <FaArrowDown className="text-red-300 text-4xl mb-2 drop-shadow-lg" />
+          <span className="text-lg text-gray-200">Despesas</span>
+          <span className="text-2xl font-bold text-red-300 drop-shadow">{despesas.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</span>
+        </div>
+      </div>
+
       <EditTransactionModal
         isOpen={isEditModalOpen}
         onClose={() => setIsEditModalOpen(false)}
