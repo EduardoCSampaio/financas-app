@@ -83,40 +83,39 @@ export default function AddTransactionModal({ isOpen, onClose, onTransactionAdde
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50">
-      <div className="w-full max-w-lg sm:max-w-md p-2 sm:p-8 space-y-6 bg-zinc-900 border border-zinc-700 rounded-2xl sm:rounded-2xl rounded-none shadow-lg relative overflow-y-auto max-h-[95vh]">
-        <button onClick={onClose} className="absolute top-2 right-2 sm:top-4 sm:right-4 text-zinc-400 hover:text-white text-3xl sm:text-2xl">&times;</button>
-        <h2 className="text-lg sm:text-2xl font-bold text-center text-white">Adicionar Transação</h2>
+    <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 animate-fade-in">
+      <div className="w-full max-w-lg sm:max-w-md p-2 sm:p-8 space-y-6 bg-white/10 backdrop-blur-2xl border border-gold/40 rounded-2xl shadow-2xl relative overflow-y-auto max-h-[95vh] glass-card animate-slide-up">
+        <button onClick={onClose} className="absolute top-2 right-2 sm:top-4 sm:right-4 text-gold hover:text-white text-3xl sm:text-2xl transition-colors">&times;</button>
+        <h2 className="text-2xl font-extrabold text-center text-gold mb-2 drop-shadow-lg">Adicionar Transação</h2>
         <form onSubmit={handleSubmit} className="space-y-4">
-          <div>
-            <label htmlFor="description" className="text-sm font-medium text-zinc-400">Descrição</label>
-            <input id="description" type="text" value={description} onChange={(e) => setDescription(e.target.value)} required className="w-full mt-1 input-style text-sm" />
+          <div className="relative">
+            <input id="description" type="text" value={description} onChange={(e) => setDescription(e.target.value)} required className="peer w-full pt-6 pb-2 px-3 rounded-lg bg-zinc-900/80 text-white border border-gold/30 focus:ring-2 focus:ring-gold outline-none text-base placeholder-transparent" placeholder="Descrição" />
+            <label htmlFor="description" className="absolute left-3 top-2 text-gold text-xs font-semibold transition-all peer-placeholder-shown:top-4 peer-placeholder-shown:text-base peer-placeholder-shown:text-gray-400 peer-focus:top-2 peer-focus:text-xs peer-focus:text-gold">Descrição</label>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <label htmlFor="value" className="text-sm font-medium text-zinc-400">Valor (R$)</label>
-              <input id="value" type="number" step="0.01" value={value} onChange={(e) => setValue(e.target.value)} required className="w-full mt-1 input-style text-sm" />
+            <div className="relative">
+              <input id="value" type="number" step="0.01" value={value} onChange={(e) => setValue(e.target.value)} required className="peer w-full pt-6 pb-2 px-3 rounded-lg bg-zinc-900/80 text-white border border-gold/30 focus:ring-2 focus:ring-gold outline-none text-base placeholder-transparent" placeholder="Valor (R$)" />
+              <label htmlFor="value" className="absolute left-3 top-2 text-gold text-xs font-semibold transition-all peer-placeholder-shown:top-4 peer-placeholder-shown:text-base peer-placeholder-shown:text-gray-400 peer-focus:top-2 peer-focus:text-xs peer-focus:text-gold">Valor (R$)</label>
             </div>
-            <div>
-              <label htmlFor="type" className="text-sm font-medium text-zinc-400">Tipo</label>
+            <div className="relative">
+              <label htmlFor="type" className="block text-xs font-semibold text-gold mb-1">Tipo</label>
               <select id="type" value={type} onChange={(e) => setType(e.target.value as "income" | "expense")}
                 required
-                className="w-full mt-1 input-style bg-zinc-900 text-white border-amber-400 text-sm"
-              >
+                className="w-full rounded-lg bg-zinc-900/80 text-white border border-gold/30 focus:ring-2 focus:ring-gold outline-none text-base py-2 px-3">
                 <option value="expense" className="bg-zinc-900 text-white">Despesa</option>
                 <option value="income" className="bg-zinc-900 text-white">Receita</option>
               </select>
             </div>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <label htmlFor="category" className="text-sm font-medium text-zinc-400">Categoria</label>
+            <div className="relative">
+              <label htmlFor="category" className="block text-xs font-semibold text-gold mb-1">Categoria</label>
               <select
                 id="category"
                 value={categoryId}
                 onChange={e => setCategoryId(e.target.value ? Number(e.target.value) : '')}
                 required
-                className="w-full mt-1 input-style bg-zinc-900 text-white border-amber-400 text-sm"
+                className="w-full rounded-lg bg-zinc-900/80 text-white border border-gold/30 focus:ring-2 focus:ring-gold outline-none text-base py-2 px-3"
                 disabled={loading}
               >
                 <option value="" className="bg-zinc-900 text-white">Selecione...</option>
@@ -125,18 +124,18 @@ export default function AddTransactionModal({ isOpen, onClose, onTransactionAdde
                 ))}
               </select>
             </div>
-            <div>
-              <label htmlFor="date" className="text-sm font-medium text-zinc-400">Data</label>
-              <input id="date" type="date" value={date} onChange={(e) => setDate(e.target.value)} required className="w-full mt-1 input-style text-sm" />
+            <div className="relative">
+              <input id="date" type="date" value={date} onChange={(e) => setDate(e.target.value)} required className="peer w-full pt-6 pb-2 px-3 rounded-lg bg-zinc-900/80 text-white border border-gold/30 focus:ring-2 focus:ring-gold outline-none text-base placeholder-transparent" placeholder="Data" />
+              <label htmlFor="date" className="absolute left-3 top-2 text-gold text-xs font-semibold transition-all peer-placeholder-shown:top-4 peer-placeholder-shown:text-base peer-placeholder-shown:text-gray-400 peer-focus:top-2 peer-focus:text-xs peer-focus:text-gold">Data</label>
             </div>
           </div>
           <div>
-            <label htmlFor="proof" className="text-sm font-medium text-zinc-400">Comprovante (Opcional)</label>
+            <label htmlFor="proof" className="block text-xs font-semibold text-gold mb-1">Comprovante (Opcional)</label>
             <input 
               id="proof" 
               type="file" 
               onChange={handleFileChange} 
-              className="w-full mt-1 text-sm text-zinc-400 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-amber-500 file:text-black hover:file:bg-amber-600" 
+              className="w-full text-sm text-gold file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-gold file:text-primary hover:file:bg-yellow-400" 
             />
           </div>
           <div className="flex items-center justify-center pt-2">
@@ -146,13 +145,13 @@ export default function AddTransactionModal({ isOpen, onClose, onTransactionAdde
                 type="checkbox" 
                 checked={paid} 
                 onChange={(e) => setPaid(e.target.checked)} 
-                className="form-checkbox h-5 w-5 text-amber-400 bg-zinc-800 border-zinc-600 rounded focus:ring-amber-500"
+                className="form-checkbox h-5 w-5 text-gold bg-zinc-800 border-gold rounded focus:ring-gold"
               />
-              <span className="ml-2 text-zinc-300">{type === 'income' ? 'Recebido?' : 'Pago?'}</span>
+              <span className="ml-2 text-gold">{type === 'income' ? 'Recebido?' : 'Pago?'}</span>
             </label>
           </div>
-          <button type="submit" className="w-full py-3 font-semibold text-black bg-amber-400 rounded-md hover:bg-amber-500 transition-colors text-base sm:text-lg">Adicionar</button>
-          {error && <p className="text-sm text-center text-red-500">{error}</p>}
+          <button type="submit" className="w-full py-3 font-semibold text-primary bg-gold rounded-lg hover:bg-yellow-400 transition-colors text-lg shadow-lg">Adicionar</button>
+          {error && <p className="text-sm text-center text-red-500 mt-2">{error}</p>}
         </form>
       </div>
     </div>
