@@ -368,7 +368,7 @@ export default function DashboardPage() {
 
       {/* Painel de orçamento por categoria */}
       {user?.id && (
-        <BudgetPanel userId={user.id} currentMonth={currentMonth} expensesByCategory={expensesByCategory} />
+        <BudgetPanel userId={user.id} currentMonth={currentMonth} expensesByCategory={expensesByCategory} allTransactions={transactions} />
       )}
 
       {/* Conteúdo principal */}
