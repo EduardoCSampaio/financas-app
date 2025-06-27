@@ -47,14 +47,3 @@ app.include_router(category_router)
 def read_root():
     return {"message": "Bem-vindo à API Financeira Premium!"}
 
-@app.get("/run-migrations")
-def run_migrations():
-    alembic_ini_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "../alembic.ini"))
-    alembic_cfg = Config(alembic_ini_path)
-    script_location = os.path.abspath(os.path.join(os.path.dirname(__file__), "../alembic"))
-    alembic_cfg.set_main_option("script_location", script_location)
-    try:
-        command.upgrade(alembic_cfg, "head")
-        return {"status": "success"}
-    except Exception as e:
-        return {"status": "error", "detail": str(e)}
