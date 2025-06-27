@@ -53,24 +53,6 @@ function getCategoryColor(name: string) {
   return colors[idx];
 }
 
-// Função para exportar CSV
-function exportCSV() {
-  const headers = [
-    'Data', 'Descrição', 'Categoria', 'Valor', 'Comprovante', 'Status'
-  ];
-  const rows = transactions.map(t => [
-    new Date(t.date).toLocaleDateString('pt-BR'),
-    t.description,
-    isCategoryObject(t.category) ? t.category.name : '-',
-    (t.type === 'income' ? '+' : '-') + 'R$ ' + t.value.toLocaleString('pt-BR', { minimumFractionDigits: 2 }),
-    t.proof_url || '-',
-    t.paid ? 'Pago' : 'Pendente',
-  ]);
-  const csv = [headers, ...rows].map(r => r.map(v => '"' + String(v).replace(/"/g, '""') + '"').join(',')).join('\n');
-  const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
-  saveAs(blob, 'transacoes.csv');
-}
-
 export default function DashboardPage() {
   const { 
     token, 
@@ -241,6 +223,24 @@ export default function DashboardPage() {
       expensesByCategory[catId] = (expensesByCategory[catId] || 0) + t.value;
     }
   });
+
+  // Função para exportar CSV
+  function exportCSV() {
+    const headers = [
+      'Data', 'Descrição', 'Categoria', 'Valor', 'Comprovante', 'Status'
+    ];
+    const rows = transactions.map(t => [
+      new Date(t.date).toLocaleDateString('pt-BR'),
+      t.description,
+      isCategoryObject(t.category) ? t.category.name : '-',
+      (t.type === 'income' ? '+' : '-') + 'R$ ' + t.value.toLocaleString('pt-BR', { minimumFractionDigits: 2 }),
+      t.proof_url || '-',
+      t.paid ? 'Pago' : 'Pendente',
+    ]);
+    const csv = [headers, ...rows].map(r => r.map(v => '"' + String(v).replace(/"/g, '""') + '"').join(',')).join('\n');
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+    saveAs(blob, 'transacoes.csv');
+  }
 
   return (
     <div className="space-y-8">
