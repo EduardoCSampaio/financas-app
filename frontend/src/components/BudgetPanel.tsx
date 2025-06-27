@@ -1,3 +1,4 @@
+"use client";
 import React, { useEffect, useState } from 'react';
 import { useUserCategories } from '@/contexts/AuthContext';
 import api from '@/lib/api';
@@ -7,6 +8,11 @@ interface Budget {
   category_id: number;
   limit: number;
   month?: string;
+}
+
+interface Category {
+  id: number;
+  name: string;
 }
 
 interface BudgetPanelProps {
@@ -20,16 +26,21 @@ const BudgetPanel: React.FC<BudgetPanelProps> = ({ userId, currentMonth, expense
   const [budgets, setBudgets] = useState<Budget[]>([]);
   const [editing, setEditing] = useState<{ [catId: number]: boolean }>({});
   const [inputValues, setInputValues] = useState<{ [catId: number]: string }>({});
+  const [addingCatId, setAddingCatId] = useState<number | null>(null);
+  const [addValue, setAddValue] = useState('');
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     fetchBudgets();
   }, [userId]);
 
   const fetchBudgets = async () => {
+    setLoading(true);
     try {
       const res = await api.get('/users/budgets');
       setBudgets(res.data);
     } catch {}
+    setLoading(false);
   };
 
   const handleEdit = (catId: number, currentLimit: number) => {
@@ -40,6 +51,7 @@ const BudgetPanel: React.FC<BudgetPanelProps> = ({ userId, currentMonth, expense
   const handleSave = async (catId: number) => {
     const value = parseFloat(inputValues[catId]);
     if (isNaN(value) || value < 0) return;
+    setLoading(true);
     try {
       await api.post('/users/budgets', {
         category_id: catId,
@@ -49,7 +61,39 @@ const BudgetPanel: React.FC<BudgetPanelProps> = ({ userId, currentMonth, expense
       await fetchBudgets();
       setEditing((prev) => ({ ...prev, [catId]: false }));
     } catch {}
+    setLoading(false);
   };
+
+  const handleDeleteBudget = async (catId: number) => {
+    setLoading(true);
+    try {
+      await api.delete(`/users/budgets/${catId}`);
+      await fetchBudgets();
+    } catch {}
+    setLoading(false);
+  };
+
+  const handleAddBudget = async () => {
+    if (!addingCatId || !addValue.trim()) return;
+    const value = parseFloat(addValue);
+    if (isNaN(value) || value < 0) return;
+    setLoading(true);
+    try {
+      await api.post('/users/budgets', {
+        category_id: addingCatId,
+        limit: value,
+        month: currentMonth,
+      });
+      setAddingCatId(null);
+      setAddValue('');
+      await fetchBudgets();
+    } catch {}
+    setLoading(false);
+  };
+
+  // Só mostrar categorias que têm orçamento definido
+  const budgetedCategories = budgets.map(b => b.category_id);
+  const availableCategories = userCategories.filter(cat => !budgetedCategories.includes(cat.id));
 
   const getBudgetForCategory = (catId: number) =>
     budgets.find((b) => b.category_id === catId && (!b.month || b.month === currentMonth));
@@ -57,11 +101,37 @@ const BudgetPanel: React.FC<BudgetPanelProps> = ({ userId, currentMonth, expense
   return (
     <div className="apple-card p-6 mb-8">
       <h2 className="apple-subtitle mb-4">Orçamento por Categoria</h2>
+      {/* Adicionar nova categoria ao orçamento */}
+      {availableCategories.length > 0 && (
+        <div className="flex gap-2 mb-6 items-end">
+          <select
+            value={addingCatId ?? ''}
+            onChange={e => setAddingCatId(Number(e.target.value))}
+            className="apple-input w-56"
+          >
+            <option value="">Adicionar categoria ao orçamento</option>
+            {availableCategories.map(cat => (
+              <option key={cat.id} value={cat.id}>{cat.name}</option>
+            ))}
+          </select>
+          <input
+            type="number"
+            min={0}
+            value={addValue}
+            onChange={e => setAddValue(e.target.value)}
+            placeholder="Limite (R$)"
+            className="apple-input w-32"
+            disabled={!addingCatId}
+          />
+          <button onClick={handleAddBudget} className="apple-btn px-4" disabled={!addingCatId || loading}>Adicionar</button>
+        </div>
+      )}
       <div className="space-y-4">
-        {userCategories.map((cat) => {
-          const budget = getBudgetForCategory(cat.id);
+        {budgets.map(budget => {
+          const cat = userCategories.find(c => c.id === budget.category_id);
+          if (!cat) return null;
           const gasto = expensesByCategory[cat.id] || 0;
-          const limite = budget?.limit ?? 0;
+          const limite = budget.limit ?? 0;
           const percent = limite > 0 ? Math.min(100, Math.round((gasto / limite) * 100)) : 0;
           return (
             <div key={cat.id} className="flex items-center gap-4 border-b border-slate-100 pb-3 last:border-b-0">
@@ -78,11 +148,13 @@ const BudgetPanel: React.FC<BudgetPanelProps> = ({ userId, currentMonth, expense
                       className="apple-input w-24"
                     />
                     <button onClick={() => handleSave(cat.id)} className="apple-btn px-3 py-1 text-sm">Salvar</button>
+                    <button onClick={() => setEditing((prev) => ({ ...prev, [cat.id]: false }))} className="text-slate-400 hover:text-slate-600 text-xs">Cancelar</button>
                   </div>
                 ) : (
                   <div className="flex gap-2 items-center">
                     <span className="text-lg font-semibold text-indigo-600">R$ {limite.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</span>
-                    <button onClick={() => handleEdit(cat.id, limite)} className="text-xs text-indigo-500 hover:underline">Editar</button>
+                    <button onClick={() => handleEdit(cat.id, limite)} className="apple-btn-secondary px-3 py-1 text-sm">Editar</button>
+                    <button onClick={() => handleDeleteBudget(cat.id)} className="text-red-500 hover:underline text-xs">Remover</button>
                   </div>
                 )}
               </div>
@@ -106,6 +178,9 @@ const BudgetPanel: React.FC<BudgetPanelProps> = ({ userId, currentMonth, expense
             </div>
           );
         })}
+        {budgets.length === 0 && (
+          <div className="text-slate-400 text-center py-8">Nenhuma categoria com orçamento definido.</div>
+        )}
       </div>
     </div>
   );
