@@ -20,7 +20,10 @@ app = FastAPI(
 # Montar diretório estático
 app.mount("/static", StaticFiles(directory="backend/static"), name="static")
 
-origins = ["*"]
+origins = [
+    "https://financas-app-mu.vercel.app",
+    "http://localhost:3000"
+]
 
 app.add_middleware(
     CORSMiddleware,
