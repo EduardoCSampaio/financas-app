@@ -3,18 +3,14 @@ import { useEffect, useRef, useState, useCallback, Fragment } from "react";
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
 import Chart from 'chart.js/auto';
-import { FaEdit, FaTrash, FaUserCircle, FaPaperclip, FaWallet, FaArrowUp, FaArrowDown } from 'react-icons/fa';
+import { FaEdit, FaTrash, FaUserCircle, FaPaperclip } from 'react-icons/fa';
 import debounce from 'lodash.debounce';
 import Pagination from "@/components/Pagination";
 import { toast } from 'react-toastify';
-import { Menu, Transition } from '@headlessui/react';
-import Link from "next/link";
-import { ChevronDownIcon } from '@heroicons/react/20/solid';
 import api from "@/lib/api"; // Importando o cliente API
 import AddTransactionModal from '@/components/AddTransactionModal';
 import EditTransactionModal from '@/components/EditTransactionModal';
 import { Transaction } from '@/types';
-import { Tooltip } from 'react-tooltip';
 
 // Spinner de carregamento
 function Spinner() {
@@ -49,23 +45,21 @@ export default function DashboardPage() {
   const { 
     token, 
     user, 
-    logout, 
     accounts, 
     selectedAccount, 
-    selectAccount,
     fetchAccounts 
   } = useAuth();
   const router = useRouter();
   
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [loading, setLoading] = useState(true);
-  const [search, setSearch] = useState('');
-  const [category, setCategory] = useState('');
+  const [search] = useState('');
+  const [category] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [itemsPerPage] = useState(10);
-  const [startDate, setStartDate] = useState("");
-  const [endDate, setEndDate] = useState("");
+  const [startDate] = useState("");
+  const [endDate] = useState("");
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [selectedTransactionForEdit, setSelectedTransactionForEdit] = useState<Transaction | null>(null);
