@@ -368,7 +368,17 @@ export default function DashboardPage() {
 
       {/* Painel de orçamento por categoria */}
       {user?.id && (
-        <BudgetPanel userId={user.id} currentMonth={currentMonth} expensesByCategory={expensesByCategory} allTransactions={transactions} />
+        <BudgetPanel
+          userId={user.id}
+          currentMonth={currentMonth}
+          expensesByCategory={expensesByCategory}
+          allTransactions={transactions.map(t => ({
+            date: t.date,
+            type: t.type,
+            category: { id: t.category && typeof t.category === 'object' && 'id' in t.category ? t.category.id : 0 },
+            value: t.value,
+          }))}
+        />
       )}
 
       {/* Conteúdo principal */}
