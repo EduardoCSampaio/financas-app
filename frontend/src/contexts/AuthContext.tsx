@@ -161,7 +161,7 @@ export function useCategories() {
 }
 
 export function useUserCategories() {
-  const [categories, setCategories] = useState([]);
+  const [categories, setCategories] = useState<Category[]>([]);
   const [loading, setLoading] = useState(false);
   useEffect(() => {
     async function fetchCategories() {
