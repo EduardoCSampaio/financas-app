@@ -4,9 +4,9 @@ FROM python:3.11-slim
 # Define o diretório de trabalho
 WORKDIR /app
 
-# Copia alembic.ini e a pasta alembic da raiz do projeto para o container
-COPY ../alembic.ini /app/alembic.ini
-COPY ../alembic /app/alembic
+# Copia alembic.ini e a pasta alembic do backend para o container
+COPY alembic.ini /app/alembic.ini
+COPY alembic /app/alembic
 
 # Copia os arquivos do backend para o container
 COPY . .
