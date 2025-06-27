@@ -1,9 +1,10 @@
+import os
 from passlib.context import CryptContext
 from datetime import datetime, timedelta, timezone
 from typing import Optional
 from jose import JWTError, jwt
 
-SECRET_KEY = "SUA_SECRET_KEY_SUPER_SECRETA"  # Mova para uma variável de ambiente em produção
+SECRET_KEY = os.environ.get("SECRET_KEY", "SUA_SECRET_KEY_SUPER_SECRETA")  # Agora lê do ambiente
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 30
 
