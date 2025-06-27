@@ -22,7 +22,6 @@ export default function PerfilPage() {
       setLoading(false);
     }
   };
-
   return (
     <div className="space-y-8">
       {/* Header */}
