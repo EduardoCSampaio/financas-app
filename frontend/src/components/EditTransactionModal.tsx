@@ -10,7 +10,6 @@ interface EditTransactionModalProps {
   onClose: () => void;
   transaction: Transaction | null;
   onTransactionUpdated: (updatedTransaction: Transaction) => void;
-  // accountId não é mais necessário aqui, pois já está na transação
 }
 
 const EditTransactionModal: React.FC<EditTransactionModalProps> = ({
@@ -19,7 +18,6 @@ const EditTransactionModal: React.FC<EditTransactionModalProps> = ({
   transaction,
   onTransactionUpdated,
 }) => {
-  // const { token } = useAuth();
   const [description, setDescription] = useState('');
   const [value, setValue] = useState('');
   const [type, setType] = useState<'income' | 'expense'>('expense');
@@ -85,80 +83,142 @@ const EditTransactionModal: React.FC<EditTransactionModalProps> = ({
   if (!isOpen || !transaction) return null;
 
   return (
-    <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 animate-fade-in">
-      <div className="w-full max-w-lg sm:max-w-md p-2 sm:p-8 space-y-6 bg-white/10 backdrop-blur-2xl border border-gold/40 rounded-2xl shadow-2xl relative overflow-y-auto max-h-[95vh] glass-card animate-slide-up">
-        <button onClick={onClose} className="absolute top-2 right-2 sm:top-4 sm:right-4 text-gold hover:text-white text-3xl sm:text-2xl transition-colors">&times;</button>
-        <h2 className="text-2xl font-extrabold text-center text-gold mb-2 drop-shadow-lg">Editar Transação</h2>
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div className="relative">
-            <input id="edit-description" type="text" value={description} onChange={(e) => setDescription(e.target.value)} required className="peer w-full pt-6 pb-2 px-3 rounded-lg bg-zinc-900/80 text-white border border-gold/30 focus:ring-2 focus:ring-gold outline-none text-base placeholder-transparent" placeholder="Descrição" />
-            <label htmlFor="edit-description" className="absolute left-3 top-2 text-gold text-xs font-semibold transition-all peer-placeholder-shown:top-4 peer-placeholder-shown:text-base peer-placeholder-shown:text-gray-400 peer-focus:top-2 peer-focus:text-xs peer-focus:text-gold">Descrição</label>
+    <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50">
+      <div className="w-full max-w-lg mx-4 bg-white rounded-2xl shadow-xl border border-slate-200 p-8 relative">
+        <button 
+          onClick={onClose} 
+          className="absolute top-4 right-4 text-slate-400 hover:text-slate-600 text-2xl transition-colors"
+        >
+          &times;
+        </button>
+        
+        <h2 className="apple-title mb-6">Editar Transação</h2>
+        
+        <form onSubmit={handleSubmit} className="space-y-6">
+          <div>
+            <label htmlFor="edit-description" className="block text-sm font-medium text-slate-700 mb-2">
+              Descrição
+            </label>
+            <input 
+              id="edit-description" 
+              type="text" 
+              value={description} 
+              onChange={(e) => setDescription(e.target.value)} 
+              required 
+              className="apple-input w-full" 
+              placeholder="Digite a descrição da transação"
+            />
           </div>
+          
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className="relative">
-              <input id="edit-value" type="number" step="0.01" value={value} onChange={(e) => setValue(e.target.value)} required className="peer w-full pt-6 pb-2 px-3 rounded-lg bg-zinc-900/80 text-white border border-gold/30 focus:ring-2 focus:ring-gold outline-none text-base placeholder-transparent" placeholder="Valor (R$)" />
-              <label htmlFor="edit-value" className="absolute left-3 top-2 text-gold text-xs font-semibold transition-all peer-placeholder-shown:top-4 peer-placeholder-shown:text-base peer-placeholder-shown:text-gray-400 peer-focus:top-2 peer-focus:text-xs peer-focus:text-gold">Valor (R$)</label>
+            <div>
+              <label htmlFor="edit-value" className="block text-sm font-medium text-slate-700 mb-2">
+                Valor (R$)
+              </label>
+              <input 
+                id="edit-value" 
+                type="number" 
+                step="0.01" 
+                value={value} 
+                onChange={(e) => setValue(e.target.value)} 
+                required 
+                className="apple-input w-full" 
+                placeholder="0,00"
+              />
             </div>
-            <div className="relative">
-              <label htmlFor="edit-type" className="block text-xs font-semibold text-gold mb-1">Tipo</label>
-              <select id="edit-type" value={type} onChange={(e) => setType(e.target.value as "income" | "expense")}
+            <div>
+              <label htmlFor="edit-type" className="block text-sm font-medium text-slate-700 mb-2">
+                Tipo
+              </label>
+              <select 
+                id="edit-type" 
+                value={type} 
+                onChange={(e) => setType(e.target.value as "income" | "expense")}
                 required
-                className="w-full rounded-lg bg-zinc-900/80 text-white border border-gold/30 focus:ring-2 focus:ring-gold outline-none text-base py-2 px-3">
-                <option value="expense" className="bg-zinc-900 text-white">Despesa</option>
-                <option value="income" className="bg-zinc-900 text-white">Receita</option>
+                className="apple-input w-full"
+              >
+                <option value="expense">Despesa</option>
+                <option value="income">Receita</option>
               </select>
             </div>
           </div>
+          
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className="relative">
-              <label htmlFor="edit-category" className="block text-xs font-semibold text-gold mb-1">Categoria</label>
+            <div>
+              <label htmlFor="edit-category" className="block text-sm font-medium text-slate-700 mb-2">
+                Categoria
+              </label>
               <select
                 id="edit-category"
                 value={categoryId}
                 onChange={e => setCategoryId(e.target.value ? Number(e.target.value) : '')}
                 required
-                className="w-full rounded-lg bg-zinc-900/80 text-white border border-gold/30 focus:ring-2 focus:ring-gold outline-none text-base py-2 px-3"
+                className="apple-input w-full"
                 disabled={loading}
               >
-                <option value="" className="bg-zinc-900 text-white">Selecione...</option>
+                <option value="">Selecione...</option>
                 {categories.map(cat => (
-                  <option key={cat.id} value={cat.id} className="bg-zinc-900 text-white">{cat.name}</option>
+                  <option key={cat.id} value={cat.id}>{cat.name}</option>
                 ))}
               </select>
             </div>
-            <div className="relative">
-              <input id="edit-date" type="date" value={date} onChange={(e) => setDate(e.target.value)} required className="peer w-full pt-6 pb-2 px-3 rounded-lg bg-zinc-900/80 text-white border border-gold/30 focus:ring-2 focus:ring-gold outline-none text-base placeholder-transparent" placeholder="Data" />
-              <label htmlFor="edit-date" className="absolute left-3 top-2 text-gold text-xs font-semibold transition-all peer-placeholder-shown:top-4 peer-placeholder-shown:text-base peer-placeholder-shown:text-gray-400 peer-focus:top-2 peer-focus:text-xs peer-focus:text-gold">Data</label>
+            <div>
+              <label htmlFor="edit-date" className="block text-sm font-medium text-slate-700 mb-2">
+                Data
+              </label>
+              <input 
+                id="edit-date" 
+                type="date" 
+                value={date} 
+                onChange={(e) => setDate(e.target.value)} 
+                required 
+                className="apple-input w-full"
+              />
             </div>
           </div>
-          <div className="mb-4">
-            <label htmlFor="proof" className="block text-xs font-semibold text-gold mb-1">Comprovante (Opcional)</label>
+          
+          <div>
+            <label htmlFor="proof" className="block text-sm font-medium text-slate-700 mb-2">
+              Comprovante (Opcional)
+            </label>
             <input
-                type="file"
-                id="proof"
-                onChange={handleFileChange}
-                className="w-full text-sm text-gold file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-gold file:text-primary hover:file:bg-yellow-400"
+              type="file"
+              id="proof"
+              onChange={handleFileChange}
+              className="w-full text-sm text-slate-600 file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-sm file:font-semibold file:bg-indigo-600 file:text-white hover:file:bg-indigo-700 transition-colors"
             />
             {transaction?.proof_url && !proof && (
-                <p className="text-xs text-gray-500 mt-1">
-                    Comprovante existente. Envie um novo para substituí-lo.
-                </p>
+              <p className="text-xs text-slate-500 mt-1">
+                Comprovante existente. Envie um novo para substituí-lo.
+              </p>
             )}
           </div>
-          <div className="flex items-center justify-center pt-2">
+          
+          <div className="flex items-center justify-center">
             <label htmlFor="edit-paid" className="flex items-center cursor-pointer">
               <input 
                 id="edit-paid" 
                 type="checkbox" 
                 checked={paid} 
                 onChange={(e) => setPaid(e.target.checked)} 
-                className="form-checkbox h-5 w-5 text-gold bg-zinc-800 border-gold rounded focus:ring-gold"
+                className="h-5 w-5 text-indigo-600 bg-white border-slate-300 rounded focus:ring-indigo-500"
               />
-              <span className="ml-2 text-gold">{type === 'income' ? 'Recebido?' : 'Pago?'}</span>
+              <span className="ml-2 text-slate-700 font-medium">
+                {type === 'income' ? 'Recebido?' : 'Pago?'}
+              </span>
             </label>
           </div>
-          <button type="submit" className="w-full py-3 font-semibold text-primary bg-gold rounded-lg hover:bg-yellow-400 transition-colors text-lg shadow-lg">Salvar Alterações</button>
-          {error && <p className="text-sm text-center text-red-500 mt-2">{error}</p>}
+          
+          <button 
+            type="submit" 
+            className="apple-btn w-full"
+          >
+            Salvar Alterações
+          </button>
+          
+          {error && (
+            <p className="text-sm text-center text-red-500 mt-2">{error}</p>
+          )}
         </form>
       </div>
     </div>

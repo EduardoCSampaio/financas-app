@@ -1,14 +1,21 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #f8fafc;
+  --foreground: #18181b;
+  --primary: #6366f1;
+  --primary-light: #38bdf8;
+  --success: #22c55e;
+  --danger: #ef4444;
+  --muted: #52525b;
+  --border: #f1f5f9;
+  --card-bg: #ffffff;
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
+  --font-sans: 'SF Pro Display', 'Inter', Arial, sans-serif;
   --font-mono: var(--font-geist-mono);
 }
 
@@ -22,7 +29,7 @@
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: 'SF Pro Display', 'Inter', Arial, sans-serif;
 }
 
 @tailwind base;
@@ -32,5 +39,47 @@ body {
 @layer components {
   .input-style {
     @apply px-3 py-2 text-white bg-white/5 border border-zinc-600 rounded-md focus:outline-none focus:ring-2 focus:ring-amber-400;
+  }
+  
+  /* Cards no estilo Apple */
+  .apple-card {
+    @apply bg-white rounded-2xl shadow-sm border border-slate-200 p-6 transition-all duration-200 hover:shadow-lg;
+  }
+  
+  /* Botões no estilo Apple */
+  .apple-btn {
+    @apply px-6 py-3 rounded-2xl font-semibold text-white bg-gradient-to-r from-slate-800 to-indigo-600 hover:from-indigo-600 hover:to-blue-500 transition-all duration-200 hover:shadow-lg hover:-translate-y-0.5 hover:scale-105 focus:outline-none;
+  }
+  
+  .apple-btn-secondary {
+    @apply px-6 py-3 rounded-2xl font-semibold text-slate-800 bg-white border border-slate-200 hover:bg-slate-50 transition-all duration-200 focus:outline-none;
+  }
+  
+  /* Inputs no estilo Apple */
+  .apple-input {
+    @apply px-4 py-3 rounded-xl border border-slate-200 bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all duration-200;
+  }
+  
+  /* Títulos no estilo Apple */
+  .apple-title {
+    @apply text-2xl font-bold text-slate-800 tracking-tight;
+  }
+  
+  .apple-subtitle {
+    @apply text-lg font-semibold text-indigo-600;
+  }
+  
+  /* Valores monetários */
+  .amount-positive {
+    @apply text-green-600 font-semibold;
+  }
+  
+  .amount-negative {
+    @apply text-red-500 font-semibold;
+  }
+  
+  /* Sidebar links ativos */
+  .sidebar-link-active {
+    @apply bg-gradient-to-r from-indigo-600 to-blue-500 text-white;
   }
 }
