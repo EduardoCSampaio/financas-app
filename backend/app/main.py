@@ -49,8 +49,12 @@ def read_root():
 
 @app.get("/run-migrations")
 def run_migrations():
-    alembic_ini_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "../alembic.ini"))
+    # Caminho absoluto para alembic.ini na raiz do projeto
+    alembic_ini_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "../../alembic.ini"))
     alembic_cfg = Config(alembic_ini_path)
+    # Caminho absoluto para a pasta alembic na raiz do projeto
+    script_location = os.path.abspath(os.path.join(os.path.dirname(__file__), "../../alembic"))
+    alembic_cfg.set_main_option("script_location", script_location)
     try:
         command.upgrade(alembic_cfg, "head")
         return {"status": "success"}
