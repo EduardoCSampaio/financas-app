@@ -1,9 +1,8 @@
 "use client";
-import { useEffect, useRef, useState, useCallback, Fragment } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
-import Chart from 'chart.js/auto';
-import { FaEdit, FaTrash, FaUserCircle, FaPaperclip } from 'react-icons/fa';
+import { FaEdit, FaTrash } from 'react-icons/fa';
 import debounce from 'lodash.debounce';
 import Pagination from "@/components/Pagination";
 import { toast } from 'react-toastify';
