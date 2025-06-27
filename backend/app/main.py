@@ -49,7 +49,8 @@ def read_root():
 
 @app.get("/run-migrations")
 def run_migrations():
-    alembic_cfg = Config("alembic.ini")
+    alembic_ini_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "../alembic.ini"))
+    alembic_cfg = Config(alembic_ini_path)
     try:
         command.upgrade(alembic_cfg, "head")
         return {"status": "success"}
