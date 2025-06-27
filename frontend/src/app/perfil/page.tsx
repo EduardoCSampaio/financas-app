@@ -16,12 +16,13 @@ export default function PerfilPage() {
       logout();
       router.push('/login');
       toast.success('Logout realizado com sucesso!');
-    } catch (error) {
+    } catch {
       toast.error('Erro ao fazer logout.');
     } finally {
       setLoading(false);
     }
   };
+
   return (
     <div className="space-y-8">
       {/* Header */}
