@@ -352,7 +352,9 @@ export default function DashboardPage() {
       </div>
 
       {/* Painel de orçamento por categoria */}
-      <BudgetPanel userId={user?.id} currentMonth={currentMonth} expensesByCategory={expensesByCategory} />
+      {user?.id && (
+        <BudgetPanel userId={user.id} currentMonth={currentMonth} expensesByCategory={expensesByCategory} />
+      )}
 
       {/* Conteúdo principal */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
