@@ -4,7 +4,7 @@ import { useRouter } from 'next/navigation';
 import api from '@/lib/api';
 import { Account, User } from '@/types';
 import { getCategories } from '../lib/api';
-import { Category } from '../types';
+import { Category } from '@/types';
 
 interface AuthContextType {
   token: string | null;
