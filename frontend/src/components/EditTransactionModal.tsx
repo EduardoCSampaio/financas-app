@@ -26,7 +26,6 @@ const EditTransactionModal: React.FC<EditTransactionModalProps> = ({
   const [paid, setPaid] = useState(false);
   const [proof, setProof] = useState<File | null>(null);
   const [error, setError] = useState<string | null>(null);
-  const { categories, loading } = useCategories();
   const { categories: userCategories } = useUserCategories();
 
   useEffect(() => {

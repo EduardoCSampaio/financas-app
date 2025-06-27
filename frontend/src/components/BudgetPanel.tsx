@@ -16,7 +16,6 @@ interface BudgetPanelProps {
 }
 
 const BudgetPanel: React.FC<BudgetPanelProps> = ({ userId, currentMonth, expensesByCategory }) => {
-  const { categories } = useCategories();
   const { categories: userCategories } = useUserCategories();
   const [budgets, setBudgets] = useState<Budget[]>([]);
   const [editing, setEditing] = useState<{ [catId: number]: boolean }>({});

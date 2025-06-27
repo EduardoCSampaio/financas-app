@@ -21,7 +21,6 @@ export default function AddTransactionModal({ isOpen, onClose, onTransactionAdde
   const [paid, setPaid] = useState(true);
   const [proof, setProof] = useState<File | null>(null);
   const [error, setError] = useState<string | null>(null);
-  const { categories, loading } = useCategories();
   const { categories: userCategories } = useUserCategories();
 
   useEffect(() => {
