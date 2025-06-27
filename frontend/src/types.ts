@@ -29,4 +29,5 @@ export interface User {
   is_active: boolean;
   account_type: 'cpf' | 'cnpj';
   document: string;
+  name?: string;
 } 
