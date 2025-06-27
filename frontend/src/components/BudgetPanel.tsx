@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useCategories, useUserCategories } from '@/contexts/AuthContext';
+import { useUserCategories } from '@/contexts/AuthContext';
 import api from '@/lib/api';
 
 interface Budget {

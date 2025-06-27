@@ -3,7 +3,7 @@ import React, { useState, useEffect, FormEvent } from 'react';
 import { toast } from 'react-toastify';
 import api from '@/lib/api';
 import { Transaction } from '@/types';
-import { useCategories, useUserCategories } from '@/contexts/AuthContext';
+import { useUserCategories } from '@/contexts/AuthContext';
 
 interface EditTransactionModalProps {
   isOpen: boolean;
