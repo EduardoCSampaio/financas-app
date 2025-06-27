@@ -211,34 +211,48 @@ export default function DashboardPage() {
   // Calcular gastos do mês atual por categoria
   const now = new Date();
   const currentMonth = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
+  const firstDay = new Date(now.getFullYear(), now.getMonth(), 1);
+  const lastDay = new Date(now.getFullYear(), now.getMonth() + 1, 0);
   const expensesByCategory: Record<number, number> = {};
   transactions.forEach(t => {
     if (
       t.type === 'expense' &&
       t.category &&
       typeof t.category === 'object' &&
-      (t.category as { id?: number }).id &&
-      t.date.startsWith(currentMonth)
+      (t.category as { id?: number }).id
     ) {
-      const catId = (t.category as { id: number }).id;
-      expensesByCategory[catId] = (expensesByCategory[catId] || 0) + t.value;
+      const date = new Date(t.date);
+      if (date >= firstDay && date <= lastDay) {
+        const catId = (t.category as { id: number }).id;
+        expensesByCategory[catId] = (expensesByCategory[catId] || 0) + t.value;
+      }
     }
   });
 
-  // Função para exportar CSV
+  // Função para exportar CSV melhorada
   function exportCSV() {
     const headers = [
-      'Data', 'Descrição', 'Categoria', 'Valor', 'Comprovante', 'Status'
+      'Data', 'Descrição', 'Categoria', 'Tipo', 'Valor', 'Status', 'Comprovante'
     ];
     const rows = transactions.map(t => [
       new Date(t.date).toLocaleDateString('pt-BR'),
       t.description,
       isCategoryObject(t.category) ? t.category.name : '-',
-      (t.type === 'income' ? '+' : '-') + 'R$ ' + t.value.toLocaleString('pt-BR', { minimumFractionDigits: 2 }),
-      t.proof_url || '-',
+      t.type === 'income' ? 'Receita' : 'Despesa',
+      t.value.toLocaleString('pt-BR', { minimumFractionDigits: 2 }),
       t.paid ? 'Pago' : 'Pendente',
+      t.proof_url || ''
     ]);
-    const csv = [headers, ...rows].map(r => r.map(v => '"' + String(v).replace(/"/g, '""') + '"').join(',')).join('\n');
+    // Gera CSV sem aspas desnecessárias, separando por vírgula
+    const csv = [headers, ...rows]
+      .map(row => row.map(field => {
+        // Escapa vírgulas e aspas no campo
+        if (typeof field === 'string' && (field.includes(',') || field.includes('"') || field.includes('\n'))) {
+          return '"' + field.replace(/"/g, '""') + '"';
+        }
+        return field;
+      }).join(','))
+      .join('\r\n');
     const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
     saveAs(blob, 'transacoes.csv');
   }
