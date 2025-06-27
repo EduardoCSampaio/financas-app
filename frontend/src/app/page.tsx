@@ -229,30 +229,32 @@ export default function DashboardPage() {
     }
   });
 
-  // Função para exportar CSV melhorada
+  // Função para exportar CSV melhorada (padrão Brasil/Excel)
   function exportCSV() {
     const headers = [
       'Data', 'Descrição', 'Categoria', 'Tipo', 'Valor', 'Status', 'Comprovante'
     ];
     const rows = transactions.map(t => [
       new Date(t.date).toLocaleDateString('pt-BR'),
-      t.description,
-      isCategoryObject(t.category) ? t.category.name : '-',
+      t.description?.replace(/\r?\n|\r/g, ' ') ?? '',
+      isCategoryObject(t.category) ? t.category.name : '',
       t.type === 'income' ? 'Receita' : 'Despesa',
-      t.value.toLocaleString('pt-BR', { minimumFractionDigits: 2 }),
+      t.value.toFixed(2).replace('.', ','),
       t.paid ? 'Pago' : 'Pendente',
       t.proof_url || ''
     ]);
-    // Gera CSV sem aspas desnecessárias, separando por vírgula
-    const csv = [headers, ...rows]
-      .map(row => row.map(field => {
-        // Escapa vírgulas e aspas no campo
-        if (typeof field === 'string' && (field.includes(',') || field.includes('"') || field.includes('\n'))) {
-          return '"' + field.replace(/"/g, '""') + '"';
-        }
-        return field;
-      }).join(','))
-      .join('\r\n');
+    // CSV com BOM para Excel, separador ponto e vírgula, sem aspas exceto se necessário
+    const csv = [
+      '\uFEFF' + headers.join(';'),
+      ...rows.map(row =>
+        row.map(field => {
+          if (typeof field === 'string' && (field.includes(';') || field.includes('"') || field.includes('\n'))) {
+            return '"' + field.replace(/"/g, '""') + '"';
+          }
+          return field;
+        }).join(';')
+      )
+    ].join('\r\n');
     const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
     saveAs(blob, 'transacoes.csv');
   }
