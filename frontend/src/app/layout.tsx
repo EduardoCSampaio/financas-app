@@ -58,6 +58,9 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
                   <Link href="/accounts" className="text-lg font-medium text-slate-800 hover:bg-gradient-to-r hover:from-indigo-600 hover:to-blue-500 hover:text-white px-4 py-3 rounded-xl transition-all duration-150">
                     Contas
                   </Link>
+                  <Link href="/categorias" className="text-lg font-medium text-slate-800 hover:bg-gradient-to-r hover:from-indigo-600 hover:to-blue-500 hover:text-white px-4 py-3 rounded-xl transition-all duration-150">
+                    Categorias
+                  </Link>
                   <Link href="/perfil" className="text-lg font-medium text-slate-800 hover:bg-gradient-to-r hover:from-indigo-600 hover:to-blue-500 hover:text-white px-4 py-3 rounded-xl transition-all duration-150">
                     Perfil
                   </Link>

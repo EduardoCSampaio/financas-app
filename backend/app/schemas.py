@@ -7,7 +7,16 @@ class CategoryBase(BaseModel):
     name: str
 
 class CategoryCreate(CategoryBase):
-    pass
+    user_id: int | None = None
+
+class CategoryUpdate(BaseModel):
+    name: str
+
+class CategoryOut(CategoryBase):
+    id: int
+    user_id: int | None = None
+    class Config:
+        orm_mode = True
 
 class Category(CategoryBase):
     id: int

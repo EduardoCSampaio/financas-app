@@ -3,7 +3,7 @@ import React, { useState, useEffect, FormEvent } from 'react';
 import { toast } from 'react-toastify';
 import api from '@/lib/api';
 import { Transaction } from '@/types';
-import { useCategories } from '@/contexts/AuthContext';
+import { useCategories, useUserCategories } from '@/contexts/AuthContext';
 
 interface EditTransactionModalProps {
   isOpen: boolean;
@@ -27,6 +27,7 @@ const EditTransactionModal: React.FC<EditTransactionModalProps> = ({
   const [proof, setProof] = useState<File | null>(null);
   const [error, setError] = useState<string | null>(null);
   const { categories, loading } = useCategories();
+  const { categories: userCategories } = useUserCategories();
 
   useEffect(() => {
     if (transaction) {
@@ -143,38 +144,36 @@ const EditTransactionModal: React.FC<EditTransactionModalProps> = ({
             </div>
           </div>
           
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <label htmlFor="edit-category" className="block text-sm font-medium text-slate-700 mb-2">
-                Categoria
-              </label>
-              <select
-                id="edit-category"
-                value={categoryId}
-                onChange={e => setCategoryId(e.target.value ? Number(e.target.value) : '')}
-                required
-                className="apple-input w-full"
-                disabled={loading}
-              >
-                <option value="">Selecione...</option>
-                {categories.map(cat => (
-                  <option key={cat.id} value={cat.id}>{cat.name}</option>
-                ))}
-              </select>
-            </div>
-            <div>
-              <label htmlFor="edit-date" className="block text-sm font-medium text-slate-700 mb-2">
-                Data
-              </label>
-              <input 
-                id="edit-date" 
-                type="date" 
-                value={date} 
-                onChange={(e) => setDate(e.target.value)} 
-                required 
-                className="apple-input w-full"
-              />
-            </div>
+          <div>
+            <label htmlFor="category" className="block text-sm font-medium text-slate-700 mb-1">
+              Categoria
+            </label>
+            <select
+              id="category"
+              value={categoryId}
+              onChange={e => setCategoryId(Number(e.target.value))}
+              required
+              className="w-full mt-1 rounded-xl border border-slate-200 bg-white px-4 py-2 text-slate-900 focus:border-indigo-400 focus:ring-2 focus:ring-indigo-100 outline-none transition"
+            >
+              <option value="">Selecione</option>
+              {userCategories.map(cat => (
+                <option key={cat.id} value={cat.id}>{cat.name}</option>
+              ))}
+            </select>
+          </div>
+          
+          <div>
+            <label htmlFor="edit-date" className="block text-sm font-medium text-slate-700 mb-2">
+              Data
+            </label>
+            <input 
+              id="edit-date" 
+              type="date" 
+              value={date} 
+              onChange={(e) => setDate(e.target.value)} 
+              required 
+              className="apple-input w-full"
+            />
           </div>
           
           <div>

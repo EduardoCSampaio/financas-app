@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useCategories } from '@/contexts/AuthContext';
+import { useCategories, useUserCategories } from '@/contexts/AuthContext';
 import api from '@/lib/api';
 
 interface Budget {
@@ -17,6 +17,7 @@ interface BudgetPanelProps {
 
 const BudgetPanel: React.FC<BudgetPanelProps> = ({ userId, currentMonth, expensesByCategory }) => {
   const { categories } = useCategories();
+  const { categories: userCategories } = useUserCategories();
   const [budgets, setBudgets] = useState<Budget[]>([]);
   const [editing, setEditing] = useState<{ [catId: number]: boolean }>({});
   const [inputValues, setInputValues] = useState<{ [catId: number]: string }>({});
@@ -58,7 +59,7 @@ const BudgetPanel: React.FC<BudgetPanelProps> = ({ userId, currentMonth, expense
     <div className="apple-card p-6 mb-8">
       <h2 className="apple-subtitle mb-4">Orçamento por Categoria</h2>
       <div className="space-y-4">
-        {categories.map((cat) => {
+        {userCategories.map((cat) => {
           const budget = getBudgetForCategory(cat.id);
           const gasto = expensesByCategory[cat.id] || 0;
           const limite = budget?.limit ?? 0;

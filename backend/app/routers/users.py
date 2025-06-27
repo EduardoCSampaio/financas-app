@@ -4,6 +4,7 @@ from .. import schemas, crud, models, security
 from ..database import get_db
 from .auth import get_current_active_user, get_current_user
 from typing import Optional
+from ..schemas import CategoryCreate, CategoryUpdate, CategoryOut
 
 router = APIRouter()
 
@@ -61,4 +62,26 @@ def delete_category_budget(category_id: int, month: Optional[str] = None, db: Se
     ok = crud.delete_category_budget(db, current_user.id, category_id, month)
     if not ok:
         raise HTTPException(status_code=404, detail="Budget not found")
+    return {"ok": True}
+
+@router.get("/categories", response_model=list[CategoryOut])
+def list_user_categories(db: Session = Depends(get_db), current_user: models.User = Depends(get_current_user)):
+    return crud.get_user_categories(db, current_user.id)
+
+@router.post("/categories", response_model=CategoryOut)
+def create_user_category(data: CategoryCreate, db: Session = Depends(get_db), current_user: models.User = Depends(get_current_user)):
+    return crud.create_user_category(db, current_user.id, data)
+
+@router.put("/categories/{category_id}", response_model=CategoryOut)
+def update_user_category(category_id: int, data: CategoryUpdate, db: Session = Depends(get_db), current_user: models.User = Depends(get_current_user)):
+    cat = crud.update_user_category(db, current_user.id, category_id, data)
+    if not cat:
+        raise HTTPException(status_code=404, detail="Categoria não encontrada")
+    return cat
+
+@router.delete("/categories/{category_id}")
+def delete_user_category(category_id: int, db: Session = Depends(get_db), current_user: models.User = Depends(get_current_user)):
+    ok = crud.delete_user_category(db, current_user.id, category_id)
+    if not ok:
+        raise HTTPException(status_code=404, detail="Categoria não encontrada")
     return {"ok": True} 

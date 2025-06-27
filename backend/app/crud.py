@@ -2,8 +2,8 @@ from sqlalchemy.orm import Session
 from typing import Optional, List
 from . import models, schemas, security
 from datetime import datetime
-from .models import CategoryBudget
-from .schemas import CategoryBudgetCreate, CategoryBudgetUpdate
+from .models import CategoryBudget, Category
+from .schemas import CategoryBudgetCreate, CategoryBudgetUpdate, CategoryCreate, CategoryUpdate
 
 # Funções CRUD para User
 def get_user_by_email(db: Session, email: str):
@@ -194,6 +194,42 @@ def delete_category_budget(db: Session, user_id: int, category_id: int, month: s
     budget = get_category_budget(db, user_id, category_id, month)
     if budget:
         db.delete(budget)
+        db.commit()
+        return True
+    return False
+
+# CRUD para categorias personalizadas
+
+# Listar categorias do usuário
+
+def get_user_categories(db: Session, user_id: int):
+    return db.query(Category).filter((Category.user_id == user_id) | (Category.user_id == None)).all()
+
+# Criar categoria personalizada
+
+def create_user_category(db: Session, user_id: int, data: CategoryCreate):
+    category = Category(name=data.name, user_id=user_id)
+    db.add(category)
+    db.commit()
+    db.refresh(category)
+    return category
+
+# Editar categoria personalizada
+
+def update_user_category(db: Session, user_id: int, category_id: int, data: CategoryUpdate):
+    category = db.query(Category).filter(Category.id == category_id, Category.user_id == user_id).first()
+    if category:
+        category.name = data.name
+        db.commit()
+        db.refresh(category)
+    return category
+
+# Deletar categoria personalizada
+
+def delete_user_category(db: Session, user_id: int, category_id: int):
+    category = db.query(Category).filter(Category.id == category_id, Category.user_id == user_id).first()
+    if category:
+        db.delete(category)
         db.commit()
         return True
     return False 

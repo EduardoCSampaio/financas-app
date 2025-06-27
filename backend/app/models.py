@@ -27,6 +27,7 @@ class Category(Base):
     __tablename__ = "categories"
     id = Column(Integer, primary_key=True, index=True)
     name = Column(String, unique=True, index=True)
+    user_id = Column(Integer, ForeignKey("users.id"), nullable=True)  # Categoria personalizada se não for null
     transactions = relationship("Transaction", back_populates="category")
 
 class Transaction(Base):

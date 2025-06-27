@@ -158,4 +158,21 @@ export function useCategories() {
   const ctx = React.useContext(CategoriesContext);
   if (!ctx) throw new Error('useCategories must be used within a CategoriesProvider');
   return ctx;
+}
+
+export function useUserCategories() {
+  const [categories, setCategories] = useState([]);
+  const [loading, setLoading] = useState(false);
+  useEffect(() => {
+    async function fetchCategories() {
+      setLoading(true);
+      try {
+        const res = await api.get('/users/categories');
+        setCategories(res.data);
+      } catch {}
+      setLoading(false);
+    }
+    fetchCategories();
+  }, []);
+  return { categories, loading };
 } 
