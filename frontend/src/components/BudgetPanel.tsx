@@ -29,7 +29,7 @@ const BudgetPanel: React.FC<BudgetPanelProps> = ({ userId, currentMonth, expense
     try {
       const res = await api.get('/users/budgets');
       setBudgets(res.data);
-    }
+    } catch (e) {}
   };
 
   const handleEdit = (catId: number, currentLimit: number) => {
@@ -48,7 +48,7 @@ const BudgetPanel: React.FC<BudgetPanelProps> = ({ userId, currentMonth, expense
       });
       await fetchBudgets();
       setEditing((prev) => ({ ...prev, [catId]: false }));
-    }
+    } catch (e) {}
   };
 
   const getBudgetForCategory = (catId: number) =>
