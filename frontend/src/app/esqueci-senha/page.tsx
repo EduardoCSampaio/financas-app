@@ -4,9 +4,7 @@ import { useRouter } from "next/navigation";
 import api from "@/lib/api";
 import { toast } from "react-toastify";
 import { FaEnvelope, FaArrowLeft } from 'react-icons/fa';
-import { motion } from 'framer-motion';
 import Link from 'next/link';
-import Image from 'next/image';
 
 export default function EsqueciSenhaPage() {
   const [email, setEmail] = useState("");

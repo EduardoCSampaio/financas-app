@@ -4,9 +4,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import api from "@/lib/api";
 import { toast } from "react-toastify";
 import { FaLock, FaArrowLeft } from 'react-icons/fa';
-import { motion } from 'framer-motion';
 import Link from 'next/link';
-import Image from 'next/image';
 
 export const dynamic = "force-dynamic";
 
