@@ -179,7 +179,7 @@ export default function DashboardPage() {
     async function fetchData() {
       setLoading(true);
       try {
-        const [txRes, , catRes] = await Promise.all([
+        const [txRes, catRes] = await Promise.all([
           api.get('/transactions'),
           api.get('/categories'),
         ]);
