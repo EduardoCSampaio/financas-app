@@ -235,7 +235,6 @@ export default function DashboardPage() {
 
   // Calcular gastos do mês atual por categoria
   const now = new Date();
-  const currentMonth = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
   const firstDay = new Date(now.getFullYear(), now.getMonth(), 1);
   const lastDay = new Date(now.getFullYear(), now.getMonth() + 1, 0);
   const expensesByCategory: Record<number, number> = {};
