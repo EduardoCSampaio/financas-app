@@ -16,9 +16,9 @@ export default function AddTransactionFAB() {
 
   return (
     <>
-      {/* FAB flutuante, só no mobile */}
+      {/* FAB flutuante, visível em todas as telas (mobile e desktop) */}
       <button
-        className="fixed bottom-6 right-6 z-40 md:hidden w-16 h-16 rounded-full bg-gradient-to-br from-indigo-600 to-blue-500 text-white shadow-2xl flex items-center justify-center text-3xl hover:scale-110 active:scale-95 transition-all duration-150"
+        className="fixed bottom-6 right-6 z-40 w-16 h-16 md:w-14 md:h-14 rounded-full bg-gradient-to-br from-indigo-600 to-blue-500 text-white shadow-2xl flex items-center justify-center text-3xl md:text-2xl hover:scale-110 active:scale-95 transition-all duration-150"
         onClick={() => setOpen(true)}
         aria-label="Adicionar transação"
       >
