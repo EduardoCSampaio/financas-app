@@ -45,24 +45,6 @@ function getCategoryColor(name: string) {
   return colors[idx];
 }
 
-const mockCategories = [
-  { name: 'Alimentação', value: 1200 },
-  { name: 'Transporte', value: 800 },
-  { name: 'Lazer', value: 600 },
-  { name: 'Saúde', value: 400 },
-  { name: 'Outros', value: 300 },
-];
-const COLORS = ['#6366f1', '#3b82f6', '#f59e42', '#10b981', '#f43f5e'];
-
-const mockBalance = [
-  { month: 'Jan', saldo: 2000 },
-  { month: 'Fev', saldo: 2500 },
-  { month: 'Mar', saldo: 1800 },
-  { month: 'Abr', saldo: 2200 },
-  { month: 'Mai', saldo: 2700 },
-  { month: 'Jun', saldo: 3000 },
-];
-
 const mockNotifications = [
   { id: 1, type: 'warning', message: 'Você gastou 80% do seu orçamento mensal!' },
   { id: 2, type: 'info', message: 'Transação agendada para amanhã.' },
@@ -104,8 +86,6 @@ export default function DashboardPage() {
   const [filterStartDate, setFilterStartDate] = useState('');
   const [filterEndDate, setFilterEndDate] = useState('');
   const [categories, setCategories] = useState([]);
-  const [balance, setBalance] = useState([]);
-  const [notifications] = useState(mockNotifications);
 
   const handleTransactionAdded = (newTransaction: Transaction) => {
     if(selectedAccount && newTransaction.account_id === selectedAccount.id) {
@@ -233,7 +213,6 @@ export default function DashboardPage() {
     name: cat.name,
     value: transactions.filter(t => t.type === 'expense' && t.category_id === cat.id).reduce((acc, t) => acc + Number(t.value), 0)
   })).filter(c => c.value > 0);
-  const COLORS = ['#6366f1', '#3b82f6', '#f59e42', '#10b981', '#f43f5e', '#818cf8', '#a5b4fc', '#f472b6', '#fbbf24', '#34d399'];
 
   // Gráfico de linha: evolução do saldo (simples, por mês)
   const saldoPorMes = {};
