@@ -3,9 +3,6 @@ import "./globals.css";
 import { AuthProvider, CategoriesProvider, useAuth } from "@/contexts/AuthContext";
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import Link from "next/link";
-import { FaHome, FaWallet, FaTags, FaUserCircle, FaSignOutAlt } from 'react-icons/fa';
-import { useState } from 'react';
 import Sidebar from '@/components/Sidebar';
 
 const inter = Inter({ subsets: ["latin"] });
