@@ -13,17 +13,7 @@ import { Transaction } from '@/types';
 import { Menu, Transition } from '@headlessui/react';
 import { Fragment } from 'react';
 import Link from 'next/link';
-import { Pie } from 'react-chartjs-2';
-import {
-  Chart as ChartJS,
-  ArcElement,
-  Tooltip,
-  Legend
-} from 'chart.js';
-import BudgetPanel from '@/components/BudgetPanel';
-import { saveAs } from 'file-saver';
-import { PieChart, Cell, ResponsiveContainer, LineChart, Line, XAxis, YAxis, CartesianGrid, Legend as RechartsLegend } from 'recharts';
-ChartJS.register(ArcElement, Tooltip, Legend);
+import { PieChart, Pie, Cell, ResponsiveContainer, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend } from 'recharts';
 
 // Spinner de carregamento
 function Spinner() {
@@ -563,21 +553,15 @@ export default function DashboardPage() {
           <div className="apple-subtitle mb-4 sm:mb-6">Resumo Gráfico</div>
           <div className="w-full h-64 bg-gradient-to-br from-indigo-50 to-blue-50 rounded-xl flex items-center justify-center">
             {Object.keys(despesasPorCategoria).length > 0 ? (
-              <Pie data={pieData} options={{
-                plugins: {
-                  legend: {
-                    display: true,
-                    position: 'right',
-                    labels: {
-                      color: '#334155',
-                      font: { family: 'Inter, sans-serif', size: 14, weight: 'bold' },
-                      padding: 20,
-                    },
-                  },
-                },
-                responsive: true,
-                maintainAspectRatio: false,
-              }} />
+              <ResponsiveContainer width="100%" height={260}>
+                <PieChart>
+                  <Pie data={pieData} dataKey="value" nameKey="label" cx="50%" cy="50%" outerRadius={80} label>
+                    {pieData.datasets[0].data.map((entry, index) => (
+                      <Cell key={`cell-${index}`} fill={pieData.datasets[0].backgroundColor[index % pieData.datasets[0].backgroundColor.length]} />
+                    ))}
+                  </Pie>
+                </PieChart>
+              </ResponsiveContainer>
             ) : (
               <div className="text-indigo-600 font-semibold opacity-70 text-center">
                 Nenhuma despesa para exibir no gráfico
@@ -629,8 +613,6 @@ export default function DashboardPage() {
                   <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                 ))}
               </Pie>
-              <Tooltip formatter={(value: number) => `R$ ${value.toLocaleString('pt-BR')}`} />
-              <RechartsLegend />
             </PieChart>
           </ResponsiveContainer>
         </div>
