@@ -2,7 +2,6 @@
 import Link from "next/link";
 import { FaHome, FaWallet, FaTags, FaUserCircle, FaSignOutAlt } from 'react-icons/fa';
 import { useState } from 'react';
-import type { User } from '@/types';
 import Image from 'next/image';
 import { useAuth } from '@/contexts/AuthContext';
 import { usePathname } from 'next/navigation';
