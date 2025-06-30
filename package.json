@@ -12,6 +12,7 @@
     "concurrently": "^9.2.0",
     "identity-obj-proxy": "^3.0.0",
     "jest": "^30.0.2",
+    "supabase": "^2.26.9",
     "ts-jest": "^29.4.0"
   },
   "scripts": {
