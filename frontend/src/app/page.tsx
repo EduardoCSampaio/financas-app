@@ -206,7 +206,7 @@ export default function DashboardPage() {
   })).filter(c => c.value > 0);
 
   // Gráfico de linha: evolução do saldo (simples, por mês)
-  const saldoPorMes = {};
+  const saldoPorMes: Record<string, number> = {};
   transactions.forEach(t => {
     const mes = new Date(t.date).toLocaleString('pt-BR', { month: 'short', year: '2-digit' });
     if (!saldoPorMes[mes]) saldoPorMes[mes] = 0;
