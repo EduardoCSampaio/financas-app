@@ -9,7 +9,7 @@ import { toast } from 'react-toastify';
 import api from "@/lib/api"; // Importando o cliente API
 import AddTransactionModal from '@/components/AddTransactionModal';
 import EditTransactionModal from '@/components/EditTransactionModal';
-import { Transaction } from '@/types';
+import { Transaction, Category } from '@/types';
 import { Menu, Transition } from '@headlessui/react';
 import { Fragment } from 'react';
 import Link from 'next/link';
@@ -44,13 +44,6 @@ function getCategoryColor(name: string) {
   const idx = Math.abs(hash) % colors.length;
   return colors[idx];
 }
-
-const mockNotifications = [
-  { id: 1, type: 'warning', message: 'Você gastou 80% do seu orçamento mensal!' },
-  { id: 2, type: 'info', message: 'Transação agendada para amanhã.' },
-  { id: 3, type: 'error', message: 'Saldo da conta principal está baixo!' },
-];
-
 // Função utilitária para calcular diferença de dias
 function daysUntil(dateStr: string) {
   const today = new Date();
@@ -85,7 +78,7 @@ export default function DashboardPage() {
   const [filterStatus, setFilterStatus] = useState('');
   const [filterStartDate, setFilterStartDate] = useState('');
   const [filterEndDate, setFilterEndDate] = useState('');
-  const [categories, setCategories] = useState([]);
+  const [categories, setCategories] = useState<Category[]>([]);
 
   const handleTransactionAdded = (newTransaction: Transaction) => {
     if(selectedAccount && newTransaction.account_id === selectedAccount.id) {
@@ -192,9 +185,8 @@ export default function DashboardPage() {
           api.get('/categories'),
         ]);
         setTransactions(txRes.data);
-        setAccounts(accRes.data);
         setCategories(catRes.data);
-      } catch (err) {
+      } catch {
         // Trate erros conforme necessário
       } finally {
         setLoading(false);
@@ -209,7 +201,7 @@ export default function DashboardPage() {
   const despesas = transactions.filter(t => t.type === 'expense').reduce((acc, t) => acc + Number(t.value), 0);
 
   // Gráfico de pizza: gastos por categoria
-  const pieData = categories.map(cat => ({
+  const pieData = (categories as Category[]).map((cat: Category) => ({
     name: cat.name,
     value: transactions.filter(t => t.type === 'expense' && t.category_id === cat.id).reduce((acc, t) => acc + Number(t.value), 0)
   })).filter(c => c.value > 0);
@@ -297,7 +289,7 @@ export default function DashboardPage() {
     t.type === 'expense' &&
     t.date &&
     daysUntil(t.date) >= 0 && daysUntil(t.date) <= 3 &&
-    (!t.paid || t.paid === false)
+    (!t.paid)
   );
   const boletoNotifications = boletosAVencer.map(t => ({
     id: `boleto-${t.id}`,
@@ -570,7 +562,7 @@ export default function DashboardPage() {
                 <PieChart>
                   <Pie data={pieData} dataKey="value" nameKey="name" cx="50%" cy="50%" outerRadius={80} label>
                     {pieData.map((entry, index) => (
-                      <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                      <Cell key={`cell-${index}`} fill={colors[index % colors.length]} />
                     ))}
                   </Pie>
                   <Tooltip formatter={(value: number) => `R$ ${value.toLocaleString('pt-BR')}`} />
@@ -624,7 +616,7 @@ export default function DashboardPage() {
             <PieChart>
               <Pie data={categories} dataKey="value" nameKey="name" cx="50%" cy="50%" outerRadius={80} label>
                 {categories.map((entry, index) => (
-                  <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                  <Cell key={`cell-${index}`} fill={colors[index % colors.length]} />
                 ))}
               </Pie>
             </PieChart>
