@@ -69,11 +69,19 @@ const mockNotifications = [
   { id: 3, type: 'error', message: 'Saldo da conta principal está baixo!' },
 ];
 
+// Função utilitária para calcular diferença de dias
+function daysUntil(dateStr: string) {
+  const today = new Date();
+  const date = new Date(dateStr);
+  const diff = Math.ceil((date.getTime() - today.getTime()) / (1000 * 60 * 60 * 24));
+  return diff;
+}
+
 export default function DashboardPage() {
   const { 
     token, 
     user, 
-    accounts, 
+    accounts: authAccounts, 
     selectedAccount, 
     selectAccount,
     fetchAccounts,
@@ -95,8 +103,8 @@ export default function DashboardPage() {
   const [filterStatus, setFilterStatus] = useState('');
   const [filterStartDate, setFilterStartDate] = useState('');
   const [filterEndDate, setFilterEndDate] = useState('');
-  const [categories] = useState(mockCategories);
-  const [balance] = useState(mockBalance);
+  const [categories, setCategories] = useState([]);
+  const [balance, setBalance] = useState([]);
   const [notifications] = useState(mockNotifications);
 
   const handleTransactionAdded = (newTransaction: Transaction) => {
@@ -179,13 +187,13 @@ export default function DashboardPage() {
         filterType,
         filterStatus
       );
-    } else if (token && accounts.length === 0) {
+    } else if (token && authAccounts.length === 0) {
       setLoading(false);
       setTransactions([]);
     } else if (!token) {
       router.push('/login');
     }
-  }, [token, selectedAccount, filterText, filterCategory, currentPage, itemsPerPage, router, debouncedFetch, accounts, filterStartDate, filterEndDate, filterType, filterStatus]);
+  }, [token, selectedAccount, filterText, filterCategory, currentPage, itemsPerPage, router, debouncedFetch, authAccounts, filterStartDate, filterEndDate, filterType, filterStatus]);
 
   useEffect(() => {
     // Simula alertas toast ao abrir o dashboard
@@ -194,13 +202,47 @@ export default function DashboardPage() {
     toast.error('Saldo da conta principal está baixo!');
   }, []);
 
-  // Cálculos derivados usam 'transactions'
-  const saldo = transactions.reduce(
-    (acc, t) => t.type === 'income' ? acc + t.value : acc - t.value, 
-    selectedAccount?.initial_balance || 0
-  );
-  const receitas = transactions.filter(t => t.type === 'income').reduce((acc, t) => acc + t.value, 0);
-  const despesas = transactions.filter(t => t.type === 'expense').reduce((acc, t) => acc + t.value, 0);
+  useEffect(() => {
+    async function fetchData() {
+      setLoading(true);
+      try {
+        const [txRes, accRes, catRes] = await Promise.all([
+          api.get('/transactions'),
+          api.get('/accounts'),
+          api.get('/categories'),
+        ]);
+        setTransactions(txRes.data);
+        setAccounts(accRes.data);
+        setCategories(catRes.data);
+      } catch (err) {
+        // Trate erros conforme necessário
+      } finally {
+        setLoading(false);
+      }
+    }
+    fetchData();
+  }, []);
+
+  // Cálculos dinâmicos
+  const saldoAtual = authAccounts.reduce((acc, a) => acc + (a.initial_balance || 0), 0);
+  const receitas = transactions.filter(t => t.type === 'income').reduce((acc, t) => acc + Number(t.value), 0);
+  const despesas = transactions.filter(t => t.type === 'expense').reduce((acc, t) => acc + Number(t.value), 0);
+
+  // Gráfico de pizza: gastos por categoria
+  const pieData = categories.map(cat => ({
+    name: cat.name,
+    value: transactions.filter(t => t.type === 'expense' && t.category_id === cat.id).reduce((acc, t) => acc + Number(t.value), 0)
+  })).filter(c => c.value > 0);
+  const COLORS = ['#6366f1', '#3b82f6', '#f59e42', '#10b981', '#f43f5e', '#818cf8', '#a5b4fc', '#f472b6', '#fbbf24', '#34d399'];
+
+  // Gráfico de linha: evolução do saldo (simples, por mês)
+  const saldoPorMes = {};
+  transactions.forEach(t => {
+    const mes = new Date(t.date).toLocaleString('pt-BR', { month: 'short', year: '2-digit' });
+    if (!saldoPorMes[mes]) saldoPorMes[mes] = 0;
+    saldoPorMes[mes] += t.type === 'income' ? Number(t.value) : -Number(t.value);
+  });
+  const lineData = Object.entries(saldoPorMes).map(([month, saldo]) => ({ month, saldo }));
 
   // Cálculo de tendências (simulado)
   const saldoTrend = 5.2;
@@ -220,13 +262,6 @@ export default function DashboardPage() {
       despesasPorCategoria[cat] = (despesasPorCategoria[cat] || 0) + t.value;
     }
   });
-  const pieData = [
-    { name: 'Alimentação', value: despesasPorCategoria['Alimentação'] || 0 },
-    { name: 'Transporte', value: despesasPorCategoria['Transporte'] || 0 },
-    { name: 'Lazer', value: despesasPorCategoria['Lazer'] || 0 },
-    { name: 'Saúde', value: despesasPorCategoria['Saúde'] || 0 },
-    { name: 'Outros', value: despesasPorCategoria['Outros'] || 0 },
-  ];
 
   // Calcular gastos do mês atual por categoria
   const now = new Date();
@@ -278,6 +313,26 @@ export default function DashboardPage() {
     saveAs(blob, 'transacoes.csv');
   }
 
+  // Notificações automáticas de boletos próximos do vencimento
+  const boletosAVencer = transactions.filter(t =>
+    t.type === 'expense' &&
+    t.date &&
+    daysUntil(t.date) >= 0 && daysUntil(t.date) <= 3 &&
+    (!t.paid || t.paid === false)
+  );
+  const boletoNotifications = boletosAVencer.map(t => ({
+    id: `boleto-${t.id}`,
+    type: 'warning',
+    message: `Boleto de R$ ${Number(t.value).toLocaleString('pt-BR', { minimumFractionDigits: 2 })} vence em ${daysUntil(t.date)} dia(s): ${t.description}`
+  }));
+
+  // Notificações finais
+  const allNotifications = [...boletoNotifications /*, ...outras notificações*/];
+
+  if (loading) {
+    return <div className="w-full flex justify-center items-center py-20 text-xl text-indigo-600">Carregando dashboard...</div>;
+  }
+
   return (
     <div className="space-y-8">
       {/* Header com saudação e seletor de contas */}
@@ -292,7 +347,7 @@ export default function DashboardPage() {
         </div>
         
         {/* Seletor de contas */}
-        {accounts.length > 0 && (
+        {authAccounts.length > 0 && (
           <Menu as="div" className="relative">
             <Menu.Button className="apple-btn-secondary inline-flex items-center gap-2">
               {selectedAccount ? selectedAccount.name : 'Selecionar Conta'}
@@ -309,7 +364,7 @@ export default function DashboardPage() {
             >
               <Menu.Items className="absolute right-0 z-10 mt-2 w-56 origin-top-right bg-white rounded-xl shadow-lg border border-slate-200 focus:outline-none">
                 <div className="py-1">
-                  {accounts.map((account) => (
+                  {authAccounts.map((account) => (
                     <Menu.Item key={account.id}>
                       {({ active }) => (
                         <button
@@ -350,7 +405,7 @@ export default function DashboardPage() {
         <div className="apple-card">
           <div className="text-slate-600 font-medium mb-2">Saldo Atual</div>
           <div className="text-3xl font-bold text-slate-800 mb-1">
-            R$ {saldo.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
+            R$ {saldoAtual.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
           </div>
           <div className="text-green-600 font-semibold">
             +{saldoTrend}% este mês
@@ -570,7 +625,7 @@ export default function DashboardPage() {
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         <div className="bg-white/80 rounded-2xl shadow p-6 flex flex-col items-center">
           <span className="text-xs text-slate-500 mb-1">Saldo Atual</span>
-          <span className="text-3xl font-black text-indigo-600">R$ {saldo.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</span>
+          <span className="text-3xl font-black text-indigo-600">R$ {saldoAtual.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</span>
         </div>
         <div className="bg-white/80 rounded-2xl shadow p-6 flex flex-col items-center">
           <span className="text-xs text-slate-500 mb-1">Gastos do mês</span>
@@ -599,7 +654,7 @@ export default function DashboardPage() {
         <div className="bg-white/80 rounded-2xl shadow p-6">
           <h2 className="text-lg font-bold text-indigo-600 mb-4">Evolução do Saldo</h2>
           <ResponsiveContainer width="100%" height={260}>
-            <LineChart data={balance} margin={{ top: 10, right: 20, left: 0, bottom: 0 }}>
+            <LineChart data={lineData} margin={{ top: 10, right: 20, left: 0, bottom: 0 }}>
               <CartesianGrid strokeDasharray="3 3" />
               <XAxis dataKey="month" />
               <YAxis />
@@ -614,7 +669,10 @@ export default function DashboardPage() {
       <div className="bg-white/80 rounded-2xl shadow p-6 mb-4">
         <h2 className="text-lg font-bold text-indigo-600 mb-4">Notificações</h2>
         <ul className="flex flex-col gap-2">
-          {notifications.map(n => (
+          {allNotifications.length === 0 && (
+            <li className="text-slate-500 text-sm">Nenhuma notificação no momento.</li>
+          )}
+          {allNotifications.map(n => (
             <li key={n.id} className={`flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium ${n.type === 'warning' ? 'bg-yellow-100 text-yellow-800' : n.type === 'error' ? 'bg-rose-100 text-rose-700' : 'bg-blue-100 text-blue-700'}`}>
               {n.type === 'warning' && <span className="text-lg">⚠️</span>}
               {n.type === 'error' && <span className="text-lg">❗</span>}
