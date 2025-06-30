@@ -106,8 +106,7 @@ export default function DashboardPage() {
   const [filterEndDate, setFilterEndDate] = useState('');
   const [categories] = useState(mockCategories);
   const [balance] = useState(mockBalance);
-  const [notifications, setNotifications] = useState(mockNotifications);
-  const total = categories.reduce((acc, c) => acc + c.value, 0);
+  const [notifications] = useState(mockNotifications);
 
   const handleTransactionAdded = (newTransaction: Transaction) => {
     if(selectedAccount && newTransaction.account_id === selectedAccount.id) {
