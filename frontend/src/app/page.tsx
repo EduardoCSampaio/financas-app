@@ -220,19 +220,13 @@ export default function DashboardPage() {
       despesasPorCategoria[cat] = (despesasPorCategoria[cat] || 0) + t.value;
     }
   });
-  const pieData = {
-    labels: Object.keys(despesasPorCategoria),
-    datasets: [
-      {
-        data: Object.values(despesasPorCategoria),
-        backgroundColor: [
-          '#6366f1', '#818cf8', '#a5b4fc', '#f472b6', '#fbbf24', '#34d399', '#60a5fa', '#f87171', '#facc15', '#38bdf8'
-        ],
-        borderWidth: 2,
-        borderColor: '#fff',
-      },
-    ],
-  };
+  const pieData = [
+    { name: 'Alimentação', value: despesasPorCategoria['Alimentação'] || 0 },
+    { name: 'Transporte', value: despesasPorCategoria['Transporte'] || 0 },
+    { name: 'Lazer', value: despesasPorCategoria['Lazer'] || 0 },
+    { name: 'Saúde', value: despesasPorCategoria['Saúde'] || 0 },
+    { name: 'Outros', value: despesasPorCategoria['Outros'] || 0 },
+  ];
 
   // Calcular gastos do mês atual por categoria
   const now = new Date();
@@ -537,14 +531,15 @@ export default function DashboardPage() {
         <div className="apple-card mt-8 lg:mt-0">
           <div className="apple-subtitle mb-4 sm:mb-6">Resumo Gráfico</div>
           <div className="w-full h-64 bg-gradient-to-br from-indigo-50 to-blue-50 rounded-xl flex items-center justify-center">
-            {Object.keys(despesasPorCategoria).length > 0 ? (
+            {pieData.length > 0 ? (
               <ResponsiveContainer width="100%" height={260}>
                 <PieChart>
-                  <Pie data={pieData} dataKey="value" nameKey="label" cx="50%" cy="50%" outerRadius={80} label>
-                    {pieData.datasets[0].data.map((entry, index) => (
-                      <Cell key={`cell-${index}`} fill={pieData.datasets[0].backgroundColor[index % pieData.datasets[0].backgroundColor.length]} />
+                  <Pie data={pieData} dataKey="value" nameKey="name" cx="50%" cy="50%" outerRadius={80} label>
+                    {pieData.map((entry, index) => (
+                      <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                     ))}
                   </Pie>
+                  <Tooltip formatter={(value: number) => `R$ ${value.toLocaleString('pt-BR')}`} />
                 </PieChart>
               </ResponsiveContainer>
             ) : (
