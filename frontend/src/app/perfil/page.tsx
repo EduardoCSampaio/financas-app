@@ -3,7 +3,7 @@ import { useState } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useRouter } from 'next/navigation';
 import { toast } from 'react-toastify';
-import { FaUser, FaEnvelope, FaIdCard, FaSignOutAlt, FaCog } from 'react-icons/fa';
+import { FaUser } from 'react-icons/fa';
 import Image from 'next/image';
 
 export default function PerfilPage() {
@@ -13,14 +13,12 @@ export default function PerfilPage() {
   // Estados para edição
   const [editName, setEditName] = useState(user?.name || '');
   const [editEmail, setEditEmail] = useState(user?.email || '');
-  const [editPhoto, setEditPhoto] = useState<File | null>(null);
   const [photoPreview, setPhotoPreview] = useState<string | null>(null);
   const [showPassword, setShowPassword] = useState(false);
   const [editPassword, setEditPassword] = useState('');
   // Preview instantâneo da foto
   const handlePhotoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
-      setEditPhoto(e.target.files[0]);
       setPhotoPreview(URL.createObjectURL(e.target.files[0]));
     }
   };
@@ -32,19 +30,6 @@ export default function PerfilPage() {
       setLoading(false);
       toast.success('Alterações salvas com sucesso! (Simulado)');
     }, 1200);
-  };
-
-  const handleLogout = async () => {
-    setLoading(true);
-    try {
-      logout();
-      router.push('/login');
-      toast.success('Logout realizado com sucesso!');
-    } catch {
-      toast.error('Erro ao fazer logout.');
-    } finally {
-      setLoading(false);
-    }
   };
 
   return (
