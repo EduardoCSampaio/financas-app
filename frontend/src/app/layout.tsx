@@ -4,6 +4,7 @@ import { AuthProvider, CategoriesProvider } from "@/contexts/AuthContext";
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import Sidebar from '@/components/Sidebar';
+import AddTransactionFAB from '@/components/AddTransactionFAB';
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -53,8 +54,10 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
                 <Sidebar />
               )}
               {/* Conteúdo principal */}
-              <main className="flex-1 p-8">
+              <main className="flex-1 p-8 relative">
                 {children}
+                {/* FAB para mobile */}
+                <AddTransactionFAB />
               </main>
             </div>
             <ToastContainer
