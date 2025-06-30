@@ -1,14 +1,12 @@
 "use client";
 import { useState } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
-import { useRouter } from 'next/navigation';
-import { toast } from 'react-toastify';
 import { FaUser } from 'react-icons/fa';
 import Image from 'next/image';
+import { toast } from 'react-toastify';
 
 export default function PerfilPage() {
-  const { user, logout } = useAuth();
-  const router = useRouter();
+  const { user } = useAuth();
   const [loading, setLoading] = useState(false);
   // Estados para edição
   const [editName, setEditName] = useState(user?.name || '');
