@@ -13,7 +13,7 @@ import { Transaction } from '@/types';
 import { Menu, Transition } from '@headlessui/react';
 import { Fragment } from 'react';
 import Link from 'next/link';
-import { PieChart, Pie, Cell, ResponsiveContainer, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend } from 'recharts';
+import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from 'recharts';
 
 // Spinner de carregamento
 function Spinner() {
@@ -290,7 +290,7 @@ export default function DashboardPage() {
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div className="flex flex-col gap-2">
           <h1 className="apple-title text-2xl sm:text-3xl">
-            Olá, {user?.document || user?.email || 'Usuário'}
+            Olá, {user?.name || user?.email || 'Usuário'}
           </h1>
           <p className="text-base sm:text-lg text-slate-600 mt-1">
             Bem-vindo ao seu dashboard premium
