@@ -14,6 +14,7 @@ import { Menu, Transition } from '@headlessui/react';
 import { Fragment } from 'react';
 import Link from 'next/link';
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip, LineChart, CartesianGrid, XAxis, YAxis, Line } from 'recharts';
+import { saveAs } from 'file-saver';
 
 // Spinner de carregamento
 function Spinner() {
