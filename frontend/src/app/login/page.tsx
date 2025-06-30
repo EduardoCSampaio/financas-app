@@ -44,35 +44,33 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 px-2">
-      <div className="w-full max-w-md p-4 sm:p-8 bg-white rounded-2xl shadow-xl border border-slate-200">
-        <div className="flex flex-col items-center mb-6">
-          <Image src="/logo.svg" alt="Logo" width={44} height={44} />
-          <span className="text-2xl font-extrabold text-indigo-600 tracking-tight mt-2 select-none" style={{letterSpacing: '-0.03em'}}>FinançasPro</span>
-        </div>
-        <h1 className="apple-title text-center mb-6 text-xl sm:text-2xl">Entrar</h1>
-        <form onSubmit={handleSubmit} className="space-y-6">
+    <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 px-4">
+      <div className="w-full max-w-md p-6 sm:p-10 bg-white/80 backdrop-blur-md rounded-3xl shadow-lg flex flex-col items-center">
+        <Image src="/logo.svg" alt="Logo" width={56} height={56} className="mb-4" />
+        <span className="text-3xl font-black text-indigo-600 tracking-tight mb-2 select-none" style={{letterSpacing: '-0.03em'}}>FinançasPro</span>
+        <h1 className="text-center mb-8 text-lg sm:text-2xl font-semibold text-slate-800">Entrar</h1>
+        <form onSubmit={handleSubmit} className="w-full flex flex-col gap-5">
           <div>
-            <label htmlFor="email" className="block text-sm font-medium text-slate-700 mb-2">E-mail</label>
-            <input id="email" type="email" required value={email} onChange={e => setEmail(e.target.value)} placeholder="Digite seu e-mail" className="apple-input w-full text-base" />
+            <label htmlFor="email" className="block text-xs font-semibold text-slate-600 mb-2">E-mail</label>
+            <input id="email" type="email" required value={email} onChange={e => setEmail(e.target.value)} placeholder="Digite seu e-mail" className="w-full rounded-xl border border-slate-200 bg-white/70 px-4 py-3 text-base shadow-sm focus:ring-2 focus:ring-indigo-200 focus:border-indigo-400 outline-none transition" />
           </div>
           <div>
-            <label htmlFor="password" className="block text-sm font-medium text-slate-700 mb-2">Senha</label>
+            <label htmlFor="password" className="block text-xs font-semibold text-slate-600 mb-2">Senha</label>
             <div className="relative">
-              <input id="password" type={showPassword ? "text" : "password"} required value={password} onChange={e => setPassword(e.target.value)} placeholder="Digite sua senha" className="apple-input w-full pr-10 text-base" />
+              <input id="password" type={showPassword ? "text" : "password"} required value={password} onChange={e => setPassword(e.target.value)} placeholder="Digite sua senha" className="w-full rounded-xl border border-slate-200 bg-white/70 px-4 py-3 pr-10 text-base shadow-sm focus:ring-2 focus:ring-indigo-200 focus:border-indigo-400 outline-none transition" />
               <button type="button" tabIndex={-1} onClick={() => setShowPassword(!showPassword)} className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-indigo-500 focus:outline-none">
                 {showPassword ? <FaEyeSlash /> : <FaEye />}
               </button>
             </div>
           </div>
-          {error && <span className="text-xs text-red-500 mt-1 block">{error}</span>}
-          <button type="submit" className="apple-btn w-full flex items-center justify-center text-base py-3" disabled={loading}>
+          {error && <span className="text-xs text-red-500 mt-1 block text-center">{error}</span>}
+          <button type="submit" className="w-full rounded-xl bg-gradient-to-r from-indigo-600 to-blue-500 text-white font-bold text-base py-3 shadow-md hover:from-indigo-700 hover:to-blue-600 transition-all duration-150 flex items-center justify-center disabled:opacity-60 disabled:cursor-not-allowed" disabled={loading}>
             {loading ? <span className="loader ml-2 w-4 h-4 border-2 border-t-2 border-indigo-600 border-t-transparent rounded-full animate-spin"></span> : "Entrar"}
           </button>
         </form>
-        <div className="flex flex-col sm:flex-row justify-between items-center mt-6 gap-2 text-sm">
-          <Link href="/register" className="text-slate-600 hover:text-indigo-600 transition-colors">Criar conta</Link>
-          <Link href="/esqueci-senha" className="text-slate-600 hover:text-indigo-600 transition-colors">Esqueci minha senha</Link>
+        <div className="flex flex-col gap-2 items-center mt-8 w-full">
+          <Link href="/register" className="text-slate-500 hover:text-indigo-600 text-sm transition-colors">Criar conta</Link>
+          <Link href="/esqueci-senha" className="text-slate-400 hover:text-indigo-500 text-xs transition-colors">Esqueci minha senha</Link>
         </div>
       </div>
     </div>

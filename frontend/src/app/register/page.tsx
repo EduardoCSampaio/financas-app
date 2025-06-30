@@ -61,9 +61,9 @@ export default function RegisterPage() {
   if (success) {
     return (
       <div className="flex flex-col items-center justify-center min-h-screen bg-gradient-to-br from-slate-50 to-slate-100">
-        <div className="w-full max-w-md p-8 bg-white rounded-2xl shadow-xl border border-slate-200 text-center">
+        <div className="w-full max-w-md p-8 bg-white/80 backdrop-blur-md rounded-3xl shadow-lg text-center">
           <FaCheckCircle className="text-6xl text-green-500 mb-4 mx-auto" />
-          <h2 className="apple-title mb-2">Conta criada!</h2>
+          <h2 className="text-2xl font-bold mb-2 text-indigo-600">Conta criada!</h2>
           <p className="text-slate-600">Redirecionando para o login...</p>
         </div>
       </div>
@@ -71,15 +71,13 @@ export default function RegisterPage() {
   }
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 px-2">
-      <div className="w-full max-w-md p-4 sm:p-8 bg-white rounded-2xl shadow-xl border border-slate-200">
-        <div className="flex flex-col items-center mb-6">
-          <Image src="/logo.svg" alt="Logo" width={44} height={44} />
-          <span className="text-2xl font-extrabold text-indigo-600 tracking-tight mt-2 select-none" style={{letterSpacing: '-0.03em'}}>FinançasPro</span>
-        </div>
-        <h1 className="apple-title text-center mb-6 text-xl sm:text-2xl">Criar conta</h1>
-        <form onSubmit={handleSubmit} className="space-y-6">
-          <div className="flex gap-4 mb-4">
+    <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 px-4">
+      <div className="w-full max-w-md p-6 sm:p-10 bg-white/80 backdrop-blur-md rounded-3xl shadow-lg flex flex-col items-center">
+        <Image src="/logo.svg" alt="Logo" width={56} height={56} className="mb-4" />
+        <span className="text-3xl font-black text-indigo-600 tracking-tight mb-2 select-none" style={{letterSpacing: '-0.03em'}}>FinançasPro</span>
+        <h1 className="text-center mb-8 text-lg sm:text-2xl font-semibold text-slate-800">Criar conta</h1>
+        <form onSubmit={handleSubmit} className="w-full flex flex-col gap-5">
+          <div className="flex gap-4 mb-2">
             <label className="flex items-center gap-2 text-slate-700 font-medium">
               <input 
                 type="radio" 
@@ -104,7 +102,7 @@ export default function RegisterPage() {
             </label>
           </div>
           <div>
-            <label htmlFor="document" className="block text-sm font-medium text-slate-700 mb-2">
+            <label htmlFor="document" className="block text-xs font-semibold text-slate-600 mb-2">
               {accountType === 'cpf' ? 'CPF' : 'CNPJ'}
             </label>
             <IMaskInput
@@ -113,12 +111,12 @@ export default function RegisterPage() {
               value={document}
               onAccept={(value: string) => setDocument(value)}
               placeholder={accountType === 'cpf' ? 'Digite seu CPF' : 'Digite seu CNPJ'}
-              className={`apple-input w-full ${error ? 'border-red-500' : ''}`}
+              className={`w-full rounded-xl border border-slate-200 bg-white/70 px-4 py-3 text-base shadow-sm focus:ring-2 focus:ring-indigo-200 focus:border-indigo-400 outline-none transition ${error ? 'border-red-500' : ''}`}
               required
             />
           </div>
           <div>
-            <label htmlFor="name" className="block text-sm font-medium text-slate-700 mb-2">
+            <label htmlFor="name" className="block text-xs font-semibold text-slate-600 mb-2">
               Nome completo
             </label>
             <input
@@ -128,11 +126,11 @@ export default function RegisterPage() {
               value={name}
               onChange={(e) => setName(e.target.value)}
               placeholder="Digite seu nome completo"
-              className={`apple-input w-full ${error ? 'border-red-500' : ''}`}
+              className={`w-full rounded-xl border border-slate-200 bg-white/70 px-4 py-3 text-base shadow-sm focus:ring-2 focus:ring-indigo-200 focus:border-indigo-400 outline-none transition ${error ? 'border-red-500' : ''}`}
             />
           </div>
           <div>
-            <label htmlFor="email" className="block text-sm font-medium text-slate-700 mb-2">
+            <label htmlFor="email" className="block text-xs font-semibold text-slate-600 mb-2">
               E-mail
             </label>
             <input
@@ -142,11 +140,11 @@ export default function RegisterPage() {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               placeholder="Digite seu e-mail"
-              className={`apple-input w-full ${error ? 'border-red-500' : ''}`}
+              className={`w-full rounded-xl border border-slate-200 bg-white/70 px-4 py-3 text-base shadow-sm focus:ring-2 focus:ring-indigo-200 focus:border-indigo-400 outline-none transition ${error ? 'border-red-500' : ''}`}
             />
           </div>
           <div>
-            <label htmlFor="password" className="block text-sm font-medium text-slate-700 mb-2">
+            <label htmlFor="password" className="block text-xs font-semibold text-slate-600 mb-2">
               Senha
             </label>
             <div className="relative">
@@ -157,7 +155,7 @@ export default function RegisterPage() {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="Digite sua senha"
-                className={`apple-input w-full pr-10 ${error ? 'border-red-500' : ''}`}
+                className={`w-full rounded-xl border border-slate-200 bg-white/70 px-4 py-3 pr-10 text-base shadow-sm focus:ring-2 focus:ring-indigo-200 focus:border-indigo-400 outline-none transition ${error ? 'border-red-500' : ''}`}
               />
               <button type="button" tabIndex={-1} onClick={() => setShowPassword(!showPassword)}
                 className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-indigo-500 focus:outline-none">
@@ -166,7 +164,7 @@ export default function RegisterPage() {
             </div>
           </div>
           <div>
-            <label htmlFor="confirmPassword" className="block text-sm font-medium text-slate-700 mb-2">
+            <label htmlFor="confirmPassword" className="block text-xs font-semibold text-slate-600 mb-2">
               Confirmar senha
             </label>
             <div className="relative">
@@ -177,7 +175,7 @@ export default function RegisterPage() {
                 value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}
                 placeholder="Confirme sua senha"
-                className={`apple-input w-full pr-10 ${error ? 'border-red-500' : ''}`}
+                className={`w-full rounded-xl border border-slate-200 bg-white/70 px-4 py-3 pr-10 text-base shadow-sm focus:ring-2 focus:ring-indigo-200 focus:border-indigo-400 outline-none transition ${error ? 'border-red-500' : ''}`}
               />
               <button type="button" tabIndex={-1} onClick={() => setShowConfirmPassword(!showConfirmPassword)}
                 className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-indigo-500 focus:outline-none">
@@ -186,12 +184,12 @@ export default function RegisterPage() {
             </div>
             {error && <span className="text-xs text-red-500 mt-1 block">{error}</span>}
           </div>
-          <button type="submit" className="apple-btn w-full flex items-center justify-center text-base py-3" disabled={loading}>
+          <button type="submit" className="w-full rounded-xl bg-gradient-to-r from-indigo-600 to-blue-500 text-white font-bold text-base py-3 shadow-md hover:from-indigo-700 hover:to-blue-600 transition-all duration-150 flex items-center justify-center disabled:opacity-60 disabled:cursor-not-allowed" disabled={loading}>
             {loading ? <span className="loader ml-2 w-4 h-4 border-2 border-t-2 border-indigo-600 border-t-transparent rounded-full animate-spin"></span> : "Criar conta"}
           </button>
         </form>
-        <div className="flex justify-center mt-6">
-          <Link href="/login" className="flex items-center text-sm text-slate-600 hover:text-indigo-600 transition-colors">
+        <div className="flex justify-center mt-8 w-full">
+          <Link href="/login" className="flex items-center text-sm text-slate-500 hover:text-indigo-600 transition-colors">
             <FaArrowLeft className="mr-2" /> Voltar para login
           </Link>
         </div>

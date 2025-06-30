@@ -4,6 +4,7 @@ import { AuthProvider, CategoriesProvider } from "@/contexts/AuthContext";
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import Link from "next/link";
+import { usePathname } from 'next/navigation';
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -40,39 +41,41 @@ export const metadata = {
 };
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode; }>) {
+  const pathname = typeof window !== 'undefined' ? window.location.pathname : '';
+  const isLoginPage = pathname === '/login';
   return (
     <html lang="pt-br">
-      <body className={`${inter.className} bg-gradient-to-br from-slate-50 to-slate-100 min-h-screen text-slate-800`}> 
+      <body className={`${inter.className} bg-gradient-to-br from-slate-50 to-slate-100 min-h-screen text-slate-800`}>
         <AuthProvider>
           <CategoriesProvider>
             <div className="flex min-h-screen">
               {/* Sidebar fixa */}
-              <aside className="w-60 bg-white border-r border-slate-200 flex flex-col p-6 gap-8 shadow-sm">
-                <div className="text-2xl font-extrabold tracking-tight text-indigo-600" style={{letterSpacing: '-0.03em'}}>
-                  Finanças<span className="text-slate-800">Pro</span>
-                </div>
-                <nav className="flex flex-col gap-3">
-                  <Link href="/" className="text-lg font-medium text-slate-800 hover:bg-gradient-to-r hover:from-indigo-600 hover:to-blue-500 hover:text-white px-4 py-3 rounded-xl transition-all duration-150">
-                    Dashboard
-                  </Link>
-                  <Link href="/accounts" className="text-lg font-medium text-slate-800 hover:bg-gradient-to-r hover:from-indigo-600 hover:to-blue-500 hover:text-white px-4 py-3 rounded-xl transition-all duration-150">
-                    Contas
-                  </Link>
-                  <Link href="/categorias" className="text-lg font-medium text-slate-800 hover:bg-gradient-to-r hover:from-indigo-600 hover:to-blue-500 hover:text-white px-4 py-3 rounded-xl transition-all duration-150">
-                    Categorias
-                  </Link>
-                  <Link href="/perfil" className="text-lg font-medium text-slate-800 hover:bg-gradient-to-r hover:from-indigo-600 hover:to-blue-500 hover:text-white px-4 py-3 rounded-xl transition-all duration-150">
-                    Perfil
-                  </Link>
-                </nav>
-              </aside>
-              
+              {!isLoginPage && (
+                <aside className="w-60 bg-white border-r border-slate-200 flex flex-col p-6 gap-8 shadow-sm">
+                  <div className="text-2xl font-extrabold tracking-tight text-indigo-600" style={{letterSpacing: '-0.03em'}}>
+                    Finanças<span className="text-slate-800">Pro</span>
+                  </div>
+                  <nav className="flex flex-col gap-3">
+                    <Link href="/" className="text-lg font-medium text-slate-800 hover:bg-gradient-to-r hover:from-indigo-600 hover:to-blue-500 hover:text-white px-4 py-3 rounded-xl transition-all duration-150">
+                      Dashboard
+                    </Link>
+                    <Link href="/accounts" className="text-lg font-medium text-slate-800 hover:bg-gradient-to-r hover:from-indigo-600 hover:to-blue-500 hover:text-white px-4 py-3 rounded-xl transition-all duration-150">
+                      Contas
+                    </Link>
+                    <Link href="/categorias" className="text-lg font-medium text-slate-800 hover:bg-gradient-to-r hover:from-indigo-600 hover:to-blue-500 hover:text-white px-4 py-3 rounded-xl transition-all duration-150">
+                      Categorias
+                    </Link>
+                    <Link href="/perfil" className="text-lg font-medium text-slate-800 hover:bg-gradient-to-r hover:from-indigo-600 hover:to-blue-500 hover:text-white px-4 py-3 rounded-xl transition-all duration-150">
+                      Perfil
+                    </Link>
+                  </nav>
+                </aside>
+              )}
               {/* Conteúdo principal */}
               <main className="flex-1 p-8">
                 {children}
               </main>
             </div>
-            
             <ToastContainer
               position="bottom-right"
               autoClose={5000}
