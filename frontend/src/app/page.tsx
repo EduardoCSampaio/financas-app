@@ -22,6 +22,7 @@ import {
 } from 'chart.js';
 import BudgetPanel from '@/components/BudgetPanel';
 import { saveAs } from 'file-saver';
+import { PieChart, Cell, ResponsiveContainer, LineChart, Line, XAxis, YAxis, CartesianGrid, Legend as RechartsLegend } from 'recharts';
 ChartJS.register(ArcElement, Tooltip, Legend);
 
 // Spinner de carregamento
@@ -53,6 +54,30 @@ function getCategoryColor(name: string) {
   return colors[idx];
 }
 
+const mockCategories = [
+  { name: 'Alimentação', value: 1200 },
+  { name: 'Transporte', value: 800 },
+  { name: 'Lazer', value: 600 },
+  { name: 'Saúde', value: 400 },
+  { name: 'Outros', value: 300 },
+];
+const COLORS = ['#6366f1', '#3b82f6', '#f59e42', '#10b981', '#f43f5e'];
+
+const mockBalance = [
+  { month: 'Jan', saldo: 2000 },
+  { month: 'Fev', saldo: 2500 },
+  { month: 'Mar', saldo: 1800 },
+  { month: 'Abr', saldo: 2200 },
+  { month: 'Mai', saldo: 2700 },
+  { month: 'Jun', saldo: 3000 },
+];
+
+const mockNotifications = [
+  { id: 1, type: 'warning', message: 'Você gastou 80% do seu orçamento mensal!' },
+  { id: 2, type: 'info', message: 'Transação agendada para amanhã.' },
+  { id: 3, type: 'error', message: 'Saldo da conta principal está baixo!' },
+];
+
 export default function DashboardPage() {
   const { 
     token, 
@@ -79,6 +104,10 @@ export default function DashboardPage() {
   const [filterStatus, setFilterStatus] = useState('');
   const [filterStartDate, setFilterStartDate] = useState('');
   const [filterEndDate, setFilterEndDate] = useState('');
+  const [categories] = useState(mockCategories);
+  const [balance] = useState(mockBalance);
+  const [notifications, setNotifications] = useState(mockNotifications);
+  const total = categories.reduce((acc, c) => acc + c.value, 0);
 
   const handleTransactionAdded = (newTransaction: Transaction) => {
     if(selectedAccount && newTransaction.account_id === selectedAccount.id) {
@@ -167,6 +196,13 @@ export default function DashboardPage() {
       router.push('/login');
     }
   }, [token, selectedAccount, filterText, filterCategory, currentPage, itemsPerPage, router, debouncedFetch, accounts, filterStartDate, filterEndDate, filterType, filterStatus]);
+
+  useEffect(() => {
+    // Simula alertas toast ao abrir o dashboard
+    toast.warn('Você gastou 80% do seu orçamento mensal!');
+    toast.info('Transação agendada para amanhã.');
+    toast.error('Saldo da conta principal está baixo!');
+  }, []);
 
   // Cálculos derivados usam 'transactions'
   const saldo = transactions.reduce(
@@ -566,6 +602,67 @@ export default function DashboardPage() {
         onTransactionUpdated={handleTransactionUpdated}
         transaction={selectedTransactionForEdit}
       />
+
+      {/* Cards de destaque */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div className="bg-white/80 rounded-2xl shadow p-6 flex flex-col items-center">
+          <span className="text-xs text-slate-500 mb-1">Saldo Atual</span>
+          <span className="text-3xl font-black text-indigo-600">R$ {saldo.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</span>
+        </div>
+        <div className="bg-white/80 rounded-2xl shadow p-6 flex flex-col items-center">
+          <span className="text-xs text-slate-500 mb-1">Gastos do mês</span>
+          <span className="text-3xl font-black text-rose-500">R$ {despesas.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</span>
+        </div>
+        <div className="bg-white/80 rounded-2xl shadow p-6 flex flex-col items-center">
+          <span className="text-xs text-slate-500 mb-1">Receitas do mês</span>
+          <span className="text-3xl font-black text-emerald-500">R$ {receitas.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</span>
+        </div>
+      </div>
+
+      {/* Gráficos */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+        <div className="bg-white/80 rounded-2xl shadow p-6">
+          <h2 className="text-lg font-bold text-indigo-600 mb-4">Gastos por Categoria</h2>
+          <ResponsiveContainer width="100%" height={260}>
+            <PieChart>
+              <Pie data={categories} dataKey="value" nameKey="name" cx="50%" cy="50%" outerRadius={80} label>
+                {categories.map((entry, index) => (
+                  <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                ))}
+              </Pie>
+              <Tooltip formatter={(value: number) => `R$ ${value.toLocaleString('pt-BR')}`} />
+              <RechartsLegend />
+            </PieChart>
+          </ResponsiveContainer>
+        </div>
+        <div className="bg-white/80 rounded-2xl shadow p-6">
+          <h2 className="text-lg font-bold text-indigo-600 mb-4">Evolução do Saldo</h2>
+          <ResponsiveContainer width="100%" height={260}>
+            <LineChart data={balance} margin={{ top: 10, right: 20, left: 0, bottom: 0 }}>
+              <CartesianGrid strokeDasharray="3 3" />
+              <XAxis dataKey="month" />
+              <YAxis />
+              <Tooltip formatter={(value: number) => `R$ ${value.toLocaleString('pt-BR')}`} />
+              <Line type="monotone" dataKey="saldo" stroke="#6366f1" strokeWidth={3} dot={{ r: 5 }} />
+            </LineChart>
+          </ResponsiveContainer>
+        </div>
+      </div>
+
+      {/* Central de notificações */}
+      <div className="bg-white/80 rounded-2xl shadow p-6 mb-4">
+        <h2 className="text-lg font-bold text-indigo-600 mb-4">Notificações</h2>
+        <ul className="flex flex-col gap-2">
+          {notifications.map(n => (
+            <li key={n.id} className={`flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium ${n.type === 'warning' ? 'bg-yellow-100 text-yellow-800' : n.type === 'error' ? 'bg-rose-100 text-rose-700' : 'bg-blue-100 text-blue-700'}`}>
+              {n.type === 'warning' && <span className="text-lg">⚠️</span>}
+              {n.type === 'error' && <span className="text-lg">❗</span>}
+              {n.type === 'info' && <span className="text-lg">ℹ️</span>}
+              {n.message}
+            </li>
+          ))}
+        </ul>
+      </div>
     </div>
   );
 }
