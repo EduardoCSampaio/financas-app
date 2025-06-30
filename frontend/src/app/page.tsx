@@ -384,21 +384,6 @@ export default function DashboardPage() {
         </div>
       </div>
 
-      {/* Painel de orçamento por categoria */}
-      {user?.id && (
-        <BudgetPanel
-          userId={user.id}
-          currentMonth={currentMonth}
-          expensesByCategory={expensesByCategory}
-          allTransactions={transactions.map(t => ({
-            date: t.date,
-            type: t.type,
-            category: { id: t.category && typeof t.category === 'object' && 'id' in t.category ? t.category.id : 0 },
-            value: t.value,
-          }))}
-        />
-      )}
-
       {/* Conteúdo principal */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         {/* Tabela de transações */}
