@@ -16,6 +16,19 @@ import Link from 'next/link';
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip, LineChart, CartesianGrid, XAxis, YAxis, Line } from 'recharts';
 import { saveAs } from 'file-saver';
 
+const colors = [
+  '#6366f1', // Indigo
+  '#22d3ee', // Cyan
+  '#f59e42', // Amber
+  '#a21caf', // Purple
+  '#ec4899', // Pink
+  '#ef4444', // Red
+  '#06d6a0', // Green
+  '#84cc16', // Lime
+  '#fb923c', // Orange
+  '#14b8a6', // Teal
+];
+
 // Spinner de carregamento
 function Spinner() {
   return (
