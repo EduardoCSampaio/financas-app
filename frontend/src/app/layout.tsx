@@ -4,7 +4,6 @@ import { AuthProvider, CategoriesProvider } from "@/contexts/AuthContext";
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import Link from "next/link";
-import { usePathname } from 'next/navigation';
 
 const inter = Inter({ subsets: ["latin"] });
 
