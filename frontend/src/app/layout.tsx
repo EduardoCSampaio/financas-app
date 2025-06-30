@@ -1,6 +1,6 @@
 import { Inter } from "next/font/google";
 import "./globals.css";
-import { AuthProvider, CategoriesProvider, useAuth } from "@/contexts/AuthContext";
+import { AuthProvider, CategoriesProvider } from "@/contexts/AuthContext";
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import Sidebar from '@/components/Sidebar';
@@ -42,7 +42,6 @@ export const metadata = {
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode; }>) {
   const pathname = typeof window !== 'undefined' ? window.location.pathname : '';
   const isLoginPage = pathname === '/login';
-  const { user, logout } = useAuth?.() || { user: null, logout: () => {} };
   return (
     <html lang="pt-br">
       <body className={`${inter.className} bg-gradient-to-br from-slate-50 to-slate-100 min-h-screen text-slate-800`}>
@@ -51,7 +50,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
             <div className="flex min-h-screen">
               {/* Sidebar premium (client-side) */}
               {!isLoginPage && (
-                <Sidebar pathname={pathname} user={user} logout={logout} />
+                <Sidebar />
               )}
               {/* Conteúdo principal */}
               <main className="flex-1 p-8">

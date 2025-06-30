@@ -4,8 +4,12 @@ import { FaHome, FaWallet, FaTags, FaUserCircle, FaSignOutAlt } from 'react-icon
 import { useState } from 'react';
 import type { User } from '@/types';
 import Image from 'next/image';
+import { useAuth } from '@/contexts/AuthContext';
+import { usePathname } from 'next/navigation';
 
-export default function Sidebar({ pathname, user, logout }: { pathname: string, user: User | null, logout: () => void }) {
+export default function Sidebar() {
+  const { user, logout } = useAuth();
+  const pathname = usePathname();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   return (
     <>
