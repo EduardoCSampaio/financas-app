@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useCallback, useMemo } from "react";
 import { useRouter } from 'next/navigation';
 import { useAuth, useUserCategories } from '@/contexts/AuthContext';
 import { FaEdit, FaTrash, FaChevronDown, FaFileAlt, FaExternalLinkAlt } from 'react-icons/fa';
@@ -16,7 +16,7 @@ import Link from 'next/link';
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip, LineChart, CartesianGrid, XAxis, YAxis, Line } from 'recharts';
 import { saveAs } from 'file-saver';
 import jsPDF from 'jspdf';
-import autoTable from 'jspdf-autotable';
+import 'jspdf-autotable';
 
 const colors = [
   '#6366f1', // Indigo
@@ -94,7 +94,7 @@ export default function DashboardPage() {
   const [filterStartDate, setFilterStartDate] = useState('');
   const [filterEndDate, setFilterEndDate] = useState('');
   const [categories, setCategories] = useState<Category[]>([]);
-  const nowDate = new Date();
+  const nowDate = useMemo(() => new Date(), []);
 
   const handleTransactionAdded = (newTransaction: Transaction) => {
     if(selectedAccount && newTransaction.account_id === selectedAccount.id) {
@@ -643,7 +643,21 @@ export default function DashboardPage() {
                         {transaction.paid ? (
                           <span className="inline-block px-3 py-1 rounded-full bg-green-100 text-green-700 text-xs font-semibold">Pago</span>
                         ) : (
-                          <span className="inline-block px-3 py-1 rounded-full bg-yellow-100 text-yellow-700 text-xs font-semibold">Pendente</span>
+                          <button
+                            className="apple-btn-secondary px-2 py-1 text-xs"
+                            title="Marcar como pago"
+                            onClick={async () => {
+                              try {
+                                await api.patch(`/transactions/${transaction.id}`, { paid: true });
+                                setTransactions(prev => prev.map(tx => tx.id === transaction.id ? { ...tx, paid: true } : tx));
+                                toast.success('Transação marcada como paga!');
+                              } catch {
+                                toast.error('Erro ao marcar como paga.');
+                              }
+                            }}
+                          >
+                            Marcar como pago
+                          </button>
                         )}
                       </td>
                       <td className="py-2 px-2 sm:py-3 sm:px-4">
