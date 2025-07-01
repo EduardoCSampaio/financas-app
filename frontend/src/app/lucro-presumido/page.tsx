@@ -1,5 +1,5 @@
 "use client";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { Transaction } from "@/types";
 import api from "@/lib/api";
@@ -11,8 +11,7 @@ export default function LucroPresumidoPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
-  // Buscar transações ao trocar a data ou conta
-  async function fetchTransactions() {
+  const fetchTransactions = useCallback(async () => {
     if (!selectedAccount) return;
     setLoading(true);
     setError("");
@@ -31,11 +30,11 @@ export default function LucroPresumidoPage() {
     } finally {
       setLoading(false);
     }
-  }
+  }, [selectedAccount, data]);
 
   useEffect(() => {
     fetchTransactions();
-  }, [data, selectedAccount]);
+  }, [fetchTransactions]);
 
   // Cálculo do saldo presumido
   const receitas = transactions.filter(t => t.type === "income").reduce((acc, t) => acc + Number(t.value), 0);

@@ -27,13 +27,13 @@ export default function PerfilPage() {
     setLoading(true);
     try {
       // Simulação: se houver foto, use a URL do preview (em produção, faça upload e use a URL real)
-      const photo_url = photoPreview || user?.photo_url || '';
+      const photo_url = photoPreview || (user && 'photo_url' in user ? user.photo_url : '');
       await api.put('/me', {
         name: editName,
         photo_url,
       });
       toast.success('Alterações salvas com sucesso!');
-    } catch (err) {
+    } catch {
       toast.error('Erro ao salvar perfil.');
     } finally {
       setLoading(false);
