@@ -31,4 +31,5 @@ export interface User {
   account_type: 'cpf' | 'cnpj';
   document: string;
   name?: string;
+  photo_url?: string | null;
 } 
