@@ -394,6 +394,10 @@ export default function DashboardPage() {
   ];
 
   function exportPDF() {
+    if (!transactions || transactions.length === 0) {
+      alert("Não há transações para exportar.");
+      return;
+    }
     const doc = new jsPDF();
     const now = new Date();
     const period = (filterStartDate && filterEndDate)
@@ -405,7 +409,7 @@ export default function DashboardPage() {
     doc.text(`Usuário: ${user?.name || user?.email || ''}`, 14, 26);
     doc.text(period, 14, 32);
     doc.text(`Exportado em: ${now.toLocaleDateString('pt-BR')} ${now.toLocaleTimeString('pt-BR')}`, 14, 38);
-    // Tabela
+
     const headers = [['Data', 'Descrição', 'Categoria', 'Tipo', 'Valor', 'Status']];
     const rows = transactions.map(t => [
       new Date(t.date).toLocaleDateString('pt-BR'),
@@ -417,7 +421,6 @@ export default function DashboardPage() {
     ]);
     // @ts-expect-error jsPDF types do not include autoTable plugin
     doc.autoTable({ head: headers, body: rows, startY: 44 });
-    // Totalizadores
     const finalY = (doc as unknown as { lastAutoTable?: { finalY?: number } }).lastAutoTable?.finalY || 44;
     doc.setFontSize(12);
     doc.text(`Receitas: R$ ${receitas.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`, 14, finalY + 10);
