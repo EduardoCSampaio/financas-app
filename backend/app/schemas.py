@@ -15,6 +15,7 @@ class CategoryUpdate(BaseModel):
 class CategoryOut(CategoryBase):
     id: int
     user_id: int | None = None
+    limit: float | None = None  # Orçamento mensal opcional
     class Config:
         orm_mode = True
 

@@ -66,7 +66,33 @@ def delete_category_budget(category_id: int, month: Optional[str] = None, db: Se
 
 @router.get("/categories", response_model=list[CategoryOut])
 def list_user_categories(db: Session = Depends(get_db), current_user: models.User = Depends(get_current_user)):
-    return crud.get_user_categories(db, current_user.id)
+    from datetime import datetime
+    # Buscar todas as categorias do usuário (personalizadas e globais)
+    categories = crud.get_user_categories(db, current_user.id)
+    # Buscar budgets do usuário para o mês atual
+    now = datetime.now()
+    month_str = f"{now.year}-{now.month:02d}"
+    budgets = { (b.category_id, b.month): b for b in crud.get_category_budgets(db, current_user.id) }
+    result = []
+    for cat in categories:
+        # Procura orçamento para o mês atual
+        limit = None
+        budget = budgets.get((cat.id, month_str))
+        if budget:
+            limit = budget.limit
+        # Se não houver orçamento para o mês, tenta pegar orçamento sem mês definido (recorrente)
+        if limit is None:
+            budget = budgets.get((cat.id, None))
+            if budget:
+                limit = budget.limit
+        cat_out = schemas.CategoryOut(
+            id=cat.id,
+            name=cat.name,
+            user_id=getattr(cat, 'user_id', None),
+            limit=limit
+        )
+        result.append(cat_out)
+    return result
 
 @router.post("/categories", response_model=CategoryOut)
 def create_user_category(data: CategoryCreate, db: Session = Depends(get_db), current_user: models.User = Depends(get_current_user)):

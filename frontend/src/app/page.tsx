@@ -15,6 +15,8 @@ import { Fragment } from 'react';
 import Link from 'next/link';
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip, LineChart, CartesianGrid, XAxis, YAxis, Line } from 'recharts';
 import { saveAs } from 'file-saver';
+import jsPDF from 'jspdf';
+import 'jspdf-autotable';
 
 const colors = [
   '#6366f1', // Indigo
@@ -182,13 +184,6 @@ export default function DashboardPage() {
   }, [token, selectedAccount, filterText, filterCategory, currentPage, itemsPerPage, router, debouncedFetch, authAccounts, filterStartDate, filterEndDate, filterType, filterStatus]);
 
   useEffect(() => {
-    // Simula alertas toast ao abrir o dashboard
-    toast.warn('Você gastou 80% do seu orçamento mensal!');
-    toast.info('Transação agendada para amanhã.');
-    toast.error('Saldo da conta principal está baixo!');
-  }, []);
-
-  useEffect(() => {
     async function fetchData() {
       setLoading(true);
       try {
@@ -227,10 +222,61 @@ export default function DashboardPage() {
   });
   const lineData = Object.entries(saldoPorMes).map(([month, saldo]) => ({ month, saldo }));
 
-  // Cálculo de tendências (simulado)
-  const saldoTrend = 5.2;
-  const receitasTrend = 2.1;
-  const despesasTrend = -1.3;
+  // Cálculo de tendências reais mês a mês
+  function getMonthYear(date: Date) {
+    return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
+  }
+
+  const nowDate = new Date();
+  const currentMonth = getMonthYear(nowDate);
+  const prevMonthDate = new Date(nowDate.getFullYear(), nowDate.getMonth() - 1, 1);
+  const prevMonth = getMonthYear(prevMonthDate);
+
+  // Filtrar transações do mês atual e anterior
+  const txCurrentMonth = transactions.filter(t => getMonthYear(new Date(t.date)) === currentMonth);
+  const txPrevMonth = transactions.filter(t => getMonthYear(new Date(t.date)) === prevMonth);
+
+  const saldoAtualMes = txCurrentMonth.reduce((acc, t) => acc + (t.type === 'income' ? Number(t.value) : -Number(t.value)), 0);
+  const saldoPrevMes = txPrevMonth.reduce((acc, t) => acc + (t.type === 'income' ? Number(t.value) : -Number(t.value)), 0);
+  const receitasAtualMes = txCurrentMonth.filter(t => t.type === 'income').reduce((acc, t) => acc + Number(t.value), 0);
+  const receitasPrevMes = txPrevMonth.filter(t => t.type === 'income').reduce((acc, t) => acc + Number(t.value), 0);
+  const despesasAtualMes = txCurrentMonth.filter(t => t.type === 'expense').reduce((acc, t) => acc + Number(t.value), 0);
+  const despesasPrevMes = txPrevMonth.filter(t => t.type === 'expense').reduce((acc, t) => acc + Number(t.value), 0);
+
+  // Tendências em porcentagem
+  function calcTrend(current: number, prev: number) {
+    if (prev === 0) return current === 0 ? 0 : 100;
+    return ((current - prev) / Math.abs(prev)) * 100;
+  }
+  const saldoTrend = calcTrend(saldoAtualMes, saldoPrevMes);
+  const receitasTrend = calcTrend(receitasAtualMes, receitasPrevMes);
+  const despesasTrend = calcTrend(despesasAtualMes, despesasPrevMes);
+
+  // Variáveis para alertas reais (a lógica será implementada em seguida)
+  // let alertOrcamento = null;
+  // let alertSaldoBaixo = null;
+
+  useEffect(() => {
+    if (!loading && categories.length > 0 && transactions.length > 0 && userCategories.length > 0) {
+      // Alerta de orçamento por categoria
+      userCategories.forEach(cat => {
+        const limite = cat.limit || 0;
+        if (limite > 0) {
+          // Gasto no mês nesta categoria
+          const gasto = transactions.filter(t => t.type === 'expense' && t.category_id === cat.id && new Date(t.date).getMonth() === nowDate.getMonth() && new Date(t.date).getFullYear() === nowDate.getFullYear()).reduce((acc, t) => acc + Number(t.value), 0);
+          if (gasto >= 0.8 * limite && gasto < limite) {
+            toast.warn(`Atenção: Você já gastou ${Math.round((gasto/limite)*100)}% do orçamento da categoria "${cat.name}" este mês!`);
+          } else if (gasto >= limite) {
+            toast.error(`Limite de orçamento da categoria "${cat.name}" ULTRAPASSADO!`);
+          }
+        }
+      });
+      // Alerta de saldo baixo
+      if (selectedAccount && selectedAccount.initial_balance < 100) {
+        toast.error('Atenção: Saldo da conta está abaixo de R$ 100,00!');
+      }
+    }
+  }, [loading, categories, transactions, userCategories, selectedAccount]);
 
   // Agrupar despesas por categoria
   const despesasPorCategoria: Record<string, number> = {};
@@ -309,8 +355,73 @@ export default function DashboardPage() {
     message: `Boleto de R$ ${Number(t.value).toLocaleString('pt-BR', { minimumFractionDigits: 2 })} vence em ${daysUntil(t.date)} dia(s): ${t.description}`
   }));
 
+  // Notificações de orçamento e saldo baixo
+  const orcamentoNotifications = userCategories.flatMap(cat => {
+    const limite = cat.limit || 0;
+    if (limite > 0) {
+      const gasto = transactions.filter(t => t.type === 'expense' && t.category_id === cat.id && new Date(t.date).getMonth() === now.getMonth() && new Date(t.date).getFullYear() === now.getFullYear()).reduce((acc, t) => acc + Number(t.value), 0);
+      if (gasto >= 0.8 * limite && gasto < limite) {
+        return [{
+          id: `orcamento-${cat.id}`,
+          type: 'warning',
+          message: `Atenção: Você já gastou ${Math.round((gasto/limite)*100)}% do orçamento da categoria "${cat.name}" este mês!`
+        }];
+      } else if (gasto >= limite) {
+        return [{
+          id: `orcamento-${cat.id}`,
+          type: 'error',
+          message: `Limite de orçamento da categoria "${cat.name}" ULTRAPASSADO!`
+        }];
+      }
+    }
+    return [];
+  });
+
+  const saldoNotifications = selectedAccount && selectedAccount.initial_balance < 100 ? [{
+    id: 'saldo-baixo',
+    type: 'error',
+    message: 'Atenção: Saldo da conta está abaixo de R$ 100,00!'
+  }] : [];
+
   // Notificações finais
-  const allNotifications = [...boletoNotifications /*, ...outras notificações*/];
+  const allNotifications = [
+    ...boletoNotifications,
+    ...orcamentoNotifications,
+    ...saldoNotifications
+  ];
+
+  function exportPDF() {
+    const doc = new jsPDF();
+    const now = new Date();
+    const period = (filterStartDate && filterEndDate)
+      ? `Período: ${new Date(filterStartDate).toLocaleDateString('pt-BR')} a ${new Date(filterEndDate).toLocaleDateString('pt-BR')}`
+      : 'Todas as datas';
+    doc.setFontSize(16);
+    doc.text('Relatório de Transações', 14, 18);
+    doc.setFontSize(10);
+    doc.text(`Usuário: ${user?.name || user?.email || ''}`, 14, 26);
+    doc.text(period, 14, 32);
+    doc.text(`Exportado em: ${now.toLocaleDateString('pt-BR')} ${now.toLocaleTimeString('pt-BR')}`, 14, 38);
+    // Tabela
+    const headers = [['Data', 'Descrição', 'Categoria', 'Tipo', 'Valor', 'Status']];
+    const rows = transactions.map(t => [
+      new Date(t.date).toLocaleDateString('pt-BR'),
+      t.description?.replace(/\r?\n|\r/g, ' ') ?? '',
+      isCategoryObject(t.category) ? t.category.name : '',
+      t.type === 'income' ? 'Receita' : 'Despesa',
+      `R$ ${t.value.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`,
+      t.paid ? 'Pago' : 'Pendente',
+    ]);
+    // @ts-ignore
+    doc.autoTable({ head: headers, body: rows, startY: 44 });
+    // Totalizadores
+    const finalY = (doc as any).lastAutoTable.finalY || 44;
+    doc.setFontSize(12);
+    doc.text(`Receitas: R$ ${receitas.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`, 14, finalY + 10);
+    doc.text(`Despesas: R$ ${despesas.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`, 14, finalY + 16);
+    doc.text(`Saldo: R$ ${saldoAtual.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`, 14, finalY + 22);
+    doc.save('relatorio-transacoes.pdf');
+  }
 
   if (loading) {
     return <div className="w-full flex justify-center items-center py-20 text-xl text-indigo-600">Carregando dashboard...</div>;
@@ -465,7 +576,8 @@ export default function DashboardPage() {
           
           {/* Botão de exportação */}
           <div className="flex justify-end mb-2">
-            <button onClick={exportCSV} className="apple-btn-secondary px-4 py-2 text-sm">Exportar CSV</button>
+            <button onClick={exportCSV} className="apple-btn-secondary px-4 py-2 text-sm mr-2">Exportar CSV</button>
+            <button onClick={exportPDF} className="apple-btn-secondary px-4 py-2 text-sm">Exportar PDF</button>
           </div>
           
           {loading ? (
