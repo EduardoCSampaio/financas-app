@@ -22,7 +22,7 @@ export default function PerfilPage() {
       const file = e.target.files[0];
       const fileExt = file.name.split('.').pop();
       const fileName = `${user?.id}_${Date.now()}.${fileExt}`;
-      const { data, error } = await supabase.storage
+      const { error } = await supabase.storage
         .from('avatars')
         .upload(fileName, file, { upsert: true });
       if (error) {
