@@ -5,6 +5,7 @@ import { FaUser } from 'react-icons/fa';
 import Image from 'next/image';
 import { toast } from 'react-toastify';
 import api from '@/lib/api';
+import { supabase } from '@/lib/supabaseClient';
 
 export default function PerfilPage() {
   const { user } = useAuth();
@@ -16,9 +17,23 @@ export default function PerfilPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [editPassword, setEditPassword] = useState('');
   // Preview instantâneo da foto
-  const handlePhotoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handlePhotoChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
-      setPhotoPreview(URL.createObjectURL(e.target.files[0]));
+      const file = e.target.files[0];
+      const fileExt = file.name.split('.').pop();
+      const fileName = `${user?.id}_${Date.now()}.${fileExt}`;
+      const { data, error } = await supabase.storage
+        .from('avatars')
+        .upload(fileName, file, { upsert: true });
+      if (error) {
+        toast.error('Erro ao fazer upload da foto.');
+        return;
+      }
+      const { data: publicUrlData } = supabase
+        .storage
+        .from('avatars')
+        .getPublicUrl(fileName);
+      setPhotoPreview(publicUrlData.publicUrl);
     }
   };
   // Simula salvar alterações
