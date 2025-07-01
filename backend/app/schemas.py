@@ -77,6 +77,8 @@ class UserBase(BaseModel):
     email: str
     account_type: str = 'cpf'
     document: str
+    name: str
+    photo_url: Optional[str] = None
 
 class UserCreate(UserBase):
     password: str
@@ -86,6 +88,10 @@ class User(UserBase):
     is_active: bool
     accounts: List[Account] = []
     model_config = ConfigDict(from_attributes=True)
+
+class UserUpdate(BaseModel):
+    name: Optional[str] = None
+    photo_url: Optional[str] = None
 
 # --- Auth Schemas ---
 class Token(BaseModel):

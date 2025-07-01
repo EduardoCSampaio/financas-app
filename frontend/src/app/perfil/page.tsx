@@ -4,6 +4,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { FaUser } from 'react-icons/fa';
 import Image from 'next/image';
 import { toast } from 'react-toastify';
+import api from '@/lib/api';
 
 export default function PerfilPage() {
   const { user } = useAuth();
@@ -24,10 +25,19 @@ export default function PerfilPage() {
   const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
-    setTimeout(() => {
+    try {
+      // Simulação: se houver foto, use a URL do preview (em produção, faça upload e use a URL real)
+      const photo_url = photoPreview || user?.photo_url || '';
+      await api.put('/me', {
+        name: editName,
+        photo_url,
+      });
+      toast.success('Alterações salvas com sucesso!');
+    } catch (err) {
+      toast.error('Erro ao salvar perfil.');
+    } finally {
       setLoading(false);
-      toast.success('Alterações salvas com sucesso! (Simulado)');
-    }, 1200);
+    }
   };
 
   return (

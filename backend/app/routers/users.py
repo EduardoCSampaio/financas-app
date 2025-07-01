@@ -4,7 +4,7 @@ from .. import schemas, crud, models, security
 from ..database import get_db
 from .auth import get_current_active_user, get_current_user
 from typing import Optional
-from ..schemas import CategoryCreate, CategoryUpdate, CategoryOut
+from ..schemas import CategoryCreate, CategoryUpdate, CategoryOut, UserUpdate
 
 router = APIRouter()
 
@@ -110,4 +110,15 @@ def delete_user_category(category_id: int, db: Session = Depends(get_db), curren
     ok = crud.delete_user_category(db, current_user.id, category_id)
     if not ok:
         raise HTTPException(status_code=404, detail="Categoria não encontrada")
-    return {"ok": True} 
+    return {"ok": True}
+
+@router.put("/me", response_model=schemas.User)
+def update_profile(
+    data: UserUpdate,
+    db: Session = Depends(get_db),
+    current_user: models.User = Depends(get_current_active_user)
+):
+    updated = crud.update_user_profile(db, current_user.id, data)
+    if not updated:
+        raise HTTPException(status_code=404, detail="Usuário não encontrado")
+    return updated 
