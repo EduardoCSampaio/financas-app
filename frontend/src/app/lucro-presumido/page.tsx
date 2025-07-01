@@ -17,8 +17,13 @@ export default function LucroPresumidoPage() {
     setLoading(true);
     setError("");
     try {
-      const res = await api.get("/transactions", {
-        params: { account_id: selectedAccount.id, end_date: data }
+      const res = await api.get("/transactions/", {
+        params: {
+          account_id: selectedAccount.id,
+          end_date: data,
+          page: 1,
+          limit: 100
+        }
       });
       setTransactions(res.data.items || res.data);
     } catch {
@@ -35,7 +40,8 @@ export default function LucroPresumidoPage() {
   // Cálculo do saldo presumido
   const receitas = transactions.filter(t => t.type === "income").reduce((acc, t) => acc + Number(t.value), 0);
   const despesas = transactions.filter(t => t.type === "expense").reduce((acc, t) => acc + Number(t.value), 0);
-  const saldoProjetado = (selectedAccount?.initial_balance || 0) + receitas - despesas;
+  const saldoAtual = selectedAccount?.initial_balance || 0;
+  const saldoProjetado = saldoAtual + receitas - despesas;
 
   return (
     <div className="max-w-2xl mx-auto bg-white/80 rounded-2xl shadow p-8 mt-8">
@@ -52,6 +58,10 @@ export default function LucroPresumidoPage() {
         <div className="text-red-500">{error}</div>
       ) : (
         <div className="space-y-4">
+          <div className="flex justify-between items-center">
+            <span className="text-slate-600">Saldo atual da conta:</span>
+            <span className="text-lg font-semibold text-indigo-600">R$ {saldoAtual.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</span>
+          </div>
           <div className="flex justify-between items-center">
             <span className="text-slate-600">Saldo projetado em <b>{new Date(data).toLocaleDateString('pt-BR')}</b>:</span>
             <span className="text-2xl font-bold text-indigo-700">R$ {saldoProjetado.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</span>
