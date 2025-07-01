@@ -94,7 +94,7 @@ export default function DashboardPage() {
   const [filterStartDate, setFilterStartDate] = useState('');
   const [filterEndDate, setFilterEndDate] = useState('');
   const [categories, setCategories] = useState<Category[]>([]);
-  const [nowDate, setNowDate] = useState(new Date());
+  const nowDate = new Date();
 
   const handleTransactionAdded = (newTransaction: Transaction) => {
     if(selectedAccount && newTransaction.account_id === selectedAccount.id) {
@@ -293,9 +293,8 @@ export default function DashboardPage() {
   });
 
   // Calcular gastos do mês atual por categoria
-  const now = nowDate;
-  const firstDay = new Date(now.getFullYear(), now.getMonth(), 1);
-  const lastDay = new Date(now.getFullYear(), now.getMonth() + 1, 0);
+  const firstDay = new Date(nowDate.getFullYear(), nowDate.getMonth(), 1);
+  const lastDay = new Date(nowDate.getFullYear(), nowDate.getMonth() + 1, 0);
   const expensesByCategory: Record<number, number> = {};
   transactions.forEach(t => {
     if (
@@ -359,7 +358,7 @@ export default function DashboardPage() {
   const orcamentoNotifications = userCategories.flatMap(cat => {
     const limite = cat.limit || 0;
     if (limite > 0) {
-      const gasto = transactions.filter(t => t.type === 'expense' && t.category_id === cat.id && new Date(t.date).getMonth() === now.getMonth() && new Date(t.date).getFullYear() === now.getFullYear()).reduce((acc, t) => acc + Number(t.value), 0);
+      const gasto = transactions.filter(t => t.type === 'expense' && t.category_id === cat.id && new Date(t.date).getMonth() === nowDate.getMonth() && new Date(t.date).getFullYear() === nowDate.getFullYear()).reduce((acc, t) => acc + Number(t.value), 0);
       if (gasto >= 0.8 * limite && gasto < limite) {
         return [{
           id: `orcamento-${cat.id}`,
@@ -412,7 +411,7 @@ export default function DashboardPage() {
       `R$ ${t.value.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`,
       t.paid ? 'Pago' : 'Pendente',
     ]);
-    // @ts-expect-error
+    // @ts-expect-error jsPDF types do not include autoTable plugin
     doc.autoTable({ head: headers, body: rows, startY: 44 });
     // Totalizadores
     const finalY = (doc as unknown as { lastAutoTable?: { finalY?: number } }).lastAutoTable?.finalY || 44;
