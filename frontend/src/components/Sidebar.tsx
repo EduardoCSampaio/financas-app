@@ -27,6 +27,9 @@ export default function Sidebar() {
             <Link href="/categorias" className={`flex items-center gap-3 px-5 py-3 rounded-xl font-semibold text-base transition-all duration-150 ${pathname === '/categorias' ? 'bg-gradient-to-r from-indigo-600 to-blue-500 text-white shadow-lg' : 'text-slate-800 hover:bg-gradient-to-r hover:from-indigo-100 hover:to-blue-50 hover:text-indigo-700'}`}>
               <FaTags className="text-xl" /> Categorias
             </Link>
+            <Link href="/lucro-presumido" className={`flex items-center gap-3 px-5 py-3 rounded-xl font-semibold text-base transition-all duration-150 ${pathname === '/lucro-presumido' ? 'bg-gradient-to-r from-indigo-600 to-blue-500 text-white shadow-lg' : 'text-slate-800 hover:bg-gradient-to-r hover:from-indigo-100 hover:to-blue-50 hover:text-indigo-700'}`}>
+              Lucro Presumido
+            </Link>
             <Link href="/perfil" className={`flex items-center gap-3 px-5 py-3 rounded-xl font-semibold text-base transition-all duration-150 ${pathname === '/perfil' ? 'bg-gradient-to-r from-indigo-600 to-blue-500 text-white shadow-lg' : 'text-slate-800 hover:bg-gradient-to-r hover:from-indigo-100 hover:to-blue-50 hover:text-indigo-700'}`}>
               <FaUserCircle className="text-xl" /> Perfil
             </Link>
@@ -68,6 +71,9 @@ export default function Sidebar() {
                 </Link>
                 <Link href="/categorias" className={`flex items-center gap-3 px-5 py-3 rounded-xl font-semibold text-base transition-all duration-150 ${pathname === '/categorias' ? 'bg-gradient-to-r from-indigo-600 to-blue-500 text-white shadow-lg' : 'text-slate-800 hover:bg-gradient-to-r hover:from-indigo-100 hover:to-blue-50 hover:text-indigo-700'}`} onClick={() => setMobileMenuOpen(false)}>
                   <FaTags className="text-xl" /> Categorias
+                </Link>
+                <Link href="/lucro-presumido" className={`flex items-center gap-3 px-5 py-3 rounded-xl font-semibold text-base transition-all duration-150 ${pathname === '/lucro-presumido' ? 'bg-gradient-to-r from-indigo-600 to-blue-500 text-white shadow-lg' : 'text-slate-800 hover:bg-gradient-to-r hover:from-indigo-100 hover:to-blue-50 hover:text-indigo-700'}`} onClick={() => setMobileMenuOpen(false)}>
+                  Lucro Presumido
                 </Link>
                 <Link href="/perfil" className={`flex items-center gap-3 px-5 py-3 rounded-xl font-semibold text-base transition-all duration-150 ${pathname === '/perfil' ? 'bg-gradient-to-r from-indigo-600 to-blue-500 text-white shadow-lg' : 'text-slate-800 hover:bg-gradient-to-r hover:from-indigo-100 hover:to-blue-50 hover:text-indigo-700'}`} onClick={() => setMobileMenuOpen(false)}>
                   <FaUserCircle className="text-xl" /> Perfil
