@@ -204,7 +204,7 @@ export default function DashboardPage() {
   }, []);
 
   // Cálculos dinâmicos
-  const saldoAtual = authAccounts.reduce((acc, a) => acc + (a.initial_balance || 0), 0);
+  const saldoAtual = selectedAccount?.initial_balance || 0;
   const receitas = transactions.filter(t => t.type === 'income').reduce((acc, t) => acc + Number(t.value), 0);
   const despesas = transactions.filter(t => t.type === 'expense').reduce((acc, t) => acc + Number(t.value), 0);
 
