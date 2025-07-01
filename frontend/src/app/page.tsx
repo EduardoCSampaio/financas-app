@@ -94,6 +94,7 @@ export default function DashboardPage() {
   const [filterStartDate, setFilterStartDate] = useState('');
   const [filterEndDate, setFilterEndDate] = useState('');
   const [categories, setCategories] = useState<Category[]>([]);
+  const [nowDate, setNowDate] = useState(new Date());
 
   const handleTransactionAdded = (newTransaction: Transaction) => {
     if(selectedAccount && newTransaction.account_id === selectedAccount.id) {
@@ -227,7 +228,6 @@ export default function DashboardPage() {
     return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
   }
 
-  const nowDate = new Date();
   const currentMonth = getMonthYear(nowDate);
   const prevMonthDate = new Date(nowDate.getFullYear(), nowDate.getMonth() - 1, 1);
   const prevMonth = getMonthYear(prevMonthDate);
@@ -276,7 +276,7 @@ export default function DashboardPage() {
         toast.error('Atenção: Saldo da conta está abaixo de R$ 100,00!');
       }
     }
-  }, [loading, categories, transactions, userCategories, selectedAccount]);
+  }, [loading, categories, transactions, userCategories, selectedAccount, nowDate]);
 
   // Agrupar despesas por categoria
   const despesasPorCategoria: Record<string, number> = {};
@@ -293,7 +293,7 @@ export default function DashboardPage() {
   });
 
   // Calcular gastos do mês atual por categoria
-  const now = new Date();
+  const now = nowDate;
   const firstDay = new Date(now.getFullYear(), now.getMonth(), 1);
   const lastDay = new Date(now.getFullYear(), now.getMonth() + 1, 0);
   const expensesByCategory: Record<number, number> = {};
@@ -412,10 +412,10 @@ export default function DashboardPage() {
       `R$ ${t.value.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`,
       t.paid ? 'Pago' : 'Pendente',
     ]);
-    // @ts-ignore
+    // @ts-expect-error
     doc.autoTable({ head: headers, body: rows, startY: 44 });
     // Totalizadores
-    const finalY = (doc as any).lastAutoTable.finalY || 44;
+    const finalY = (doc as unknown as { lastAutoTable?: { finalY?: number } }).lastAutoTable?.finalY || 44;
     doc.setFontSize(12);
     doc.text(`Receitas: R$ ${receitas.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`, 14, finalY + 10);
     doc.text(`Despesas: R$ ${despesas.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`, 14, finalY + 16);
