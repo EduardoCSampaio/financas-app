@@ -15,8 +15,6 @@ import { Fragment } from 'react';
 import Link from 'next/link';
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip, LineChart, CartesianGrid, XAxis, YAxis, Line } from 'recharts';
 import { saveAs } from 'file-saver';
-import jsPDF from 'jspdf';
-import 'jspdf-autotable';
 
 const colors = [
   '#6366f1', // Indigo
@@ -398,6 +396,8 @@ export default function DashboardPage() {
       alert("Não há transações para exportar.");
       return;
     }
+    const jsPDF = require('jspdf').default;
+    const autoTable = require('jspdf-autotable');
     const doc = new jsPDF();
     const now = new Date();
     const period = (filterStartDate && filterEndDate)
