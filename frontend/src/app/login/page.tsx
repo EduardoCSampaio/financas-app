@@ -37,12 +37,17 @@ export default function LoginPage() {
         setError('Token de acesso não recebido. Contate o suporte.');
         toast.error('Token de acesso não recebido. Contate o suporte.');
       }
-    } catch (err: any) {
+    } catch (err: unknown) {
       let errorMessage = 'E-mail ou senha inválidos.';
-      if (!err.response) {
+      if (err && typeof err === 'object' && 'response' in err) {
+        const response = (err as any).response;
+        if (!response) {
+          errorMessage = 'Erro de conexão. Tente novamente mais tarde.';
+        } else if (response.data?.detail) {
+          errorMessage = response.data.detail;
+        }
+      } else if (!err || typeof err !== 'object') {
         errorMessage = 'Erro de conexão. Tente novamente mais tarde.';
-      } else if (err.response.data?.detail) {
-        errorMessage = err.response.data.detail;
       }
       setError(errorMessage);
       toast.error(errorMessage);
