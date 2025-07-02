@@ -258,32 +258,6 @@ export default function DashboardPage() {
   const receitasTrend = calcTrend(receitasAtualMes, receitasPrevMes);
   const despesasTrend = calcTrend(despesasAtualMes, despesasPrevMes);
 
-  // Variáveis para alertas reais (a lógica será implementada em seguida)
-  // let alertOrcamento = null;
-  // let alertSaldoBaixo = null;
-
-  useEffect(() => {
-    if (!loading && categories.length > 0 && transactions.length > 0 && userCategories.length > 0) {
-      // Alerta de orçamento por categoria
-      userCategories.forEach(cat => {
-        const limite = cat.limit || 0;
-        if (limite > 0) {
-          // Gasto no mês nesta categoria
-          const gasto = transactions.filter(t => t.type === 'expense' && t.category_id === cat.id && new Date(t.date).getMonth() === nowDate.getMonth() && new Date(t.date).getFullYear() === nowDate.getFullYear()).reduce((acc, t) => acc + Number(t.value), 0);
-          if (gasto >= 0.8 * limite && gasto < limite) {
-            toast.warn(`Atenção: Você já gastou ${Math.round((gasto/limite)*100)}% do orçamento da categoria "${cat.name}" este mês!`);
-          } else if (gasto >= limite) {
-            toast.error(`Limite de orçamento da categoria "${cat.name}" ULTRAPASSADO!`);
-          }
-        }
-      });
-      // Alerta de saldo baixo
-      if (selectedAccount && selectedAccount.initial_balance < 100) {
-        toast.error('Atenção: Saldo da conta está abaixo de R$ 100,00!');
-      }
-    }
-  }, [loading, categories, transactions, userCategories, selectedAccount, nowDate]);
-
   // Agrupar despesas por categoria
   const despesasPorCategoria: Record<string, number> = {};
   transactions.forEach(t => {
@@ -780,24 +754,6 @@ export default function DashboardPage() {
             </LineChart>
           </ResponsiveContainer>
         </div>
-      </div>
-
-      {/* Central de notificações */}
-      <div className="bg-white/80 rounded-2xl shadow p-6 mb-4">
-        <h2 className="text-lg font-bold text-indigo-600 mb-4">Notificações</h2>
-        <ul className="flex flex-col gap-2">
-          {allNotifications.length === 0 && (
-            <li className="text-slate-500 text-sm">Nenhuma notificação no momento.</li>
-          )}
-          {allNotifications.map(n => (
-            <li key={n.id} className={`flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium ${n.type === 'warning' ? 'bg-yellow-100 text-yellow-800' : n.type === 'error' ? 'bg-rose-100 text-rose-700' : 'bg-blue-100 text-blue-700'}`}>
-              {n.type === 'warning' && <span className="text-lg">⚠️</span>}
-              {n.type === 'error' && <span className="text-lg">❗</span>}
-              {n.type === 'info' && <span className="text-lg">ℹ️</span>}
-              {n.message}
-            </li>
-          ))}
-        </ul>
       </div>
     </div>
   );
