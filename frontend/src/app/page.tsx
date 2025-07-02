@@ -189,8 +189,8 @@ export default function DashboardPage() {
       setLoading(true);
       try {
         const [txRes, catRes] = await Promise.all([
-          api.get('/transactions'),
-          api.get('/categories'),
+          api.get('/transactions/'),
+          api.get('/categories/'),
         ]);
         setTransactions(txRes.data);
         setCategories(catRes.data);
