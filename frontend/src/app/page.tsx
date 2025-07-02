@@ -362,13 +362,6 @@ export default function DashboardPage() {
     message: 'Atenção: Saldo da conta está abaixo de R$ 100,00!'
   }] : [];
 
-  // Notificações finais
-  const allNotifications = [
-    ...boletoNotifications,
-    ...orcamentoNotifications,
-    ...saldoNotifications
-  ];
-
   function exportPDF() {
     if (!transactions || transactions.length === 0) {
       alert("Não há transações para exportar.");
