@@ -321,14 +321,6 @@ export default function DashboardPage() {
     saveAs(blob, 'transacoes.csv');
   }
 
-  // Notificações automáticas de boletos próximos do vencimento
-  const boletosAVencer = transactions.filter(t =>
-    t.type === 'expense' &&
-    t.date &&
-    daysUntil(t.date) >= 0 && daysUntil(t.date) <= 3 &&
-    (!t.paid)
-  );
-
   function exportPDF() {
     if (!transactions || transactions.length === 0) {
       alert("Não há transações para exportar.");
