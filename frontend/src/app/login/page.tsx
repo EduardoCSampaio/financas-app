@@ -20,21 +20,29 @@ export default function LoginPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
+    setLoading(true);
 
     const formData = new URLSearchParams();
-    formData.append('username', email);
+    formData.append('email', email);
     formData.append('password', password);
 
     try {
-      setLoading(true);
+      localStorage.removeItem('token');
       const response = await api.post('/auth/token', formData);
       const { access_token, user } = response.data;
-      login(access_token, user);
-      router.push('/');
-    } catch (err: unknown) {
+      if (access_token) {
+        login(access_token, user);
+        router.push('/');
+      } else {
+        setError('Token de acesso não recebido. Contate o suporte.');
+        toast.error('Token de acesso não recebido. Contate o suporte.');
+      }
+    } catch (err: any) {
       let errorMessage = 'E-mail ou senha inválidos.';
-      if (err && typeof err === 'object' && 'response' in err && err.response && typeof err.response === 'object' && 'data' in err.response && err.response.data && typeof err.response.data === 'object' && 'detail' in err.response.data) {
-        errorMessage = (err.response as { data?: { detail?: string } }).data?.detail || errorMessage;
+      if (!err.response) {
+        errorMessage = 'Erro de conexão. Tente novamente mais tarde.';
+      } else if (err.response.data?.detail) {
+        errorMessage = err.response.data.detail;
       }
       setError(errorMessage);
       toast.error(errorMessage);
