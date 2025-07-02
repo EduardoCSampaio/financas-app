@@ -650,7 +650,7 @@ export default function DashboardPage() {
                             title="Marcar como pago"
                             onClick={async () => {
                               try {
-                                await api.patch(`/transactions/${transaction.id}`, { paid: true });
+                                await api.patch(`/transactions/${transaction.id}/toggle-paid`, { paid: true });
                                 setTransactions(prev => prev.map(tx => tx.id === transaction.id ? { ...tx, paid: true } : tx));
                                 toast.success('Transação marcada como paga!');
                               } catch {
