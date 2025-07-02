@@ -328,39 +328,6 @@ export default function DashboardPage() {
     daysUntil(t.date) >= 0 && daysUntil(t.date) <= 3 &&
     (!t.paid)
   );
-  const boletoNotifications = boletosAVencer.map(t => ({
-    id: `boleto-${t.id}`,
-    type: 'warning',
-    message: `Boleto de R$ ${Number(t.value).toLocaleString('pt-BR', { minimumFractionDigits: 2 })} vence em ${daysUntil(t.date)} dia(s): ${t.description}`
-  }));
-
-  // Notificações de orçamento e saldo baixo
-  const orcamentoNotifications = userCategories.flatMap(cat => {
-    const limite = cat.limit || 0;
-    if (limite > 0) {
-      const gasto = transactions.filter(t => t.type === 'expense' && t.category_id === cat.id && new Date(t.date).getMonth() === nowDate.getMonth() && new Date(t.date).getFullYear() === nowDate.getFullYear()).reduce((acc, t) => acc + Number(t.value), 0);
-      if (gasto >= 0.8 * limite && gasto < limite) {
-        return [{
-          id: `orcamento-${cat.id}`,
-          type: 'warning',
-          message: `Atenção: Você já gastou ${Math.round((gasto/limite)*100)}% do orçamento da categoria "${cat.name}" este mês!`
-        }];
-      } else if (gasto >= limite) {
-        return [{
-          id: `orcamento-${cat.id}`,
-          type: 'error',
-          message: `Limite de orçamento da categoria "${cat.name}" ULTRAPASSADO!`
-        }];
-      }
-    }
-    return [];
-  });
-
-  const saldoNotifications = selectedAccount && selectedAccount.initial_balance < 100 ? [{
-    id: 'saldo-baixo',
-    type: 'error',
-    message: 'Atenção: Saldo da conta está abaixo de R$ 100,00!'
-  }] : [];
 
   function exportPDF() {
     if (!transactions || transactions.length === 0) {
