@@ -188,12 +188,14 @@ export default function DashboardPage() {
     async function fetchData() {
       setLoading(true);
       try {
-        const [txRes, catRes] = await Promise.all([
-          api.get('/transactions/'),
-          api.get('/categories/'),
-        ]);
-        setTransactions(txRes.data);
-        setCategories(catRes.data);
+        if (selectedAccount) {
+          const [txRes, catRes] = await Promise.all([
+            api.get('/transactions/', { params: { account_id: selectedAccount.id } }),
+            api.get('/categories/'),
+          ]);
+          setTransactions(txRes.data.items ?? txRes.data);
+          setCategories(catRes.data);
+        }
       } catch {
         // Trate erros conforme necessário
       } finally {
