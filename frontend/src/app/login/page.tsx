@@ -8,6 +8,15 @@ import api from '@/lib/api';
 import { FaEye, FaEyeSlash } from 'react-icons/fa';
 import Image from 'next/image';
 
+function isAxiosError(error: unknown): error is { response: { data?: { detail?: string } } } {
+  return (
+    typeof error === 'object' &&
+    error !== null &&
+    'response' in error &&
+    typeof (error as { response: unknown }).response === 'object'
+  );
+}
+
 export default function LoginPage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -39,14 +48,14 @@ export default function LoginPage() {
       }
     } catch (err: unknown) {
       let errorMessage = 'E-mail ou senha inválidos.';
-      if (err && typeof err === 'object' && 'response' in err) {
-        const response = (err as any).response;
+      if (isAxiosError(err)) {
+        const response = err.response;
         if (!response) {
           errorMessage = 'Erro de conexão. Tente novamente mais tarde.';
         } else if (response.data?.detail) {
           errorMessage = response.data.detail;
         }
-      } else if (!err || typeof err !== 'object') {
+      } else {
         errorMessage = 'Erro de conexão. Tente novamente mais tarde.';
       }
       setError(errorMessage);
